@@ -3,8 +3,10 @@ using System.Text;
 
 namespace DbWin
 {
-	public partial class Form1 : Form
+	public partial class Form1:Form
 	{
+		ConnectionString cs;
+		MySQLconn conn;
 
 		/// <summary>
 		/// Ctor
@@ -12,6 +14,8 @@ namespace DbWin
 		public Form1()
 		{
 			InitializeComponent();
+			cs = new ConnectionString("127.0.0.1","3306","pippo","pippo01","dbc01");
+			conn = new MySQLconn();
 		}
 
 		/// <summary>
@@ -21,7 +25,7 @@ namespace DbWin
 		/// <param name="e"></param>
 		private void Form1_Load(object sender,EventArgs e)
 		{
-
+			UpdateForm();
 		}
 
 		/// <summary>
@@ -31,7 +35,7 @@ namespace DbWin
 		/// <param name="e"></param>
 		private void Form1_FormClosing(object sender,FormClosingEventArgs e)
 		{
-			if(MessageBox.Show(Messages.Msg.Closing,Messages.Titles.Closing,MessageBoxButtons.OKCancel, MessageBoxIcon.Warning) != DialogResult.OK)
+			if(MessageBox.Show(Messages.Msg.Closing,Messages.Titles.Closing,MessageBoxButtons.OKCancel,MessageBoxIcon.Warning) != DialogResult.OK)
 			{
 				e.Cancel = true;
 			}
@@ -42,7 +46,7 @@ namespace DbWin
 		/// </summary>
 		/// <param name="execAssy">from Assembly.GetExecutingAssembly()</param>
 		/// <returns></returns>
-		public string Version(Assembly asm, bool details = false)
+		public string Version(Assembly asm,bool details = false)
 		{
 			StringBuilder strb = new StringBuilder();
 			try
@@ -51,19 +55,21 @@ namespace DbWin
 				if(asm != null)
 				{
 					System.Version? v = asm.GetName().Version;
-					if(v != null) strb.AppendLine($"Version: {v.ToString()} ({BuildTime(asm)})");
+					if(v != null)
+						strb.AppendLine($"Version: {v.ToString()} ({BuildTime(asm)})");
 					if(details)
 					{
 						string? n = asm.GetName().Name;
-						if(n != null) strb.AppendLine("Assembly name: " + n);
-						strb.AppendLine("BuildTime time: "+ File.GetCreationTime(asm.Location).ToString());
+						if(n != null)
+							strb.AppendLine("Assembly name: " + n);
+						strb.AppendLine("BuildTime time: " + File.GetCreationTime(asm.Location).ToString());
 						strb.AppendLine("BuildTime number: " + BuildTime(asm,true));
 						strb.AppendLine("Executable path: " + Application.ExecutablePath);
 					}
 				}
 				strb.AppendLine("Copyright: " + Application.CompanyName);
 			}
-			catch	{}
+			catch { }
 			return strb.ToString();
 		}
 
@@ -72,7 +78,7 @@ namespace DbWin
 		/// </summary>
 		/// <param name="asm"></param>
 		/// <returns></returns>
-		public string BuildTime(Assembly asm, bool number = false)
+		public string BuildTime(Assembly asm,bool number = false)
 		{
 			StringBuilder strb = new StringBuilder();
 			if(asm != null)
@@ -82,8 +88,42 @@ namespace DbWin
 					strb.Append(String.Format("{0:yyMMddhh}.{0:mmss}",dt));
 				else
 					strb.Append(dt.ToString("d"));
-			}	
+			}
 			return strb.ToString();
+		}
+
+		public void UpdateForm()
+		{
+
+		}
+
+		public void ParametriConnessione()
+		{
+			ConnectionForm form = new ConnectionForm(cs);
+			if(form.ShowDialog() == DialogResult.OK)
+			{
+				cs = new ConnectionString(form.cs);
+			}
+		}
+
+		public void Connetti()
+		{
+			conn.ConnectionString = cs;
+			conn.Connect();
+		}
+
+		public void Disconnetti()
+		{
+			if(conn != null)
+			{
+				if(conn.Status == System.Data.ConnectionState.Open)
+				{
+					if(MessageBox.Show(Messages.Msg.Disconnecting,Messages.Titles.Disconnecting,MessageBoxButtons.OKCancel,MessageBoxIcon.Warning) == DialogResult.OK)
+					{
+						conn.Disconnect();
+					}
+				}
+			}
 		}
 
 		#region - Command handlers -
@@ -94,22 +134,24 @@ namespace DbWin
 
 		private void connettiToolStripMenuItem_Click(object sender,EventArgs e)
 		{
-
+			Connetti();
 		}
 
 		private void disconnettiToolStripMenuItem_Click(object sender,EventArgs e)
 		{
-			if(MessageBox.Show(Messages.Msg.Disconnecting,Messages.Titles.Disconnecting,MessageBoxButtons.OKCancel, MessageBoxIcon.Warning) == DialogResult.OK)
-			{
-				MessageBox.Show("Disconnecting");
-			}
+			Disconnetti();
 		}
 
 		private void esciToolStripMenuItem_Click(object sender,EventArgs e)
 		{
 			Close();
 		}
-		#endregion
 
+		private void parametriDiConnessioneToolStripMenuItem_Click(object sender,EventArgs e)
+		{
+			ParametriConnessione();
+		}
+
+		#endregion ---
 	}
 }

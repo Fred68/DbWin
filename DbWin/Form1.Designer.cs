@@ -33,6 +33,7 @@
 			connettiToolStripMenuItem = new ToolStripMenuItem();
 			disconnettiToolStripMenuItem = new ToolStripMenuItem();
 			esciToolStripMenuItem = new ToolStripMenuItem();
+			parametriDiConnessioneToolStripMenuItem = new ToolStripMenuItem();
 			helpToolStripMenuItem = new ToolStripMenuItem();
 			informazioniToolStripMenuItem = new ToolStripMenuItem();
 			statusStrip1 = new StatusStrip();
@@ -50,7 +51,7 @@
 			// 
 			// fileToolStripMenuItem
 			// 
-			fileToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { connettiToolStripMenuItem,disconnettiToolStripMenuItem,esciToolStripMenuItem });
+			fileToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { parametriDiConnessioneToolStripMenuItem,connettiToolStripMenuItem,disconnettiToolStripMenuItem,esciToolStripMenuItem });
 			fileToolStripMenuItem.Name = "fileToolStripMenuItem";
 			fileToolStripMenuItem.Size = new Size(87,20);
 			fileToolStripMenuItem.Text = "Connessione";
@@ -75,6 +76,13 @@
 			esciToolStripMenuItem.Size = new Size(180,22);
 			esciToolStripMenuItem.Text = "Esci";
 			esciToolStripMenuItem.Click += esciToolStripMenuItem_Click;
+			// 
+			// parametriDiConnessioneToolStripMenuItem
+			// 
+			parametriDiConnessioneToolStripMenuItem.Name = "parametriDiConnessioneToolStripMenuItem";
+			parametriDiConnessioneToolStripMenuItem.Size = new Size(180,22);
+			parametriDiConnessioneToolStripMenuItem.Text = "Parametri";
+			parametriDiConnessioneToolStripMenuItem.Click += parametriDiConnessioneToolStripMenuItem_Click;
 			// 
 			// helpToolStripMenuItem
 			// 
@@ -126,5 +134,6 @@
 		private ToolStripMenuItem disconnettiToolStripMenuItem;
 		private ToolStripMenuItem esciToolStripMenuItem;
 		private ToolStripMenuItem informazioniToolStripMenuItem;
+		private ToolStripMenuItem parametriDiConnessioneToolStripMenuItem;
 	}
 }

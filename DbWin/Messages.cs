@@ -13,6 +13,10 @@ namespace DbWin
 		{
 			public static string Closing =			"Uscire dal programma ?";
 			public static string Disconnecting =	"Disconnettersi ?";
+			public static string Disconnected =		"Disconnesso";
+			public static string NotConnected =		"Non connesso";
+
+			
 		}
 		public static class Titles
 		{
