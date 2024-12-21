@@ -134,6 +134,7 @@ namespace DbWin
 			}
 			if( conn != null )
 			{
+				ConnectionState cst = conn.State;
 				sb.AppendLine($"Connection: {conn.State.ToString()}");
 				if(bShowExtraInfo)
 				{

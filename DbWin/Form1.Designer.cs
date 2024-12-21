@@ -30,14 +30,18 @@
 		{
 			menuStrip1 = new MenuStrip();
 			fileToolStripMenuItem = new ToolStripMenuItem();
+			parametriDiConnessioneToolStripMenuItem = new ToolStripMenuItem();
 			connettiToolStripMenuItem = new ToolStripMenuItem();
 			disconnettiToolStripMenuItem = new ToolStripMenuItem();
 			esciToolStripMenuItem = new ToolStripMenuItem();
-			parametriDiConnessioneToolStripMenuItem = new ToolStripMenuItem();
 			helpToolStripMenuItem = new ToolStripMenuItem();
 			informazioniToolStripMenuItem = new ToolStripMenuItem();
 			statusStrip1 = new StatusStrip();
+			tsStatus = new ToolStripStatusLabel();
+			toolStripStatusLabel2 = new ToolStripStatusLabel();
+			toolStripStatusLabel3 = new ToolStripStatusLabel();
 			menuStrip1.SuspendLayout();
+			statusStrip1.SuspendLayout();
 			SuspendLayout();
 			// 
 			// menuStrip1
@@ -56,33 +60,33 @@
 			fileToolStripMenuItem.Size = new Size(87,20);
 			fileToolStripMenuItem.Text = "Connessione";
 			// 
+			// parametriDiConnessioneToolStripMenuItem
+			// 
+			parametriDiConnessioneToolStripMenuItem.Name = "parametriDiConnessioneToolStripMenuItem";
+			parametriDiConnessioneToolStripMenuItem.Size = new Size(134,22);
+			parametriDiConnessioneToolStripMenuItem.Text = "Parametri";
+			parametriDiConnessioneToolStripMenuItem.Click += parametriDiConnessioneToolStripMenuItem_Click;
+			// 
 			// connettiToolStripMenuItem
 			// 
 			connettiToolStripMenuItem.Name = "connettiToolStripMenuItem";
-			connettiToolStripMenuItem.Size = new Size(180,22);
+			connettiToolStripMenuItem.Size = new Size(134,22);
 			connettiToolStripMenuItem.Text = "Connetti";
 			connettiToolStripMenuItem.Click += connettiToolStripMenuItem_Click;
 			// 
 			// disconnettiToolStripMenuItem
 			// 
 			disconnettiToolStripMenuItem.Name = "disconnettiToolStripMenuItem";
-			disconnettiToolStripMenuItem.Size = new Size(180,22);
+			disconnettiToolStripMenuItem.Size = new Size(134,22);
 			disconnettiToolStripMenuItem.Text = "Disconnetti";
 			disconnettiToolStripMenuItem.Click += disconnettiToolStripMenuItem_Click;
 			// 
 			// esciToolStripMenuItem
 			// 
 			esciToolStripMenuItem.Name = "esciToolStripMenuItem";
-			esciToolStripMenuItem.Size = new Size(180,22);
+			esciToolStripMenuItem.Size = new Size(134,22);
 			esciToolStripMenuItem.Text = "Esci";
 			esciToolStripMenuItem.Click += esciToolStripMenuItem_Click;
-			// 
-			// parametriDiConnessioneToolStripMenuItem
-			// 
-			parametriDiConnessioneToolStripMenuItem.Name = "parametriDiConnessioneToolStripMenuItem";
-			parametriDiConnessioneToolStripMenuItem.Size = new Size(180,22);
-			parametriDiConnessioneToolStripMenuItem.Text = "Parametri";
-			parametriDiConnessioneToolStripMenuItem.Click += parametriDiConnessioneToolStripMenuItem_Click;
 			// 
 			// helpToolStripMenuItem
 			// 
@@ -100,11 +104,32 @@
 			// 
 			// statusStrip1
 			// 
+			statusStrip1.Items.AddRange(new ToolStripItem[] { tsStatus,toolStripStatusLabel2,toolStripStatusLabel3 });
 			statusStrip1.Location = new Point(0,428);
 			statusStrip1.Name = "statusStrip1";
 			statusStrip1.Size = new Size(800,22);
 			statusStrip1.TabIndex = 1;
 			statusStrip1.Text = "statusStrip1";
+			// 
+			// tsStatus
+			// 
+			tsStatus.Name = "tsStatus";
+			tsStatus.Size = new Size(36,17);
+			tsStatus.Text = "tsStat";
+			// 
+			// toolStripStatusLabel2
+			// 
+			toolStripStatusLabel2.Name = "toolStripStatusLabel2";
+			toolStripStatusLabel2.Size = new Size(118,17);
+			toolStripStatusLabel2.Text = "toolStripStatusLabel2";
+			toolStripStatusLabel2.Visible = false;
+			// 
+			// toolStripStatusLabel3
+			// 
+			toolStripStatusLabel3.Name = "toolStripStatusLabel3";
+			toolStripStatusLabel3.Size = new Size(118,17);
+			toolStripStatusLabel3.Text = "toolStripStatusLabel3";
+			toolStripStatusLabel3.Visible = false;
 			// 
 			// Form1
 			// 
@@ -120,6 +145,8 @@
 			Load += Form1_Load;
 			menuStrip1.ResumeLayout(false);
 			menuStrip1.PerformLayout();
+			statusStrip1.ResumeLayout(false);
+			statusStrip1.PerformLayout();
 			ResumeLayout(false);
 			PerformLayout();
 		}
@@ -135,5 +162,8 @@
 		private ToolStripMenuItem esciToolStripMenuItem;
 		private ToolStripMenuItem informazioniToolStripMenuItem;
 		private ToolStripMenuItem parametriDiConnessioneToolStripMenuItem;
+		private ToolStripStatusLabel tsStatus;
+		private ToolStripStatusLabel toolStripStatusLabel2;
+		private ToolStripStatusLabel toolStripStatusLabel3;
 	}
 }

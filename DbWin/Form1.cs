@@ -1,3 +1,5 @@
+using Org.BouncyCastle.Pqc.Crypto.Lms;
+using System.Data;
 using System.Reflection;
 using System.Text;
 
@@ -35,9 +37,20 @@ namespace DbWin
 		/// <param name="e"></param>
 		private void Form1_FormClosing(object sender,FormClosingEventArgs e)
 		{
-			if(MessageBox.Show(Messages.Msg.Closing,Messages.Titles.Closing,MessageBoxButtons.OKCancel,MessageBoxIcon.Warning) != DialogResult.OK)
+			Disconnetti();								// Chiede conferma di disconnessione
+			ConnectionState st = conn.Status;			// Se non è connesso, chiede conferma di chiusura
+			if ((st == ConnectionState.Closed) || (st == ConnectionState.Broken))	
 			{
-				e.Cancel = true;
+				if(MessageBox.Show(Messages.Msg.Closing,Messages.Titles.Closing,MessageBoxButtons.OKCancel,MessageBoxIcon.Warning) != DialogResult.OK)
+				{
+					e.Cancel = true;					// Se la chiusura non è confermata, annulla il comando
+					UpdateForm();
+				}
+			}
+			else
+			{
+				e.Cancel = true;						// In tutti gli altri casi, annulla il comando
+				UpdateForm();
 			}
 		}
 
@@ -94,7 +107,7 @@ namespace DbWin
 
 		public void UpdateForm()
 		{
-
+			tsStatus.Text = conn.GetStatus();
 		}
 
 		public void ParametriConnessione()
@@ -104,12 +117,14 @@ namespace DbWin
 			{
 				cs = new ConnectionString(form.cs);
 			}
+			UpdateForm();
 		}
 
 		public void Connetti()
 		{
 			conn.ConnectionString = cs;
 			conn.Connect();
+			UpdateForm();
 		}
 
 		public void Disconnetti()
@@ -124,6 +139,7 @@ namespace DbWin
 					}
 				}
 			}
+			UpdateForm();
 		}
 
 		#region - Command handlers -
