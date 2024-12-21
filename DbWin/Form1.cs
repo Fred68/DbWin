@@ -1,0 +1,115 @@
+using System.Reflection;
+using System.Text;
+
+namespace DbWin
+{
+	public partial class Form1 : Form
+	{
+
+		/// <summary>
+		/// Ctor
+		/// </summary>
+		public Form1()
+		{
+			InitializeComponent();
+		}
+
+		/// <summary>
+		/// On Load
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		private void Form1_Load(object sender,EventArgs e)
+		{
+
+		}
+
+		/// <summary>
+		/// On Closing
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		private void Form1_FormClosing(object sender,FormClosingEventArgs e)
+		{
+			if(MessageBox.Show(Messages.Msg.Closing,Messages.Titles.Closing,MessageBoxButtons.OKCancel, MessageBoxIcon.Warning) != DialogResult.OK)
+			{
+				e.Cancel = true;
+			}
+		}
+
+		/// <summary>
+		/// Version string
+		/// </summary>
+		/// <param name="execAssy">from Assembly.GetExecutingAssembly()</param>
+		/// <returns></returns>
+		public string Version(Assembly asm, bool details = false)
+		{
+			StringBuilder strb = new StringBuilder();
+			try
+			{
+				strb.AppendLine(Application.ProductName);
+				if(asm != null)
+				{
+					System.Version? v = asm.GetName().Version;
+					if(v != null) strb.AppendLine($"Version: {v.ToString()} ({BuildTime(asm)})");
+					if(details)
+					{
+						string? n = asm.GetName().Name;
+						if(n != null) strb.AppendLine("Assembly name: " + n);
+						strb.AppendLine("BuildTime time: "+ File.GetCreationTime(asm.Location).ToString());
+						strb.AppendLine("BuildTime number: " + BuildTime(asm,true));
+						strb.AppendLine("Executable path: " + Application.ExecutablePath);
+					}
+				}
+				strb.AppendLine("Copyright: " + Application.CompanyName);
+			}
+			catch	{}
+			return strb.ToString();
+		}
+
+		/// <summary>
+		/// Build string
+		/// </summary>
+		/// <param name="asm"></param>
+		/// <returns></returns>
+		public string BuildTime(Assembly asm, bool number = false)
+		{
+			StringBuilder strb = new StringBuilder();
+			if(asm != null)
+			{
+				DateTime dt = File.GetCreationTime(asm.Location);
+				if(number)
+					strb.Append(String.Format("{0:yyMMddhh}.{0:mmss}",dt));
+				else
+					strb.Append(dt.ToString("d"));
+			}	
+			return strb.ToString();
+		}
+
+		#region - Command handlers -
+		private void informazioniToolStripMenuItem_Click(object sender,EventArgs e)
+		{
+			MessageBox.Show(Version(Assembly.GetExecutingAssembly()));
+		}
+
+		private void connettiToolStripMenuItem_Click(object sender,EventArgs e)
+		{
+
+		}
+
+		private void disconnettiToolStripMenuItem_Click(object sender,EventArgs e)
+		{
+			if(MessageBox.Show(Messages.Msg.Disconnecting,Messages.Titles.Disconnecting,MessageBoxButtons.OKCancel, MessageBoxIcon.Warning) == DialogResult.OK)
+			{
+				MessageBox.Show("Disconnecting");
+			}
+		}
+
+		private void esciToolStripMenuItem_Click(object sender,EventArgs e)
+		{
+			Close();
+		}
+		#endregion
+
+	}
+}
