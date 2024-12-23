@@ -9,6 +9,11 @@ namespace DbWin
 	{
 		ConnectionString cs;
 		MySQLconn conn;
+		Color statStripBkCol;
+
+		/*******************************************/
+		// Ctors and main functions
+		/*******************************************/
 
 		/// <summary>
 		/// Ctor
@@ -27,6 +32,12 @@ namespace DbWin
 		/// <param name="e"></param>
 		private void Form1_Load(object sender,EventArgs e)
 		{
+			statStripBkCol = statusStrip1.BackColor;
+#if DEBUG
+			TESTtsmi.Visible = true;
+#else
+			TESTtsmi.Visible = false;
+#endif
 			UpdateForm();
 		}
 
@@ -37,22 +48,26 @@ namespace DbWin
 		/// <param name="e"></param>
 		private void Form1_FormClosing(object sender,FormClosingEventArgs e)
 		{
-			Disconnetti();								// Chiede conferma di disconnessione
-			ConnectionState st = conn.Status;			// Se non è connesso, chiede conferma di chiusura
-			if ((st == ConnectionState.Closed) || (st == ConnectionState.Broken))	
+			Disconnetti();                              // Chiede conferma di disconnessione
+			ConnectionState st = conn.Status;           // Se non è connesso, chiede conferma di chiusura
+			if((st == ConnectionState.Closed) || (st == ConnectionState.Broken))
 			{
 				if(MessageBox.Show(Messages.Msg.Closing,Messages.Titles.Closing,MessageBoxButtons.OKCancel,MessageBoxIcon.Warning) != DialogResult.OK)
 				{
-					e.Cancel = true;					// Se la chiusura non è confermata, annulla il comando
+					e.Cancel = true;                    // Se la chiusura non è confermata, annulla il comando
 					UpdateForm();
 				}
 			}
 			else
 			{
-				e.Cancel = true;						// In tutti gli altri casi, annulla il comando
+				e.Cancel = true;                        // In tutti gli altri casi, annulla il comando
 				UpdateForm();
 			}
 		}
+
+		/*******************************************/
+		// Version and help
+		/*******************************************/
 
 		/// <summary>
 		/// Version string
@@ -105,9 +120,21 @@ namespace DbWin
 			return strb.ToString();
 		}
 
+		/*******************************************/
+		// Functions
+		/*******************************************/
+
 		public void UpdateForm()
 		{
-			tsStatus.Text = conn.GetStatus();
+			tsStatus.Text = conn.GetStatus(Info.Status).Trim();
+			if(conn.IsConnected)
+			{
+				statusStrip1.BackColor = Color.LightGreen;
+			}
+			else
+			{
+				statusStrip1.BackColor = statStripBkCol;
+			}
 		}
 
 		public void ParametriConnessione()
@@ -123,7 +150,10 @@ namespace DbWin
 		public void Connetti()
 		{
 			conn.ConnectionString = cs;
-			conn.Connect();
+			string msg = conn.Connect();
+#if DEBUG
+			MsgBox.Show(msg);
+#endif
 			UpdateForm();
 		}
 
@@ -135,17 +165,30 @@ namespace DbWin
 				{
 					if(MessageBox.Show(Messages.Msg.Disconnecting,Messages.Titles.Disconnecting,MessageBoxButtons.OKCancel,MessageBoxIcon.Warning) == DialogResult.OK)
 					{
-						conn.Disconnect();
+						string msg = conn.Disconnect();
+#if DEBUG
+						MsgBox.Show(msg);
+#endif
+						conn.ConnectionString = new ConnectionString();
 					}
 				}
 			}
 			UpdateForm();
 		}
 
-		#region - Command handlers -
+		public void ShowStatus(Info info)
+		{
+			string st = conn.GetStatus(info);
+			MsgBox.Show(st,Messages.Titles.Status);
+		}
+
+		/*******************************************/
+		// Handlers
+		/*******************************************/
+
 		private void informazioniToolStripMenuItem_Click(object sender,EventArgs e)
 		{
-			MessageBox.Show(Version(Assembly.GetExecutingAssembly()));
+			MsgBox.Show(Version(Assembly.GetExecutingAssembly()));
 		}
 
 		private void connettiToolStripMenuItem_Click(object sender,EventArgs e)
@@ -168,6 +211,34 @@ namespace DbWin
 			ParametriConnessione();
 		}
 
-		#endregion ---
+		private void statoToolStripMenuItem1_Click(object sender,EventArgs e)
+		{
+			ShowStatus(Info.Status);
+		}
+
+		private void connectionStringToolStripMenuItem_Click(object sender,EventArgs e)
+		{
+			ShowStatus(Info.ConnectionString);
+		}
+
+		private void schemaToolStripMenuItem_Click(object sender,EventArgs e)
+		{
+			ShowStatus(Info.Schema);
+		}
+
+		private void proceduresToolStripMenuItem_Click(object sender,EventArgs e)
+		{
+			ShowStatus(Info.Procedures);
+		}
+
+		private void functionsToolStripMenuItem_Click(object sender,EventArgs e)
+		{
+			ShowStatus(Info.Functions);
+		}
+
+		private void MsgBoxToolStripMenuItem_Click(object sender,EventArgs e)
+		{
+			MsgBox.Show("test");
+		}
 	}
 }

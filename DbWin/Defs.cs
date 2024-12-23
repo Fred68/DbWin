@@ -6,6 +6,26 @@ using System.Threading.Tasks;
 
 namespace DbWin
 {
+
+	[Flags]
+	public enum Info
+	{
+		None				= 0,
+		Status				= 1 << 0,
+		ConnectionString	= 1 << 1,
+		Schema				= 1 << 2,
+		Procedures			= 1 << 3,
+		Functions			= 1 << 4,
+		All					= -1
+	}
+
+	public enum SQLqueryType
+	{
+		Reader,
+		NoQuery,
+		Scalar
+	}
+
 	internal class Messages
 	{
 
@@ -22,6 +42,8 @@ namespace DbWin
 		{
 			public static string Closing =			"Uscita";
 			public static string Disconnecting =	"Disconnessione";
+			public static string Status =			"Stato della connessione";
 		}
 	}
 }
+

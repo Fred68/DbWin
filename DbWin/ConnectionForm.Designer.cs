@@ -44,88 +44,94 @@
 			// 
 			// tbSvr
 			// 
-			tbSvr.Location = new Point(105,12);
+			tbSvr.Location = new Point(112,70);
 			tbSvr.Name = "tbSvr";
 			tbSvr.Size = new Size(144,23);
-			tbSvr.TabIndex = 0;
+			tbSvr.TabIndex = 2;
+			tbSvr.Visible = false;
 			// 
 			// tbPrt
 			// 
-			tbPrt.Location = new Point(105,41);
+			tbPrt.Location = new Point(112,94);
 			tbPrt.Name = "tbPrt";
 			tbPrt.Size = new Size(144,23);
-			tbPrt.TabIndex = 1;
+			tbPrt.TabIndex = 3;
+			tbPrt.Visible = false;
 			// 
 			// tbUsr
 			// 
-			tbUsr.Location = new Point(105,70);
+			tbUsr.Location = new Point(112,12);
 			tbUsr.Name = "tbUsr";
 			tbUsr.Size = new Size(144,23);
-			tbUsr.TabIndex = 2;
+			tbUsr.TabIndex = 0;
 			// 
 			// tbPwd
 			// 
-			tbPwd.Location = new Point(105,99);
+			tbPwd.Location = new Point(112,41);
 			tbPwd.Name = "tbPwd";
 			tbPwd.Size = new Size(144,23);
-			tbPwd.TabIndex = 3;
+			tbPwd.TabIndex = 1;
 			// 
 			// tbDb
 			// 
-			tbDb.Location = new Point(105,128);
+			tbDb.Location = new Point(112,128);
 			tbDb.Name = "tbDb";
 			tbDb.Size = new Size(144,23);
 			tbDb.TabIndex = 4;
+			tbDb.Visible = false;
 			// 
 			// label1
 			// 
 			label1.AutoSize = true;
-			label1.Location = new Point(10,15);
+			label1.Location = new Point(17,73);
 			label1.Name = "label1";
-			label1.Size = new Size(38,15);
+			label1.Size = new Size(39,15);
 			label1.TabIndex = 5;
-			label1.Text = "label1";
+			label1.Text = "Server";
+			label1.Visible = false;
 			// 
 			// label2
 			// 
 			label2.AutoSize = true;
-			label2.Location = new Point(10,44);
+			label2.Location = new Point(17,102);
 			label2.Name = "label2";
-			label2.Size = new Size(38,15);
+			label2.Size = new Size(35,15);
 			label2.TabIndex = 6;
-			label2.Text = "label2";
+			label2.Text = "Porta";
+			label2.Visible = false;
 			// 
 			// label3
 			// 
 			label3.AutoSize = true;
-			label3.Location = new Point(10,73);
+			label3.Location = new Point(17,15);
 			label3.Name = "label3";
-			label3.Size = new Size(38,15);
+			label3.Size = new Size(42,15);
 			label3.TabIndex = 7;
-			label3.Text = "label3";
+			label3.Text = "Utente";
 			// 
 			// label4
 			// 
 			label4.AutoSize = true;
-			label4.Location = new Point(10,102);
+			label4.Location = new Point(17,44);
 			label4.Name = "label4";
-			label4.Size = new Size(38,15);
+			label4.Size = new Size(57,15);
 			label4.TabIndex = 8;
-			label4.Text = "label4";
+			label4.Text = "Password";
 			// 
 			// label5
 			// 
 			label5.AutoSize = true;
-			label5.Location = new Point(10,131);
+			label5.Location = new Point(17,131);
 			label5.Name = "label5";
-			label5.Size = new Size(38,15);
+			label5.Size = new Size(55,15);
 			label5.TabIndex = 9;
-			label5.Text = "label5";
+			label5.Text = "Database";
+			label5.Visible = false;
 			// 
 			// button1
 			// 
 			button1.DialogResult = DialogResult.OK;
-			button1.Location = new Point(105,170);
+			button1.Location = new Point(280,12);
 			button1.Name = "button1";
 			button1.Size = new Size(100,23);
 			button1.TabIndex = 10;
@@ -136,9 +142,9 @@
 			// button2
 			// 
 			button2.DialogResult = DialogResult.Cancel;
-			button2.Location = new Point(10,170);
+			button2.Location = new Point(280,40);
 			button2.Name = "button2";
-			button2.Size = new Size(89,23);
+			button2.Size = new Size(100,23);
 			button2.TabIndex = 11;
 			button2.Text = "Annulla";
 			button2.UseVisualStyleBackColor = true;
@@ -147,7 +153,7 @@
 			// 
 			AutoScaleDimensions = new SizeF(7F,15F);
 			AutoScaleMode = AutoScaleMode.Font;
-			ClientSize = new Size(261,207);
+			ClientSize = new Size(400,163);
 			Controls.Add(button2);
 			Controls.Add(button1);
 			Controls.Add(label5);
@@ -161,6 +167,7 @@
 			Controls.Add(tbPrt);
 			Controls.Add(tbSvr);
 			Name = "ConnectionForm";
+			StartPosition = FormStartPosition.CenterScreen;
 			Text = "ConnectionForm";
 			ResumeLayout(false);
 			PerformLayout();

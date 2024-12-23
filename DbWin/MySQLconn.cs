@@ -5,7 +5,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-using MySql.Data.MySqlClient;		// Per MySqlConnection
+using MySql.Data.MySqlClient;
+using Org.BouncyCastle.Tls.Crypto;      // Per MySqlConnection
 
 
 namespace DbWin
@@ -20,7 +21,10 @@ namespace DbWin
 		ConnectionString cstr;
 		DataTable? dtConn;
 
-		#region --- Properties ---
+
+		/*******************************************/
+		// Properties
+		/*******************************************/
 
 		/// <summary>
 		/// MySqlConnection (read only)
@@ -44,6 +48,16 @@ namespace DbWin
 		}
 		
 		/// <summary>
+		/// Is connected ? (readonly)
+		/// </summary>
+		public bool IsConnected
+		{
+			get
+			{
+				return ((Status==ConnectionState.Open)||(Status==ConnectionState.Executing)||(Status==ConnectionState.Fetching));
+			}
+		}
+		/// <summary>
 		/// Connection string
 		/// </summary>
 		public ConnectionString ConnectionString
@@ -51,7 +65,10 @@ namespace DbWin
 			get { return cstr;}
 			set { cstr = value;}
 		}
-		#endregion  --- 
+
+		/*******************************************/
+		// Ctors
+		/*******************************************/
 
 		/// <summary>
 		/// Ctor
@@ -74,49 +91,56 @@ namespace DbWin
 			dtConn = null;
 		}
 
+		/*******************************************/
+		// Main fuctions
+		/*******************************************/
+
 		/// <summary>
 		/// Connect
 		/// </summary>
-		public void Connect()
+		public string Connect()
 		{
+			StringBuilder sb = new StringBuilder();
 			try
 			{
 				if(conn == null)
 				{
 					conn = new MySqlConnection(cstr.ToString());
 					conn.Open();
-					MessageBox.Show(GetStatus(true,false));
-
 					dtConn = conn.GetSchema();
+					sb.AppendLine(GetStatus(Info.Status | Info.ConnectionString));
 				}
 				else
 				{
-					MessageBox.Show($"Already connected: {conn.State.ToString()}");
+					sb.AppendLine($"Already connected: {conn.State.ToString()}");
 				}
 			}
 			catch(MySql.Data.MySqlClient.MySqlException ex)
 			{
-				MessageBox.Show($"{ex.Number}:{ex.Message}" + $"\nConnection string: {cstr.ToString()}");
+				sb.AppendLine($"{ex.Number}:{ex.Message}" + $"\nConnection string: {cstr.ToString()}");
 				Disconnect();
 
 			}
+			return sb.ToString().Trim();
 		}
 
 		/// <summary>
 		/// Disconnect
 		/// </summary>
-		public void Disconnect()
+		public string Disconnect()
 		{
+			StringBuilder sb = new StringBuilder();
 			if(conn != null)
 			{
 				conn.Close();
 				conn = null;
-				MessageBox.Show(Messages.Msg.Disconnected);
+				sb.AppendLine(Messages.Msg.Disconnected);
 			}
 			else
 			{
-				MessageBox.Show(Messages.Msg.NotConnected);
+				sb.AppendLine(Messages.Msg.NotConnected);
 			}
+			return sb.ToString().Trim();
 		}
 
 		/// <summary>
@@ -125,28 +149,45 @@ namespace DbWin
 		/// <param name="bShowConnString"></param>
 		/// <param name="bShowExtraInfo"></param>
 		/// <returns></returns>
-		public string GetStatus(bool bShowConnString = false, bool bShowExtraInfo = false)
+		public string GetStatus(Info nfo)
 		{
 			StringBuilder sb = new StringBuilder();
-			if(bShowConnString)
-			{
-				sb.AppendLine($"Connection string: {cstr.ToString()}");
-			}
+
 			if( conn != null )
 			{
-				ConnectionState cst = conn.State;
-				sb.AppendLine($"Connection: {conn.State.ToString()}");
-				if(bShowExtraInfo)
+				if( (nfo & Info.ConnectionString) != 0 )
+				{
+					sb.AppendLine($"STRINGA DI CONNESSIONE:{Environment.NewLine}{cstr.ToString().Trim()}");
+				}
+
+				if ( (nfo & Info.Status) != 0  )
+				{
+					sb.AppendLine($"Connessione: {conn.State.ToString().Trim()}");
+				}
+
+				if ( (nfo & Info.Schema) != 0  )
 				{
 					if(dtConn != null)
 					{
-						sb.Append(DisplayDataTable(dtConn));
+						sb.AppendLine("--- SCHEMA ---");
+						sb.AppendLine($"{Environment.NewLine}{DisplayDataTable(dtConn)}");
 					}
+				}
+
+				if ( (nfo & Info.Functions) != 0  )
+				{
+					sb.AppendLine("--- FUNZIONI ---");
+					sb.AppendLine(ExecuteSQLCommand("CALL ListaFunzioni();",SQLqueryType.Reader));
+				}
+				if ( (nfo & Info.Procedures) != 0  )
+				{
+					sb.AppendLine("--- PROCEDURE ---");
+					sb.AppendLine(ExecuteSQLCommand("CALL ListaProcedure();",SQLqueryType.Reader));
 				}
 			}
 			else
 			{
-				sb.AppendLine($"Non connected");
+				sb.AppendLine($"NON CONNESSO");
 			}
 			
 			return sb.ToString();
@@ -170,5 +211,74 @@ namespace DbWin
 			}
 			return sb.ToString();
 		}
+
+		/// <summary>
+		/// Execute MySQL command (reader, non query or scalar)
+		/// </summary>
+		/// <param name="sql"></param>
+		/// <param name="type"></param>
+		/// <returns></returns>
+		public string ExecuteSQLCommand(string sql, SQLqueryType type)
+		{
+			StringBuilder sb = new StringBuilder();
+			MySqlDataReader? rdr = null;
+			if(conn != null)
+			{
+				try
+				{
+					MySqlCommand cmd = new MySqlCommand(sql, conn);
+					switch(type)
+					{
+						case SQLqueryType.NoQuery:			// ExecuteNonQuery 
+						{
+							int lines = cmd.ExecuteNonQuery();
+							sb.AppendLine($"NonQuery():{lines} linee.");
+						}
+						break;
+						case SQLqueryType.Scalar:			// ExecuteScalar 
+						{
+							string? s = string.Empty;
+							object obj = cmd.ExecuteScalar();
+							if(obj != null)
+							{
+								s = Convert.ToString(obj);
+							}
+							sb.AppendLine($"Scalar():{s}.");
+						}
+						break;
+						case SQLqueryType.Reader:			// ExecuteReader 
+						{
+							sb.AppendLine($"Reader():");
+							rdr = cmd.ExecuteReader();
+							while(rdr.Read())
+							{
+								for(int i=0; i<rdr.FieldCount; i++)
+								{
+									sb.Append(rdr[i].ToString());
+									if(i != rdr.FieldCount-1)	sb.Append(", ");
+									
+								}
+								sb.Append(System.Environment.NewLine);
+							}
+							rdr.Close();
+							rdr = null;
+						}
+						break;
+					}
+				}
+				catch(Exception ex)
+				{
+					if(rdr != null)
+					{
+						rdr.Close();
+						rdr = null;
+					}
+					sb.AppendLine(ex.ToString());
+				}
+
+			}
+			return sb.ToString();
+		}
+
 	}
 }

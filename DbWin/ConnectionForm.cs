@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Org.BouncyCastle.Tls.Crypto;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -18,6 +19,23 @@ namespace DbWin
 		{
 			InitializeComponent();
 			cs = new ConnectionString(cstr);
+			bool visib = false;
+
+			#if DEBUG
+			visib = true;
+			#endif
+
+			tbSvr.Visible = tbPrt.Visible = tbDb.Visible = visib;
+			label1.Visible = label2.Visible = label5.Visible = visib;
+			if(!visib)
+			{
+				this.Height -= tbDb.Bottom - tbPwd.Bottom;
+			}
+			
+			this.StartPosition = FormStartPosition.CenterScreen;
+			this.TopMost = true;
+			this.FormBorderStyle = FormBorderStyle.Fixed3D;
+
 			UpdateContent();
 		}
 
