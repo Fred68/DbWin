@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.12.35527.113 d17.12
+VisualStudioVersion = 17.12.35527.113
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DbWin", "DbWin\DbWin.csproj", "{5AB73F6D-E226-44B8-8B54-D12EAE2F19D3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CfgReaderLib", "..\Fred68\CfgReader.NET\CfgReaderLib\CfgReaderLib.csproj", "{AA9CA405-B4C7-431C-B915-291EDA9820B8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{5AB73F6D-E226-44B8-8B54-D12EAE2F19D3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5AB73F6D-E226-44B8-8B54-D12EAE2F19D3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5AB73F6D-E226-44B8-8B54-D12EAE2F19D3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AA9CA405-B4C7-431C-B915-291EDA9820B8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AA9CA405-B4C7-431C-B915-291EDA9820B8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AA9CA405-B4C7-431C-B915-291EDA9820B8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AA9CA405-B4C7-431C-B915-291EDA9820B8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

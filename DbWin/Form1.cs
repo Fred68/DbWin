@@ -3,10 +3,13 @@ using System.Data;
 using System.Reflection;
 using System.Text;
 
+
+
 namespace DbWin
 {
-	public partial class Form1:Form
+	public partial class Form1 : Form
 	{
+		
 		ConnectionString cs;
 		MySQLconn conn;
 		Color statStripBkCol;
@@ -21,7 +24,7 @@ namespace DbWin
 		public Form1()
 		{
 			InitializeComponent();
-			cs = new ConnectionString("127.0.0.1","3306","pippo","pippo01","dbc01");
+			cs = new ConnectionString(Cfg.Config.CONN_server,Cfg.Config.CONN_port,Cfg.Config.CONN_user,Cfg.Config.CONN_password,Cfg.Config.CONN_database);
 			conn = new MySQLconn();
 		}
 
@@ -52,7 +55,7 @@ namespace DbWin
 			ConnectionState st = conn.Status;           // Se non è connesso, chiede conferma di chiusura
 			if((st == ConnectionState.Closed) || (st == ConnectionState.Broken))
 			{
-				if(MessageBox.Show(Messages.Msg.Closing,Messages.Titles.Closing,MessageBoxButtons.OKCancel,MessageBoxIcon.Warning) != DialogResult.OK)
+				if(MessageBox.Show(Cfg.Msg.MsgClosing,Cfg.Msg.MnuClosing,MessageBoxButtons.OKCancel,MessageBoxIcon.Warning) != DialogResult.OK)
 				{
 					e.Cancel = true;                    // Se la chiusura non è confermata, annulla il comando
 					UpdateForm();
@@ -163,7 +166,7 @@ namespace DbWin
 			{
 				if(conn.Status == System.Data.ConnectionState.Open)
 				{
-					if(MessageBox.Show(Messages.Msg.Disconnecting,Messages.Titles.Disconnecting,MessageBoxButtons.OKCancel,MessageBoxIcon.Warning) == DialogResult.OK)
+					if(MessageBox.Show(Cfg.Msg.MsgDisconnecting,Cfg.Msg.MnuDisconnecting,MessageBoxButtons.OKCancel,MessageBoxIcon.Warning) == DialogResult.OK)
 					{
 						string msg = conn.Disconnect();
 #if DEBUG
@@ -179,7 +182,7 @@ namespace DbWin
 		public void ShowStatus(Info info)
 		{
 			string st = conn.GetStatus(info);
-			MsgBox.Show(st,Messages.Titles.Status);
+			MsgBox.Show(st,Cfg.Msg.MnuStatus);
 		}
 
 		/*******************************************/
@@ -239,6 +242,11 @@ namespace DbWin
 		private void MsgBoxToolStripMenuItem_Click(object sender,EventArgs e)
 		{
 			MsgBox.Show("test");
+		}
+
+		private void dettagliToolStripMenuItem_Click(object sender,EventArgs e)
+		{
+			MsgBox.Show(Version(Assembly.GetExecutingAssembly(),true));
 		}
 	}
 }

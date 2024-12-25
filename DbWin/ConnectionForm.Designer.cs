@@ -95,9 +95,9 @@
 			label2.AutoSize = true;
 			label2.Location = new Point(17,102);
 			label2.Name = "label2";
-			label2.Size = new Size(35,15);
+			label2.Size = new Size(29,15);
 			label2.TabIndex = 6;
-			label2.Text = "Porta";
+			label2.Text = "Port";
 			label2.Visible = false;
 			// 
 			// label3
@@ -105,9 +105,9 @@
 			label3.AutoSize = true;
 			label3.Location = new Point(17,15);
 			label3.Name = "label3";
-			label3.Size = new Size(42,15);
+			label3.Size = new Size(30,15);
 			label3.TabIndex = 7;
-			label3.Text = "Utente";
+			label3.Text = "User";
 			// 
 			// label4
 			// 

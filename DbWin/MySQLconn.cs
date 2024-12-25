@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 using MySql.Data.MySqlClient;
 using Org.BouncyCastle.Tls.Crypto;      // Per MySqlConnection
 
-
 namespace DbWin
 {
 
@@ -20,7 +19,6 @@ namespace DbWin
 		MySqlConnection? conn;
 		ConnectionString cstr;
 		DataTable? dtConn;
-
 
 		/*******************************************/
 		// Properties
@@ -112,12 +110,12 @@ namespace DbWin
 				}
 				else
 				{
-					sb.AppendLine($"Already connected: {conn.State.ToString()}");
+					sb.AppendLine($"{Cfg.Msg.MsgConnected}: {conn.State.ToString()}");
 				}
 			}
 			catch(MySql.Data.MySqlClient.MySqlException ex)
 			{
-				sb.AppendLine($"{ex.Number}:{ex.Message}" + $"\nConnection string: {cstr.ToString()}");
+				sb.AppendLine($"{ex.Number}:{ex.Message}" + $"\n{Cfg.Msg.MnuConnString}: {cstr.ToString()}");
 				Disconnect();
 
 			}
@@ -134,11 +132,11 @@ namespace DbWin
 			{
 				conn.Close();
 				conn = null;
-				sb.AppendLine(Messages.Msg.Disconnected);
+				sb.AppendLine(Cfg.Msg.MsgDisconnected);
 			}
 			else
 			{
-				sb.AppendLine(Messages.Msg.NotConnected);
+				sb.AppendLine(Cfg.Msg.MsgNotConnected);
 			}
 			return sb.ToString().Trim();
 		}
@@ -157,37 +155,37 @@ namespace DbWin
 			{
 				if( (nfo & Info.ConnectionString) != 0 )
 				{
-					sb.AppendLine($"STRINGA DI CONNESSIONE:{Environment.NewLine}{cstr.ToString().Trim()}");
+					sb.AppendLine($"{Cfg.Msg.MnuConnString}:{Environment.NewLine}{cstr.ToString().Trim()}");
 				}
 
 				if ( (nfo & Info.Status) != 0  )
 				{
-					sb.AppendLine($"Connessione: {conn.State.ToString().Trim()}");
+					sb.AppendLine($"{Cfg.Msg.MnuConnect}: {conn.State.ToString().Trim()}");
 				}
 
 				if ( (nfo & Info.Schema) != 0  )
 				{
 					if(dtConn != null)
 					{
-						sb.AppendLine("--- SCHEMA ---");
+						sb.AppendLine($"--- {Cfg.Msg.MnuSchema} ---");
 						sb.AppendLine($"{Environment.NewLine}{DisplayDataTable(dtConn)}");
 					}
 				}
 
 				if ( (nfo & Info.Functions) != 0  )
 				{
-					sb.AppendLine("--- FUNZIONI ---");
+					sb.AppendLine($"--- {Cfg.Msg.MnuFunctions} ---");
 					sb.AppendLine(ExecuteSQLCommand("CALL ListaFunzioni();",SQLqueryType.Reader));
 				}
 				if ( (nfo & Info.Procedures) != 0  )
 				{
-					sb.AppendLine("--- PROCEDURE ---");
+					sb.AppendLine($"--- {Cfg.Msg.MnuProcedures} ---");
 					sb.AppendLine(ExecuteSQLCommand("CALL ListaProcedure();",SQLqueryType.Reader));
 				}
 			}
 			else
 			{
-				sb.AppendLine($"NON CONNESSO");
+				sb.AppendLine($"{Cfg.Msg.MsgNotConnected}");
 			}
 			
 			return sb.ToString();

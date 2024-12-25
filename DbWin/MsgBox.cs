@@ -63,7 +63,7 @@ namespace DbWin
 			flowLayoutPanel1.Controls.Add(button3);
 			flowLayoutPanel1.Dock = DockStyle.Bottom;
 			flowLayoutPanel1.FlowDirection = FlowDirection.RightToLeft;
-			flowLayoutPanel1.Location = new Point(0,78);
+			flowLayoutPanel1.Location = new Point(0,28);
 			flowLayoutPanel1.Name = "flowLayoutPanel1";
 			flowLayoutPanel1.Size = new Size(280,29);
 			flowLayoutPanel1.TabIndex = 0;
@@ -102,7 +102,7 @@ namespace DbWin
 			textBox1.Location = new Point(0,0);
 			textBox1.Multiline = true;
 			textBox1.Name = "textBox1";
-			textBox1.Size = new Size(280,57);
+			textBox1.Size = new Size(280,18);
 			textBox1.TabIndex = 1;
 			textBox1.WordWrap = false;
 			// 
@@ -110,13 +110,13 @@ namespace DbWin
 			// 
 			AutoScaleDimensions = new SizeF(7F,15F);
 			AutoScaleMode = AutoScaleMode.Font;
-			ClientSize = new Size(280,107);
+			ClientSize = new Size(280,57);
 			Controls.Add(textBox1);
 			Controls.Add(flowLayoutPanel1);
 			FormBorderStyle = FormBorderStyle.Fixed3D;
 			MaximizeBox = false;
 			MinimizeBox = false;
-			MinimumSize = new Size(300,150);
+			MinimumSize = new Size(300,100);
 			Name = "MsgBox";
 			StartPosition = FormStartPosition.CenterScreen;
 			Text = "MsgBox";
