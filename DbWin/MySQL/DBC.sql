@@ -413,24 +413,6 @@ SELECT COUNT(*) AS `COUNT` FROM dbc00.codici WHERE dbc00.codici.cod LIKE _cod;
 END//
 DELIMITER ;
 
--- Dump della struttura di procedura dbc01.DaAggiornare
-DELIMITER //
-CREATE PROCEDURE `DaAggiornare`(
-	IN `_tab` VARCHAR(20)
-)
-BEGIN
-	IF _tab = 'commerciali' THEN
-		UPDATE dbc02.aggiornato SET commerciali = 1;
-	ELSEIF _tab = 'costruttori' THEN
-		UPDATE dbc02.aggiornato SET costruttori = 1;
-	ELSEIF _tab = 'materiali' THEN
-		UPDATE dbc02.aggiornato SET materiali = 1;
-	ELSEIF _tab = 'prodotti' THEN
-		UPDATE dbc02.aggiornato SET prodotti = 1;
-	END IF;
-END//
-DELIMITER ;
-
 -- Dump della struttura di procedura dbc01.Esplodi
 DELIMITER //
 CREATE PROCEDURE `Esplodi`(
@@ -764,6 +746,7 @@ DELIMITER ;
 -- Dump della struttura di procedura dbc01.ListaFunzioni
 DELIMITER //
 CREATE PROCEDURE `ListaFunzioni`()
+    COMMENT 'ListaFunzioni()'
 BEGIN
 SELECT ROUTINE_NAME, ROUTINE_COMMENT FROM INFORMATION_SCHEMA.ROUTINES WHERE ROUTINE_SCHEMA=DATABASE() AND ROUTINE_TYPE='FUNCTION';
 END//
@@ -772,8 +755,20 @@ DELIMITER ;
 -- Dump della struttura di procedura dbc01.ListaProcedure
 DELIMITER //
 CREATE PROCEDURE `ListaProcedure`()
+    COMMENT 'ListaProcedure()'
 BEGIN
 SELECT ROUTINE_NAME, ROUTINE_COMMENT FROM INFORMATION_SCHEMA.ROUTINES WHERE ROUTINE_SCHEMA=DATABASE() AND ROUTINE_TYPE='PROCEDURE';
+END//
+DELIMITER ;
+
+-- Dump della struttura di procedura dbc01.NomeUtente
+DELIMITER //
+CREATE PROCEDURE `NomeUtente`()
+    COMMENT 'Estrae i dati dell''utente connesso'
+BEGIN
+	DECLARE idu, stu INT DEFAULT(-1);
+	CALL StatoUtente(idu,stu);
+	SELECT ut.utente, ut.utenteSQL, ut.sigla, ut.can_write FROM dbc02.utenti AS ut WHERE ut.id = idu;
 END//
 DELIMITER ;
 
@@ -781,27 +776,27 @@ DELIMITER ;
 DELIMITER //
 CREATE PROCEDURE `SetAggiorna`(
 	IN `_tab` VARCHAR(20),
-	IN `_usr` VARCHAR(20)
+	IN `_usr` VARCHAR(20),
+	IN `_st` INT
 )
+    COMMENT 'SetAggiorna(_tab, _usr, _st): tabella (obbligatoria), utente e stato.'
 BEGIN
-	DECLARE n INT;
+	DECLARE n, n1 INT;
 	DECLARE u, nu INT;
-	-- Verifica se esiste la colonna
+	-- Verifica se esistono tabella e colonna
 	SET _tab = TRIM(_tab);
 	SET n = -1;
-	IF LENGTH(_tab) > 1 THEN
-		SELECT COUNT(*) FROM information_schema.columns WHERE table_schema = 'dbc02' AND table_name = 'aggiornato' AND column_name = _tab INTO n;
-		IF n = 1 THEN
-			SELECT "Existing", n;
-		ELSE
-			SELECT "Not existing", n;
-		END IF;
-	ELSE
-		SELECT "No _tab specified", n;
-	END IF;
-	-- Verifica se esiste l'utente
-	SET _usr = TRIM(_usr);
 	SET u = -1;
+	IF LENGTH(_tab) > 1 THEN
+		SELECT COUNT(*) FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = 'dbc02' AND TABLE_NAME = 'aggiornato' AND COLUMN_NAME = _tab INTO n;
+		SELECT COUNT(*) FROM information_schema.TABLES  WHERE TABLE_SCHEMA = 'dbc00' AND TABLE_NAME = _tab INTO n1;
+		-- Se diversi: errore n <- -1
+		IF n != n1  THEN
+			SET n = -1;
+		END IF;
+	END IF;
+	-- Verifica utente: u <- -1 non specificato, u <- 0 non trovato 
+	SET _usr = TRIM(_usr);
 	IF LENGTH(_usr) > 1 THEN
 		SELECT COUNT(*) FROM dbc02.utenti WHERE utente = _usr INTO nu;
 		IF nu = 1 THEN
@@ -809,10 +804,18 @@ BEGIN
 		ELSE
 			SET u = 0;
 		END IF;
-		SELECT "id utente", u;
-	ELSE
-		SELECT "No _usr specified", u;
 	END IF;
+	-- Esegue update solo se trovata _tab e se utente trovato o non specificato
+	IF n = 1 AND u != 0 THEN
+		SET @stm = CONCAT("UPDATE dbc02.aggiornato SET ",_tab,"=",_st);
+		IF u > 0 THEN
+			SET @stm = CONCAT(@stm," WHERE id=",u);
+		END IF;
+		PREPARE stmt FROM @stm;
+ 		EXECUTE stmt;
+ 		DEALLOCATE PREPARE stmt;
+	END IF;
+	-- DEBUG: SELECT "Numero tabelle",n, "id utente", u, @stm;	
 END//
 DELIMITER ;
 
@@ -825,11 +828,12 @@ CREATE PROCEDURE `StatoUtente`(
     COMMENT 'Legge lo StatoUtente(INOUT _uid INT, INOUT _st TINYINT), soltanto se  _uid = -1. Altrimenti non fa né modifica nulla.'
 BEGIN
 DECLARE x INT;
-DECLARE cusr VARCHAR(50);
+DECLARE cusr, cusrName VARCHAR(50);
 IF _uid = -1 THEN
 	SET _st = 0;
 	SELECT CURRENT_USER() INTO cusr;
-	SELECT count(*) FROM dbc02.utenti uc WHERE uc.utenteSQL = cusr INTO X;
+	SELECT SUBSTRING_INDEX(cusr, "@", 1) INTO cusrName;
+	SELECT count(*) FROM dbc02.utenti uc WHERE uc.utenteSQL = cusr AND uc.utente = cusrName INTO X;
 	IF	x=1 THEN	
 		SELECT uc.can_write FROM dbc02.utenti uc WHERE uc.utenteSQL = cusr INTO _st;
 		SELECT uc.id FROM dbc02.utenti uc WHERE uc.utenteSQL = cusr INTO _uid;
@@ -1311,12 +1315,12 @@ CREATE TABLE IF NOT EXISTS `aggiornato` (
 
 -- Dump dei dati della tabella dbc02.aggiornato: ~0 rows (circa)
 REPLACE INTO `aggiornato` (`id`, `commerciali`, `costruttori`, `materiali`, `prodotti`) VALUES
-	(1, 0, 1, 1, 1),
-	(2, 1, 1, 1, 1),
-	(3, 1, 1, 1, 1),
-	(4, 1, 1, 1, 0),
-	(5, 1, 1, 1, 0),
-	(6, 1, 0, 0, 0);
+	(1, 1, 1, 0, 1),
+	(2, 0, 1, 2, 1),
+	(3, 0, 1, 0, 1),
+	(4, 0, 1, 0, 0),
+	(5, 0, 1, 0, 0),
+	(6, 0, 0, 0, 0);
 
 -- Dump della struttura di tabella dbc02.utenti
 CREATE TABLE IF NOT EXISTS `utenti` (
