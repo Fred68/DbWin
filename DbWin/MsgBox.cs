@@ -9,6 +9,8 @@
 //using System.Windows.Forms;
 //using System.Windows.Forms.VisualStyles;
 
+#pragma warning disable CS8602	// Dereferenziamento di un riferimento eventualmente Null.
+
 namespace DbWin
 {
 	public sealed class MsgBox : Form
@@ -258,3 +260,5 @@ namespace DbWin
 		}
 	}
 }
+
+#pragma warning restore CS8602

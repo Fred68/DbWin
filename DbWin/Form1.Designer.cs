@@ -39,16 +39,17 @@
 			schemaToolStripMenuItem = new ToolStripMenuItem();
 			proceduresToolStripMenuItem = new ToolStripMenuItem();
 			functionsToolStripMenuItem = new ToolStripMenuItem();
+			utenteToolStripMenuItem = new ToolStripMenuItem();
 			esciToolStripMenuItem = new ToolStripMenuItem();
 			helpToolStripMenuItem = new ToolStripMenuItem();
 			informazioniToolStripMenuItem = new ToolStripMenuItem();
+			dettagliToolStripMenuItem = new ToolStripMenuItem();
 			TESTtsmi = new ToolStripMenuItem();
 			mSGBOXToolStripMenuItem = new ToolStripMenuItem();
 			statusStrip1 = new StatusStrip();
 			tsStatus = new ToolStripStatusLabel();
 			toolStripStatusLabel2 = new ToolStripStatusLabel();
 			toolStripStatusLabel3 = new ToolStripStatusLabel();
-			dettagliToolStripMenuItem = new ToolStripMenuItem();
 			menuStrip1.SuspendLayout();
 			statusStrip1.SuspendLayout();
 			SuspendLayout();
@@ -67,76 +68,83 @@
 			fileToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { parametriDiConnessioneToolStripMenuItem,connettiToolStripMenuItem,disconnettiToolStripMenuItem,statoToolStripMenuItem,esciToolStripMenuItem });
 			fileToolStripMenuItem.Name = "fileToolStripMenuItem";
 			fileToolStripMenuItem.Size = new Size(87,20);
-			fileToolStripMenuItem.Text = Cfg.Msg.MnuConnect;
+			fileToolStripMenuItem.Text = "Connessione";
 			// 
 			// parametriDiConnessioneToolStripMenuItem
 			// 
 			parametriDiConnessioneToolStripMenuItem.Name = "parametriDiConnessioneToolStripMenuItem";
-			parametriDiConnessioneToolStripMenuItem.Size = new Size(134,22);
-			parametriDiConnessioneToolStripMenuItem.Text = Cfg.Msg.MnuParameters;
+			parametriDiConnessioneToolStripMenuItem.Size = new Size(180,22);
+			parametriDiConnessioneToolStripMenuItem.Text = "Parametri";
 			parametriDiConnessioneToolStripMenuItem.Click += parametriDiConnessioneToolStripMenuItem_Click;
 			// 
 			// connettiToolStripMenuItem
 			// 
 			connettiToolStripMenuItem.Name = "connettiToolStripMenuItem";
-			connettiToolStripMenuItem.Size = new Size(134,22);
-			connettiToolStripMenuItem.Text = Cfg.Msg.MnuConnect;
+			connettiToolStripMenuItem.Size = new Size(180,22);
+			connettiToolStripMenuItem.Text = "Connetti";
 			connettiToolStripMenuItem.Click += connettiToolStripMenuItem_Click;
 			// 
 			// disconnettiToolStripMenuItem
 			// 
 			disconnettiToolStripMenuItem.Name = "disconnettiToolStripMenuItem";
-			disconnettiToolStripMenuItem.Size = new Size(134,22);
-			disconnettiToolStripMenuItem.Text = Cfg.Msg.MnuDisconnect;
+			disconnettiToolStripMenuItem.Size = new Size(180,22);
+			disconnettiToolStripMenuItem.Text = "Disconnetti";
 			disconnettiToolStripMenuItem.Click += disconnettiToolStripMenuItem_Click;
 			// 
 			// statoToolStripMenuItem
 			// 
-			statoToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { statoToolStripMenuItem1,connectionStringToolStripMenuItem,schemaToolStripMenuItem,proceduresToolStripMenuItem,functionsToolStripMenuItem });
+			statoToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { statoToolStripMenuItem1,connectionStringToolStripMenuItem,schemaToolStripMenuItem,proceduresToolStripMenuItem,functionsToolStripMenuItem,utenteToolStripMenuItem });
 			statoToolStripMenuItem.Name = "statoToolStripMenuItem";
-			statoToolStripMenuItem.Size = new Size(134,22);
-			statoToolStripMenuItem.Text = Cfg.Msg.MnuStatus;
+			statoToolStripMenuItem.Size = new Size(180,22);
+			statoToolStripMenuItem.Text = "Stato";
 			// 
 			// statoToolStripMenuItem1
 			// 
 			statoToolStripMenuItem1.Name = "statoToolStripMenuItem1";
 			statoToolStripMenuItem1.Size = new Size(193,22);
-			statoToolStripMenuItem1.Text = Cfg.Msg.MnuStatus;
+			statoToolStripMenuItem1.Text = "Stato";
 			statoToolStripMenuItem1.Click += statoToolStripMenuItem1_Click;
 			// 
 			// connectionStringToolStripMenuItem
 			// 
 			connectionStringToolStripMenuItem.Name = "connectionStringToolStripMenuItem";
 			connectionStringToolStripMenuItem.Size = new Size(193,22);
-			connectionStringToolStripMenuItem.Text = Cfg.Msg.MnuConnString;
+			connectionStringToolStripMenuItem.Text = "Stringa di connessione";
 			connectionStringToolStripMenuItem.Click += connectionStringToolStripMenuItem_Click;
 			// 
 			// schemaToolStripMenuItem
 			// 
 			schemaToolStripMenuItem.Name = "schemaToolStripMenuItem";
 			schemaToolStripMenuItem.Size = new Size(193,22);
-			schemaToolStripMenuItem.Text = Cfg.Msg.MnuSchema;
+			schemaToolStripMenuItem.Text = "Schema";
 			schemaToolStripMenuItem.Click += schemaToolStripMenuItem_Click;
 			// 
 			// proceduresToolStripMenuItem
 			// 
 			proceduresToolStripMenuItem.Name = "proceduresToolStripMenuItem";
 			proceduresToolStripMenuItem.Size = new Size(193,22);
-			proceduresToolStripMenuItem.Text = Cfg.Msg.MnuProcedures;
+			proceduresToolStripMenuItem.Text = "Procedure";
 			proceduresToolStripMenuItem.Click += proceduresToolStripMenuItem_Click;
 			// 
 			// functionsToolStripMenuItem
 			// 
 			functionsToolStripMenuItem.Name = "functionsToolStripMenuItem";
 			functionsToolStripMenuItem.Size = new Size(193,22);
-			functionsToolStripMenuItem.Text = Cfg.Msg.MnuFunctions;
+			functionsToolStripMenuItem.Text = "Funzioni";
 			functionsToolStripMenuItem.Click += functionsToolStripMenuItem_Click;
+			// 
+			// utenteToolStripMenuItem
+			// 
+			utenteToolStripMenuItem.Name = "utenteToolStripMenuItem";
+			utenteToolStripMenuItem.Size = new Size(193,22);
+			utenteToolStripMenuItem.Text = "Usr";
+			utenteToolStripMenuItem.Click += utenteToolStripMenuItem_Click;
 			// 
 			// esciToolStripMenuItem
 			// 
 			esciToolStripMenuItem.Name = "esciToolStripMenuItem";
-			esciToolStripMenuItem.Size = new Size(134,22);
-			esciToolStripMenuItem.Text = Cfg.Msg.MnuExit;
+			esciToolStripMenuItem.Size = new Size(180,22);
+			esciToolStripMenuItem.Text = "Esci";
 			esciToolStripMenuItem.Click += esciToolStripMenuItem_Click;
 			// 
 			// helpToolStripMenuItem
@@ -149,9 +157,16 @@
 			// informazioniToolStripMenuItem
 			// 
 			informazioniToolStripMenuItem.Name = "informazioniToolStripMenuItem";
-			informazioniToolStripMenuItem.Size = new Size(180,22);
-			informazioniToolStripMenuItem.Text = Cfg.Msg.MnuNfo;
+			informazioniToolStripMenuItem.Size = new Size(115,22);
+			informazioniToolStripMenuItem.Text = "Info";
 			informazioniToolStripMenuItem.Click += informazioniToolStripMenuItem_Click;
+			// 
+			// dettagliToolStripMenuItem
+			// 
+			dettagliToolStripMenuItem.Name = "dettagliToolStripMenuItem";
+			dettagliToolStripMenuItem.Size = new Size(115,22);
+			dettagliToolStripMenuItem.Text = "Dettagli";
+			dettagliToolStripMenuItem.Click += dettagliToolStripMenuItem_Click;
 			// 
 			// TESTtsmi
 			// 
@@ -163,7 +178,7 @@
 			// mSGBOXToolStripMenuItem
 			// 
 			mSGBOXToolStripMenuItem.Name = "mSGBOXToolStripMenuItem";
-			mSGBOXToolStripMenuItem.Size = new Size(180,22);
+			mSGBOXToolStripMenuItem.Size = new Size(122,22);
 			mSGBOXToolStripMenuItem.Text = "MSGBOX";
 			mSGBOXToolStripMenuItem.Visible = false;
 			mSGBOXToolStripMenuItem.Click += MsgBoxToolStripMenuItem_Click;
@@ -198,13 +213,6 @@
 			toolStripStatusLabel3.Text = "toolStripStatusLabel3";
 			toolStripStatusLabel3.Visible = false;
 			// 
-			// dettagliToolStripMenuItem
-			// 
-			dettagliToolStripMenuItem.Name = "dettagliToolStripMenuItem";
-			dettagliToolStripMenuItem.Size = new Size(180,22);
-			dettagliToolStripMenuItem.Text = Cfg.Msg.MnuDetails;
-			dettagliToolStripMenuItem.Click += dettagliToolStripMenuItem_Click;
-			// 
 			// Form1
 			// 
 			AutoScaleDimensions = new SizeF(7F,15F);
@@ -214,7 +222,7 @@
 			Controls.Add(menuStrip1);
 			MainMenuStrip = menuStrip1;
 			Name = "Form1";
-			Text = Application.ProductName;
+			Text = "DesignToolsServer";
 			FormClosing += Form1_FormClosing;
 			Load += Form1_Load;
 			menuStrip1.ResumeLayout(false);
@@ -248,5 +256,6 @@
 		private ToolStripMenuItem TESTtsmi;
 		private ToolStripMenuItem mSGBOXToolStripMenuItem;
 		private ToolStripMenuItem dettagliToolStripMenuItem;
+		private ToolStripMenuItem utenteToolStripMenuItem;
 	}
 }

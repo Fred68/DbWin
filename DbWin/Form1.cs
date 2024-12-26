@@ -7,9 +7,9 @@ using System.Text;
 
 namespace DbWin
 {
-	public partial class Form1 : Form
+	public partial class Form1:Form
 	{
-		
+
 		ConnectionString cs;
 		MySQLconn conn;
 		Color statStripBkCol;
@@ -24,8 +24,32 @@ namespace DbWin
 		public Form1()
 		{
 			InitializeComponent();
+			ReplaceGUIText();
 			cs = new ConnectionString(Cfg.Config.CONN_server,Cfg.Config.CONN_port,Cfg.Config.CONN_user,Cfg.Config.CONN_password,Cfg.Config.CONN_database);
 			conn = new MySQLconn();
+		}
+
+		private void ReplaceGUIText()
+		{
+			SuspendLayout();
+			fileToolStripMenuItem.Text = Cfg.Msg.MnuConnecting;
+			parametriDiConnessioneToolStripMenuItem.Text = Cfg.Msg.MnuParameters;
+			connettiToolStripMenuItem.Text = Cfg.Msg.MnuConnect;
+			disconnettiToolStripMenuItem.Text = Cfg.Msg.MnuDisconnect;
+			statoToolStripMenuItem.Text = Cfg.Msg.MnuStatus;
+			statoToolStripMenuItem1.Text = Cfg.Msg.MnuStatus;
+			connectionStringToolStripMenuItem.Text = Cfg.Msg.MnuConnString;
+			schemaToolStripMenuItem.Text = Cfg.Msg.MnuSchema;
+			proceduresToolStripMenuItem.Text = Cfg.Msg.MnuProcedures;
+			functionsToolStripMenuItem.Text = Cfg.Msg.MnuFunctions;
+			utenteToolStripMenuItem.Text = "Utente";
+			esciToolStripMenuItem.Text = Cfg.Msg.MnuExit;
+			helpToolStripMenuItem.Text = "?";
+			informazioniToolStripMenuItem.Text = Cfg.Msg.MnuNfo;
+			dettagliToolStripMenuItem.Text = Cfg.Msg.MnuDetails;
+			utenteToolStripMenuItem.Text = Cfg.Msg.MnuUser;
+			Text = "DesignToolsServer";
+			ResumeLayout(true);
 		}
 
 		/// <summary>
@@ -247,6 +271,11 @@ namespace DbWin
 		private void dettagliToolStripMenuItem_Click(object sender,EventArgs e)
 		{
 			MsgBox.Show(Version(Assembly.GetExecutingAssembly(),true));
+		}
+
+		private void utenteToolStripMenuItem_Click(object sender,EventArgs e)
+		{
+			ShowStatus(Info.User);
 		}
 	}
 }

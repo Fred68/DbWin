@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DbWin
 {
-	
+
 	[Flags]
 	public enum Info
 	{
@@ -16,6 +16,7 @@ namespace DbWin
 		Schema				= 1 << 2,
 		Procedures			= 1 << 3,
 		Functions			= 1 << 4,
+		User				= 1 << 5,
 		All					= -1
 	}
 

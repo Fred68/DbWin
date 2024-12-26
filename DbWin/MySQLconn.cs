@@ -182,6 +182,11 @@ namespace DbWin
 					sb.AppendLine($"--- {Cfg.Msg.MnuProcedures} ---");
 					sb.AppendLine(ExecuteSQLCommand("CALL ListaProcedure();",SQLqueryType.Reader));
 				}
+				if ( (nfo & Info.User) != 0  )
+				{
+					sb.AppendLine($"--- {Cfg.Msg.MnuUser} ---");
+					sb.AppendLine(ExecuteSQLCommand("CALL NomeUtente();",SQLqueryType.Reader));
+				}
 			}
 			else
 			{

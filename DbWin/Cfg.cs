@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 using Fred68.CfgReader;
 
+#pragma warning disable CS8602	// Dereferenziamento di un riferimento eventualmente Null.
+#pragma warning disable CS8618	// La variabile che non ammette i valori Null deve contenere un valore non Null quando si esce dal costruttore.
+
 namespace DbWin
 {
 
@@ -59,7 +62,6 @@ namespace DbWin
 
 		static Cfg()
 		{
-			bool bCfg2, bMsg2;
 			Config = new Cfg2();
 			Config.CHR_ListSeparator = @";";
 			Config.ReadConfiguration("DbWin.cfg");
@@ -79,3 +81,5 @@ namespace DbWin
 		}
 	}
 }
+#pragma warning restore CS8602
+#pragma warning restore CS8618

@@ -18,12 +18,13 @@ namespace DbWin
 		public ConnectionForm(ConnectionString cstr)
 		{
 			InitializeComponent();
+			ReplaceText();
 			cs = new ConnectionString(cstr);
 			bool visib = false;
 
-			#if DEBUG
+#if DEBUG
 			visib = true;
-			#endif
+#endif
 
 			tbSvr.Visible = tbPrt.Visible = tbDb.Visible = visib;
 			label1.Visible = label2.Visible = label5.Visible = visib;
@@ -31,7 +32,7 @@ namespace DbWin
 			{
 				this.Height -= tbDb.Bottom - tbPwd.Bottom;
 			}
-			
+
 			this.StartPosition = FormStartPosition.CenterScreen;
 			this.TopMost = true;
 			this.FormBorderStyle = FormBorderStyle.Fixed3D;
@@ -39,13 +40,30 @@ namespace DbWin
 			UpdateContent();
 		}
 
+		public void ReplaceText()
+		{
+			SuspendLayout();
+			label1.Text = Cfg.Msg.MnuServer;
+			label2.Text = Cfg.Msg.MnuPort;
+			label3.Text = Cfg.Msg.MnuUser;
+			label3.Text = Cfg.Msg.MnuUser;
+			label4.Text = Cfg.Msg.MnuPassword;
+			label5.Text = Cfg.Msg.MnuDatabase;
+			
+			Text = Cfg.Msg.MnuConnecting;
+
+			button1.Text = Cfg.Msg.MnuOK;
+			button2.Text = Cfg.Msg.MnuCancel;
+
+			ResumeLayout(true);
+		}
 		private void button1_Click(object sender,EventArgs e)
 		{
 			cs.srv = tbSvr.Text;
 			cs.prt = tbPrt.Text;
 			cs.usr = tbUsr.Text;
 			cs.pwd = tbPwd.Text;
-			cs.db  = tbDb.Text;	
+			cs.db = tbDb.Text;
 		}
 
 		void UpdateContent()
@@ -55,6 +73,11 @@ namespace DbWin
 			tbUsr.Text = cs.usr;
 			tbPwd.Text = cs.pwd;
 			tbDb.Text = cs.db;
+		}
+
+		private void ConnectionForm_Load(object sender,EventArgs e)
+		{
+
 		}
 	}
 }

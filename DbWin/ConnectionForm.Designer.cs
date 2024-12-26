@@ -52,7 +52,7 @@
 			// 
 			// tbPrt
 			// 
-			tbPrt.Location = new Point(112,94);
+			tbPrt.Location = new Point(112,99);
 			tbPrt.Name = "tbPrt";
 			tbPrt.Size = new Size(144,23);
 			tbPrt.TabIndex = 3;
@@ -87,7 +87,7 @@
 			label1.Name = "label1";
 			label1.Size = new Size(39,15);
 			label1.TabIndex = 5;
-			label1.Text = Cfg.Msg.MnuServer;
+			label1.Text = "Server";
 			label1.Visible = false;
 			// 
 			// label2
@@ -97,7 +97,7 @@
 			label2.Name = "label2";
 			label2.Size = new Size(29,15);
 			label2.TabIndex = 6;
-			label2.Text = Cfg.Msg.MnuPort;
+			label2.Text = "Port";
 			label2.Visible = false;
 			// 
 			// label3
@@ -107,25 +107,25 @@
 			label3.Name = "label3";
 			label3.Size = new Size(30,15);
 			label3.TabIndex = 7;
-			label3.Text = Cfg.Msg.MnuUser;
+			label3.Text = "User";
 			// 
 			// label4
 			// 
 			label4.AutoSize = true;
 			label4.Location = new Point(17,44);
 			label4.Name = "label4";
-			label4.Size = new Size(57,15);
+			label4.Size = new Size(30,15);
 			label4.TabIndex = 8;
-			label4.Text = Cfg.Msg.MnuPassword;
+			label4.Text = "Pwd";
 			// 
 			// label5
 			// 
 			label5.AutoSize = true;
 			label5.Location = new Point(17,131);
 			label5.Name = "label5";
-			label5.Size = new Size(55,15);
+			label5.Size = new Size(22,15);
 			label5.TabIndex = 9;
-			label5.Text =  Cfg.Msg.MnuDatabase;
+			label5.Text = "Db";
 			label5.Visible = false;
 			// 
 			// button1
@@ -135,7 +135,7 @@
 			button1.Name = "button1";
 			button1.Size = new Size(100,23);
 			button1.TabIndex = 10;
-			button1.Text = Cfg.Msg.MnuOK;
+			button1.Text = "ok";
 			button1.UseVisualStyleBackColor = true;
 			button1.Click += button1_Click;
 			// 
@@ -146,7 +146,7 @@
 			button2.Name = "button2";
 			button2.Size = new Size(100,23);
 			button2.TabIndex = 11;
-			button2.Text = Cfg.Msg.MnuCancel;
+			button2.Text = "cancel";
 			button2.UseVisualStyleBackColor = true;
 			// 
 			// ConnectionForm
@@ -168,7 +168,7 @@
 			Controls.Add(tbSvr);
 			Name = "ConnectionForm";
 			StartPosition = FormStartPosition.CenterScreen;
-			Text = Cfg.Msg.MnuConnecting;
+			Load += ConnectionForm_Load;
 			ResumeLayout(false);
 			PerformLayout();
 		}
