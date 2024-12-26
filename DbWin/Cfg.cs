@@ -43,7 +43,13 @@ namespace DbWin
 		public string MnuExit;
 		public string MnuNfo;
 		public string MnuDetails;
-
+		public string MnuServer;
+		public string MnuPort;
+		public string MnuUser;
+		public string MnuPassword;
+		public string MnuDatabase;
+		public string MnuCancel;
+		public string MnuOK;
 	}
 
 	public static class Cfg 
@@ -58,7 +64,7 @@ namespace DbWin
 			Config.CHR_ListSeparator = @";";
 			Config.ReadConfiguration("DbWin.cfg");
 			#if DEBUG
-			MessageBox.Show(Config.DumpEntries());
+			MsgBox.Show(Config.DumpEntries());
 			#endif
 			Config.GetNames(true);
 
@@ -66,7 +72,7 @@ namespace DbWin
 			Msg.CHR_ListSeparator = @";";
 			Msg.ReadConfiguration("DbWin.msg");
 			#if DEBUG
-			MessageBox.Show(Msg.DumpEntries());
+			MsgBox.Show(Msg.DumpEntries());
 			#endif
 			Msg.GetNames(true);
 			

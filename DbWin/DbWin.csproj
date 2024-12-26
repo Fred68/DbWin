@@ -16,7 +16,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Fred68\CfgReader.NET\CfgReader.NET\CfgReaderLib.csproj" />
     <ProjectReference Include="..\..\Fred68\CfgReader.NET\CfgReaderLib\CfgReaderLib.csproj" />
   </ItemGroup>
 

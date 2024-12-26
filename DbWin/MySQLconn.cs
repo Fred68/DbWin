@@ -160,7 +160,7 @@ namespace DbWin
 
 				if ( (nfo & Info.Status) != 0  )
 				{
-					sb.AppendLine($"{Cfg.Msg.MnuConnect}: {conn.State.ToString().Trim()}");
+					sb.AppendLine($"{Cfg.Msg.MnuConnecting}: {conn.State.ToString().Trim()}");
 				}
 
 				if ( (nfo & Info.Schema) != 0  )

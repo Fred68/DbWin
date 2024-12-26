@@ -192,6 +192,7 @@ namespace DbWin
 					button3.DialogResult = DialogResult.Continue;
 					break;
 			}
+			#warning Usare lingua IT, EN o altra.
 			button1.Text = button1.DialogResult.ToString();
 			button2.Text = button2.DialogResult.ToString();
 			button3.Text = button3.DialogResult.ToString();

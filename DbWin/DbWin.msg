@@ -4,8 +4,11 @@
 
 SECTIONPREFIXOFF					# Nomi delle variabili semplici
 
-[IT] = ON
-[EN] = OFF
+[IT] = OFF
+[EN] = ON
+
+
+
 
 [IT]
 # Messaggi
@@ -32,6 +35,11 @@ STR MnuFunctions	=		"Funzioni"
 STR MnuExit			=		"Esci"
 STR MnuNfo			=		"Informazioni"
 STR MnuDetails		=		"Dettagli"
+
+STR MnuServer		=		"Server"
+STR MnuPort			=		"Porta"
+STR MnuUser			=		"Utente"
+STR MnuCancel		=		"Annulla"
 [.]
 
 
@@ -59,4 +67,13 @@ STR MnuFunctions	=		"Functions"
 STR MnuExit			=		"Exit"
 STR MnuNfo			=		"Info"
 STR MnuDetails		=		"Details"
+
+STR MnuServer		=		"Server"
+STR MnuPort			=		"Port"
+STR MnuUser			=		"User"
+STR MnuCancel		=		"Cancel"
 [.]
+
+STR MnuPassword		=		"Password"
+STR MnuDatabase		=		"Database"
+STR MnuOK			=		"OK"
