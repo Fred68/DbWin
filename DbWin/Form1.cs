@@ -1,7 +1,9 @@
+using MySqlX.XDevAPI.Relational;
 using Org.BouncyCastle.Pqc.Crypto.Lms;
 using System.Data;
 using System.Reflection;
 using System.Text;
+using static Fred68.CfgReader.CfgReader;
 
 
 
@@ -13,6 +15,10 @@ namespace DbWin
 		ConnectionString cs;
 		MySQLconn conn;
 		Color statStripBkCol;
+		RotatingChar rotchar;
+		Busy busy;
+		static CancellationTokenSource? cts = null;         // new CancellationTokenSource();
+		CancellationToken token = CancellationToken.None;   // cts.Token;
 
 		/*******************************************/
 		// Ctors and main functions
@@ -27,6 +33,8 @@ namespace DbWin
 			ReplaceGUIText();
 			cs = new ConnectionString(Cfg.Config.CONN_server,Cfg.Config.CONN_port,Cfg.Config.CONN_user,Cfg.Config.CONN_password,Cfg.Config.CONN_database);
 			conn = new MySQLconn();
+			rotchar = new RotatingChar(activeTsMenuItem);
+			busy = new Busy(busyTsMenuItem,"B"," ");
 		}
 
 		private void ReplaceGUIText()
@@ -60,11 +68,16 @@ namespace DbWin
 		private void Form1_Load(object sender,EventArgs e)
 		{
 			statStripBkCol = statusStrip1.BackColor;
+
 #if DEBUG
 			TESTtsmi.Visible = true;
 #else
 			TESTtsmi.Visible = false;
 #endif
+
+			refreshTimer.Interval = 1000;
+			refreshTimer.Start();
+			busy.busy = false;
 			UpdateForm();
 		}
 
@@ -151,6 +164,11 @@ namespace DbWin
 		// Functions
 		/*******************************************/
 
+		public void UpdateRotchar()
+		{
+			rotchar.Update();
+		}
+
 		public void UpdateForm()
 		{
 			tsStatus.Text = conn.GetStatus(Info.Status).Trim();
@@ -176,12 +194,15 @@ namespace DbWin
 
 		public void Connetti()
 		{
-			conn.ConnectionString = cs;
-			string msg = conn.Connect();
-#if DEBUG
-			MsgBox.Show(msg);
-#endif
-			UpdateForm();
+			if(!busy.busy)
+			{
+				conn.ConnectionString = cs;
+				cts = new CancellationTokenSource();
+				token = cts.Token;
+				busy.busy = true;
+				Task<string> task = Task<string>.Factory.StartNew(() => conn.Connect(),token);
+				task.ContinueWith(ShowMsgConnection);
+			}
 		}
 
 		public void Disconnetti()
@@ -205,10 +226,32 @@ namespace DbWin
 
 		public void ShowStatus(Info info)
 		{
-			string st = conn.GetStatus(info);
-			MsgBox.Show(st,Cfg.Msg.MnuStatus);
+			if(!busy.busy)
+			{
+				cts = new CancellationTokenSource();
+				token = cts.Token;
+				busy.busy = true;
+				Task<string> task = Task<string>.Factory.StartNew(() => conn.GetStatus(info),token);
+				task.ContinueWith(ShowMsgStatus);
+			}
 		}
 
+		void ShowMsgStatus(Task<string> t)
+		{
+			string st = t.Result;
+			busy.busy = false;
+			UpdateForm();
+			BeginInvoke(new Action(() => MsgBox.Show(st,Cfg.Msg.MnuStatus)));
+		}
+		void ShowMsgConnection(Task<string> t)
+		{
+			string msg = t.Result;
+			busy.busy = false;
+			UpdateForm();
+#if DEBUG
+			MsgBox.Show(msg);
+#endif
+		}
 		/*******************************************/
 		// Handlers
 		/*******************************************/
@@ -277,5 +320,17 @@ namespace DbWin
 		{
 			ShowStatus(Info.User);
 		}
+
+		private void asyncTestToolStripMenuItem_Click(object sender,EventArgs e)
+		{
+			ShowStatus(Info.User);
+		}
+
+		private void refreshTimer_Tick(object sender,EventArgs e)
+		{
+			rotchar.Update(true);
+			busy.Invalidate();
+		}
+
 	}
 }

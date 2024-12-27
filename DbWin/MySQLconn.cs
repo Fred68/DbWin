@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 using MySql.Data.MySqlClient;
 using Org.BouncyCastle.Tls.Crypto;      // Per MySqlConnection
+using System.Data.Common;				// Per DbDataReader
 
 namespace DbWin
 {
@@ -98,6 +99,7 @@ namespace DbWin
 		/// </summary>
 		public string Connect()
 		{
+			
 			StringBuilder sb = new StringBuilder();
 			try
 			{
@@ -107,6 +109,8 @@ namespace DbWin
 					conn.Open();
 					dtConn = conn.GetSchema();
 					sb.AppendLine(GetStatus(Info.Status | Info.ConnectionString));
+
+					Thread.Sleep(3000);
 				}
 				else
 				{
@@ -169,6 +173,7 @@ namespace DbWin
 					{
 						sb.AppendLine($"--- {Cfg.Msg.MnuSchema} ---");
 						sb.AppendLine($"{Environment.NewLine}{DisplayDataTable(dtConn)}");
+						Thread.Sleep(3000);
 					}
 				}
 
@@ -176,23 +181,26 @@ namespace DbWin
 				{
 					sb.AppendLine($"--- {Cfg.Msg.MnuFunctions} ---");
 					sb.AppendLine(ExecuteSQLCommand("CALL ListaFunzioni();",SQLqueryType.Reader));
+					Thread.Sleep(3000);
 				}
 				if ( (nfo & Info.Procedures) != 0  )
 				{
 					sb.AppendLine($"--- {Cfg.Msg.MnuProcedures} ---");
 					sb.AppendLine(ExecuteSQLCommand("CALL ListaProcedure();",SQLqueryType.Reader));
+					Thread.Sleep(3000);
 				}
 				if ( (nfo & Info.User) != 0  )
 				{
 					sb.AppendLine($"--- {Cfg.Msg.MnuUser} ---");
 					sb.AppendLine(ExecuteSQLCommand("CALL NomeUtente();",SQLqueryType.Reader));
+					Thread.Sleep(3000);
 				}
 			}
 			else
 			{
 				sb.AppendLine($"{Cfg.Msg.MsgNotConnected}");
 			}
-			
+
 			return sb.ToString();
 		}
 
@@ -214,6 +222,125 @@ namespace DbWin
 			}
 			return sb.ToString();
 		}
+
+		/*******************************************/
+		// MySQL async functions (non usate)
+		/*******************************************/
+#if false
+		public static async Task<string> ExecuteNonQuery(string sql, MySqlConnection conn, CancellationToken token)
+		{
+			int lines = 0;
+			StringBuilder sb = new StringBuilder();
+			if(conn != null)
+			{
+				try
+				{
+					MySqlCommand cmd = new MySqlCommand(sql, conn);
+					lines = await cmd.ExecuteNonQueryAsync(token);
+					sb.AppendLine($"NonQuery():{lines} linee.");
+
+				}
+				catch(Exception ex)
+				{
+					sb.AppendLine(ex.ToString());
+				}
+			}
+			return sb.ToString();
+		}
+		public static async Task<string> ExecuteScalar(string sql, MySqlConnection conn, CancellationToken token)
+		{
+			object? obj = null;
+			StringBuilder sb = new StringBuilder();
+			if(conn != null)
+			{
+				try
+				{
+					MySqlCommand cmd = new MySqlCommand(sql, conn);
+					obj = await cmd.ExecuteScalarAsync(token);
+					string? s = string.Empty;
+					if(obj != null)
+					{
+						s = Convert.ToString(obj);
+					}
+					sb.AppendLine($"Scalar():{s}.");
+				}
+				catch(Exception ex)
+				{
+					sb.AppendLine(ex.ToString());
+				}
+			}
+			return sb.ToString();
+		}
+		public static async Task<string> ExecuteReader(string sql, MySqlConnection conn, CancellationToken token)
+		{
+			DbDataReader? rdr = null;		// Al posto di MySqlDataReader
+			StringBuilder sb = new StringBuilder();
+			if(conn != null)
+			{
+				try
+				{
+					MySqlCommand cmd = new MySqlCommand(sql, conn);
+					sb.AppendLine($"Reader():");
+					rdr = await cmd.ExecuteReaderAsync(token);
+					while(rdr.Read())
+					{
+						for(int i=0; i<rdr.FieldCount; i++)
+						{
+							sb.Append(rdr[i].ToString());
+							if(i != rdr.FieldCount-1)	sb.Append(", ");
+									
+						}
+						sb.Append(System.Environment.NewLine);
+					}
+					rdr.Close();
+					rdr = null;
+				}
+				catch(Exception ex)
+				{
+					sb.AppendLine(ex.ToString());
+				}
+			}
+			return sb.ToString();
+		}
+		public async Task<string> ExecuteSQLCommandAsync(string sql, SQLqueryType type, CancellationToken token, CancellationTokenSource cts)
+		{
+			
+			if( (token!=CancellationToken.None) && (cts!=null))
+				 {
+				 token.Register( () =>
+					{
+					MessageBox.Show("Task canceled");
+					cts.Dispose();
+					}
+					);
+				 }
+
+			string result = "";
+			if(conn != null)
+			{
+				switch(type)
+				{
+				
+					case SQLqueryType.NoQuery:
+					{
+						result = await ExecuteNonQuery(sql, conn, token);
+					}
+					break;
+					case SQLqueryType.Scalar:
+					{
+						result = await ExecuteScalar(sql, conn, token);
+					}
+					break;
+					case SQLqueryType.Reader:
+					{
+						result = await ExecuteReader(sql, conn, token);
+					}
+					break;
+				}
+			}
+			return result;
+		}
+		#endif
 
 		/// <summary>
 		/// Execute MySQL command (reader, non query or scalar)

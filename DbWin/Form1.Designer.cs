@@ -28,6 +28,7 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
+			components = new System.ComponentModel.Container();
 			menuStrip1 = new MenuStrip();
 			fileToolStripMenuItem = new ToolStripMenuItem();
 			parametriDiConnessioneToolStripMenuItem = new ToolStripMenuItem();
@@ -46,17 +47,21 @@
 			dettagliToolStripMenuItem = new ToolStripMenuItem();
 			TESTtsmi = new ToolStripMenuItem();
 			mSGBOXToolStripMenuItem = new ToolStripMenuItem();
+			asyncTestToolStripMenuItem = new ToolStripMenuItem();
+			activeTsMenuItem = new ToolStripMenuItem();
+			busyTsMenuItem = new ToolStripMenuItem();
 			statusStrip1 = new StatusStrip();
 			tsStatus = new ToolStripStatusLabel();
 			toolStripStatusLabel2 = new ToolStripStatusLabel();
 			toolStripStatusLabel3 = new ToolStripStatusLabel();
+			refreshTimer = new System.Windows.Forms.Timer(components);
 			menuStrip1.SuspendLayout();
 			statusStrip1.SuspendLayout();
 			SuspendLayout();
 			// 
 			// menuStrip1
 			// 
-			menuStrip1.Items.AddRange(new ToolStripItem[] { fileToolStripMenuItem,helpToolStripMenuItem,TESTtsmi });
+			menuStrip1.Items.AddRange(new ToolStripItem[] { fileToolStripMenuItem,helpToolStripMenuItem,TESTtsmi,activeTsMenuItem,busyTsMenuItem });
 			menuStrip1.Location = new Point(0,0);
 			menuStrip1.Name = "menuStrip1";
 			menuStrip1.Size = new Size(800,24);
@@ -73,21 +78,21 @@
 			// parametriDiConnessioneToolStripMenuItem
 			// 
 			parametriDiConnessioneToolStripMenuItem.Name = "parametriDiConnessioneToolStripMenuItem";
-			parametriDiConnessioneToolStripMenuItem.Size = new Size(180,22);
+			parametriDiConnessioneToolStripMenuItem.Size = new Size(134,22);
 			parametriDiConnessioneToolStripMenuItem.Text = "Parametri";
 			parametriDiConnessioneToolStripMenuItem.Click += parametriDiConnessioneToolStripMenuItem_Click;
 			// 
 			// connettiToolStripMenuItem
 			// 
 			connettiToolStripMenuItem.Name = "connettiToolStripMenuItem";
-			connettiToolStripMenuItem.Size = new Size(180,22);
+			connettiToolStripMenuItem.Size = new Size(134,22);
 			connettiToolStripMenuItem.Text = "Connetti";
 			connettiToolStripMenuItem.Click += connettiToolStripMenuItem_Click;
 			// 
 			// disconnettiToolStripMenuItem
 			// 
 			disconnettiToolStripMenuItem.Name = "disconnettiToolStripMenuItem";
-			disconnettiToolStripMenuItem.Size = new Size(180,22);
+			disconnettiToolStripMenuItem.Size = new Size(134,22);
 			disconnettiToolStripMenuItem.Text = "Disconnetti";
 			disconnettiToolStripMenuItem.Click += disconnettiToolStripMenuItem_Click;
 			// 
@@ -95,7 +100,7 @@
 			// 
 			statoToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { statoToolStripMenuItem1,connectionStringToolStripMenuItem,schemaToolStripMenuItem,proceduresToolStripMenuItem,functionsToolStripMenuItem,utenteToolStripMenuItem });
 			statoToolStripMenuItem.Name = "statoToolStripMenuItem";
-			statoToolStripMenuItem.Size = new Size(180,22);
+			statoToolStripMenuItem.Size = new Size(134,22);
 			statoToolStripMenuItem.Text = "Stato";
 			// 
 			// statoToolStripMenuItem1
@@ -143,7 +148,7 @@
 			// esciToolStripMenuItem
 			// 
 			esciToolStripMenuItem.Name = "esciToolStripMenuItem";
-			esciToolStripMenuItem.Size = new Size(180,22);
+			esciToolStripMenuItem.Size = new Size(134,22);
 			esciToolStripMenuItem.Text = "Esci";
 			esciToolStripMenuItem.Click += esciToolStripMenuItem_Click;
 			// 
@@ -170,7 +175,7 @@
 			// 
 			// TESTtsmi
 			// 
-			TESTtsmi.DropDownItems.AddRange(new ToolStripItem[] { mSGBOXToolStripMenuItem });
+			TESTtsmi.DropDownItems.AddRange(new ToolStripItem[] { mSGBOXToolStripMenuItem,asyncTestToolStripMenuItem });
 			TESTtsmi.Name = "TESTtsmi";
 			TESTtsmi.Size = new Size(45,20);
 			TESTtsmi.Text = "TEST";
@@ -178,10 +183,34 @@
 			// mSGBOXToolStripMenuItem
 			// 
 			mSGBOXToolStripMenuItem.Name = "mSGBOXToolStripMenuItem";
-			mSGBOXToolStripMenuItem.Size = new Size(122,22);
-			mSGBOXToolStripMenuItem.Text = "MSGBOX";
+			mSGBOXToolStripMenuItem.Size = new Size(180,22);
+			mSGBOXToolStripMenuItem.Text = "MsgBox";
 			mSGBOXToolStripMenuItem.Visible = false;
 			mSGBOXToolStripMenuItem.Click += MsgBoxToolStripMenuItem_Click;
+			// 
+			// asyncTestToolStripMenuItem
+			// 
+			asyncTestToolStripMenuItem.Name = "asyncTestToolStripMenuItem";
+			asyncTestToolStripMenuItem.Size = new Size(180,22);
+			asyncTestToolStripMenuItem.Text = "async test";
+			asyncTestToolStripMenuItem.Visible = false;
+			asyncTestToolStripMenuItem.Click += asyncTestToolStripMenuItem_Click;
+			// 
+			// activeTsMenuItem
+			// 
+			activeTsMenuItem.Alignment = ToolStripItemAlignment.Right;
+			activeTsMenuItem.Font = new Font("Courier New",9F,FontStyle.Regular,GraphicsUnit.Point,0);
+			activeTsMenuItem.Name = "activeTsMenuItem";
+			activeTsMenuItem.Size = new Size(26,20);
+			activeTsMenuItem.Text = "A";
+			// 
+			// busyTsMenuItem
+			// 
+			busyTsMenuItem.Alignment = ToolStripItemAlignment.Right;
+			busyTsMenuItem.Font = new Font("Courier New",9F,FontStyle.Regular,GraphicsUnit.Point,0);
+			busyTsMenuItem.Name = "busyTsMenuItem";
+			busyTsMenuItem.Size = new Size(26,20);
+			busyTsMenuItem.Text = "B";
 			// 
 			// statusStrip1
 			// 
@@ -209,9 +238,14 @@
 			// toolStripStatusLabel3
 			// 
 			toolStripStatusLabel3.Name = "toolStripStatusLabel3";
+			toolStripStatusLabel3.RightToLeft = RightToLeft.No;
 			toolStripStatusLabel3.Size = new Size(118,17);
 			toolStripStatusLabel3.Text = "toolStripStatusLabel3";
 			toolStripStatusLabel3.Visible = false;
+			// 
+			// refreshTimer
+			// 
+			refreshTimer.Tick += refreshTimer_Tick;
 			// 
 			// Form1
 			// 
@@ -257,5 +291,9 @@
 		private ToolStripMenuItem mSGBOXToolStripMenuItem;
 		private ToolStripMenuItem dettagliToolStripMenuItem;
 		private ToolStripMenuItem utenteToolStripMenuItem;
+		private ToolStripMenuItem asyncTestToolStripMenuItem;
+		private ToolStripMenuItem activeTsMenuItem;
+		private System.Windows.Forms.Timer refreshTimer;
+		private ToolStripMenuItem busyTsMenuItem;
 	}
 }
