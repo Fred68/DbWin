@@ -40,6 +40,10 @@ STR MnuServer		=		"Server"
 STR MnuPort			=		"Porta"
 STR MnuUser			=		"Utente"
 STR MnuCancel		=		"Annulla"
+
+STR MnuViewCodes	=		"Vedi codici"
+STR MnuQuery		=		"Interroga"
+
 [.]
 
 
@@ -72,8 +76,13 @@ STR MnuServer		=		"Server"
 STR MnuPort			=		"Port"
 STR MnuUser			=		"User"
 STR MnuCancel		=		"Cancel"
+
+STR MnuViewCodes	=		"View Codes"
+STR MnuQuery		=		"Query"
+
 [.]
 
 STR MnuPassword		=		"Password"
 STR MnuDatabase		=		"Database"
 STR MnuOK			=		"OK"
+

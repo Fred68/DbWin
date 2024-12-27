@@ -173,7 +173,7 @@ namespace DbWin
 					if(dtConn != null)
 					{
 						sb.AppendLine($"--- {Cfg.Msg.MnuSchema} ---");
-						sb.AppendLine($"{Environment.NewLine}{DisplayDataTable(dtConn)}");
+						sb.AppendLine($"{Environment.NewLine}{DataTableToString(dtConn)}");
 						#if DEBUG
 						Thread.Sleep(1000);
 						#endif
@@ -214,11 +214,11 @@ namespace DbWin
 		}
 
 		/// <summary>
-		/// Display data table content
+		/// Display data table value
 		/// </summary>
 		/// <param name="dt"></param>
 		/// <returns></returns>
-		public string DisplayDataTable(DataTable dt)
+		public string DataTableToString(DataTable dt)
 		{
 			StringBuilder sb = new StringBuilder();
 			foreach(DataRow dr in dt.Rows)
@@ -232,22 +232,23 @@ namespace DbWin
 			return sb.ToString();
 		}
 
-		public string VediCodici(string cod, string mod, int limit)
+		public DataTable EmptyDataTable(string columnName, string value)
 		{
-			StringBuilder sb = new StringBuilder();
-			if( conn != null )
-			{
-				string sql = $"CALL VediCodici({limit},\"{cod}\",\"{mod}\");";
-				MsgBox.Show(sql);
-				sb.AppendLine($"--- {"Vedi codici"} ---");
-				sb.AppendLine(ExecuteSQLCommand(sql,SQLqueryType.Reader));
-			}
-			return sb.ToString();
+			DataTable dt = new DataTable();
+			DataColumn dtC= new DataColumn();
+			dtC.DataType = typeof(string);
+			dtC.ColumnName = columnName;
+			dtC.ReadOnly = false;
+			dt.Columns.Add(dtC);
+			DataSet ds = new DataSet();
+			ds.Tables.Add(dt);
+			DataRow dr = dt.NewRow();
+			dr[columnName] = value;
+			dt.Rows.Add(dr);
+			return dt;
 		}
-		/*******************************************/
-		// MySQL async functions (non usate)
-		/*******************************************/
-#if false
+
+#if false		// MySQL async functions (non usate)
 		public static async Task<string> ExecuteNonQuery(string sql, MySqlConnection conn, CancellationToken token)
 		{
 			int lines = 0;
@@ -437,6 +438,77 @@ namespace DbWin
 			}
 			return sb.ToString();
 		}
+
+		public void ExecuteSQLReadDataTable(string sql, ref DataTable dt)
+		{
+			if(conn != null)
+			{
+				try
+				{
+					MySqlCommand cmd = new MySqlCommand(sql, conn);
+					using (MySqlDataAdapter da = new MySqlDataAdapter(cmd))
+					{
+						da.Fill(dt);
+					}
+				}
+				catch(Exception ex)
+				{
+					dt.Clear();
+				}
+			}
+		}
+
+		/*******************************************/
+		// Query fuctions
+		/*******************************************/
+
+		/// <summary>
+		/// Vedi codici (in una stringa unica)
+		/// </summary>
+		/// <param name="cod">Codice (con wildcard %)</param>
+		/// <param name="mod">Modifica (con wildcard %)</param>
+		/// <param name="limit">Numero massimo di righe</param>
+		/// <returns></returns>
+		public string VediCodici(string cod, string mod, int limit)
+		{
+			StringBuilder sb = new StringBuilder();
+			if( conn != null )
+			{
+				string sql = $"CALL VediCodici({limit},\"{cod}\",\"{mod}\");";
+				MsgBox.Show(sql);
+				sb.AppendLine($"--- {"Vedi codici"} ---");
+				sb.AppendLine(ExecuteSQLCommand(sql,SQLqueryType.Reader));
+			}
+			else
+			{
+				sb.AppendLine($"{Cfg.Msg.MsgNotConnected}");
+			}
+			return sb.ToString();
+		}
+
+		/// <summary>
+		/// Vedi codici (in una tabella di dati)
+		/// </summary>
+		/// <param name="cod">Codice (con wildcard %)</param>
+		/// <param name="mod">Modifica (con wildcard %)</param>
+		/// <param name="limit">Numero massimo di righe</param>
+		/// <returns></returns>
+		public DataTable VediCodiciDT(string cod, string mod, int limit)
+		{
+			DataTable dt = new DataTable();
+			if(conn != null)
+			{
+				string sql = $"CALL VediCodici({limit},\"{cod}\",\"{mod}\");";
+				MsgBox.Show(sql);
+				ExecuteSQLReadDataTable(sql, ref dt);
+			}
+			else
+			{
+				dt = EmptyDataTable("RESULT",Cfg.Msg.MsgNotConnected);
+			}
+			return dt;
+		}
+
 
 	}
 }

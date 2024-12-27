@@ -40,6 +40,7 @@ namespace DbWin
 		private void ReplaceGUIText()
 		{
 			SuspendLayout();
+			Text = "DesignToolsServer";
 			fileToolStripMenuItem.Text = Cfg.Msg.MnuConnecting;
 			parametriDiConnessioneToolStripMenuItem.Text = Cfg.Msg.MnuParameters;
 			connettiToolStripMenuItem.Text = Cfg.Msg.MnuConnect;
@@ -50,13 +51,16 @@ namespace DbWin
 			schemaToolStripMenuItem.Text = Cfg.Msg.MnuSchema;
 			proceduresToolStripMenuItem.Text = Cfg.Msg.MnuProcedures;
 			functionsToolStripMenuItem.Text = Cfg.Msg.MnuFunctions;
-			utenteToolStripMenuItem.Text = "Utente";
+			utenteToolStripMenuItem.Text = Cfg.Msg.MnuUser;
 			esciToolStripMenuItem.Text = Cfg.Msg.MnuExit;
 			helpToolStripMenuItem.Text = "?";
 			informazioniToolStripMenuItem.Text = Cfg.Msg.MnuNfo;
 			dettagliToolStripMenuItem.Text = Cfg.Msg.MnuDetails;
 			utenteToolStripMenuItem.Text = Cfg.Msg.MnuUser;
-			Text = "DesignToolsServer";
+			interrogaToolStripMenuItem.Text = Cfg.Msg.MnuQuery;
+			vediCodiciToolStripMenuItem1.Text = Cfg.Msg.MnuViewCodes;
+			vediCodiciToolStripMenuItem2.Text = Cfg.Msg.MnuViewCodes;
+
 			ResumeLayout(true);
 		}
 
@@ -210,9 +214,9 @@ namespace DbWin
 			string msg = t.Result;
 			busy.busy = false;
 			UpdateForm();
-			#if DEBUG
+#if DEBUG
 			MsgBox.Show(msg);
-			#endif
+#endif
 		}
 
 		public void Disconnetti()
@@ -254,7 +258,7 @@ namespace DbWin
 			BeginInvoke(new Action(() => MsgBox.Show(st)));
 		}
 
-		void VediCodici()
+		void VediCodiciString()
 		{
 			if(!busy.busy)
 			{
@@ -265,6 +269,33 @@ namespace DbWin
 				task.ContinueWith(ShowTaskMsg);
 			}
 		}
+
+		void VediCodiciDataTable()
+		{
+			if(!busy.busy)
+			{
+				cts = new CancellationTokenSource();
+				token = cts.Token;
+				busy.busy = true;
+				Task<DataTable> task = Task<DataTable>.Factory.StartNew(() => conn.VediCodiciDT("%","%",100),token);
+				task.ContinueWith(ShowDT);
+			}
+		}
+		void ShowDT(Task<DataTable> t)
+		{
+			DataTable dt = t.Result;
+			busy.busy = false;
+			UpdateForm();
+			BeginInvoke(new Action(() => ShowDataTable(dt)));
+		}
+
+		void ShowDataTable(DataTable dt)
+		{
+			GridBox gb = new GridBox(dt);
+			gb.Show();
+
+		}
+
 
 
 		/*******************************************/
@@ -349,7 +380,25 @@ namespace DbWin
 
 		private void vediCodiciToolStripMenuItem_Click(object sender,EventArgs e)
 		{
-			VediCodici();	
+			VediCodiciString();
+		}
+
+		private void dataTableToolStripMenuItem_Click(object sender,EventArgs e)
+		{
+			VediCodiciDataTable();
+		}
+
+		private void vediCodiciToolStripMenuItem1_Click(object sender,EventArgs e)
+		{
+			VediCodiciString();
+		}
+
+		private void vediCodiciToolStripMenuItem2_Click(object sender,EventArgs e)
+		{
+			#warning Nuovo Form interroga codici
+			VediCodiciDataTable();
+			#warning Nuovo Form vedi data table
+
 		}
 	}
 }

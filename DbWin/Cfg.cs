@@ -52,6 +52,9 @@ namespace DbWin
 		public string MnuDatabase;
 		public string MnuCancel;
 		public string MnuOK;
+		public string MnuViewCodes;
+		public string MnuQuery;
+
 	}
 
 	public static class Cfg
