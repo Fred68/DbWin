@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 using MySql.Data.MySqlClient;
 using Org.BouncyCastle.Tls.Crypto;      // Per MySqlConnection
-using System.Data.Common;				// Per DbDataReader
+using System.Data.Common;
 
 namespace DbWin
 {
@@ -109,8 +109,9 @@ namespace DbWin
 					conn.Open();
 					dtConn = conn.GetSchema();
 					sb.AppendLine(GetStatus(Info.Status | Info.ConnectionString));
-
-					Thread.Sleep(3000);
+					#if DEBUG
+					Thread.Sleep(1000);
+					#endif
 				}
 				else
 				{
@@ -173,7 +174,9 @@ namespace DbWin
 					{
 						sb.AppendLine($"--- {Cfg.Msg.MnuSchema} ---");
 						sb.AppendLine($"{Environment.NewLine}{DisplayDataTable(dtConn)}");
-						Thread.Sleep(3000);
+						#if DEBUG
+						Thread.Sleep(1000);
+						#endif
 					}
 				}
 
@@ -181,19 +184,25 @@ namespace DbWin
 				{
 					sb.AppendLine($"--- {Cfg.Msg.MnuFunctions} ---");
 					sb.AppendLine(ExecuteSQLCommand("CALL ListaFunzioni();",SQLqueryType.Reader));
-					Thread.Sleep(3000);
+					#if DEBUG
+					Thread.Sleep(1000);
+					#endif
 				}
 				if ( (nfo & Info.Procedures) != 0  )
 				{
 					sb.AppendLine($"--- {Cfg.Msg.MnuProcedures} ---");
 					sb.AppendLine(ExecuteSQLCommand("CALL ListaProcedure();",SQLqueryType.Reader));
-					Thread.Sleep(3000);
+					#if DEBUG
+					Thread.Sleep(1000);
+					#endif
 				}
 				if ( (nfo & Info.User) != 0  )
 				{
 					sb.AppendLine($"--- {Cfg.Msg.MnuUser} ---");
 					sb.AppendLine(ExecuteSQLCommand("CALL NomeUtente();",SQLqueryType.Reader));
-					Thread.Sleep(3000);
+					#if DEBUG
+					Thread.Sleep(1000);
+					#endif
 				}
 			}
 			else
@@ -223,6 +232,18 @@ namespace DbWin
 			return sb.ToString();
 		}
 
+		public string VediCodici(string cod, string mod, int limit)
+		{
+			StringBuilder sb = new StringBuilder();
+			if( conn != null )
+			{
+				string sql = $"CALL VediCodici({limit},\"{cod}\",\"{mod}\");";
+				MsgBox.Show(sql);
+				sb.AppendLine($"--- {"Vedi codici"} ---");
+				sb.AppendLine(ExecuteSQLCommand(sql,SQLqueryType.Reader));
+			}
+			return sb.ToString();
+		}
 		/*******************************************/
 		// MySQL async functions (non usate)
 		/*******************************************/
@@ -380,6 +401,13 @@ namespace DbWin
 						{
 							sb.AppendLine($"Reader():");
 							rdr = cmd.ExecuteReader();
+							
+							for(int i=0; i<rdr.FieldCount; i++)
+							{
+								sb.Append(rdr.GetName(i).ToString());
+								if(i != rdr.FieldCount-1)	sb.Append(", ");
+							}
+							sb.Append(System.Environment.NewLine);
 							while(rdr.Read())
 							{
 								for(int i=0; i<rdr.FieldCount; i++)

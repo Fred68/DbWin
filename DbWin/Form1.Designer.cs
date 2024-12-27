@@ -55,6 +55,7 @@
 			toolStripStatusLabel2 = new ToolStripStatusLabel();
 			toolStripStatusLabel3 = new ToolStripStatusLabel();
 			refreshTimer = new System.Windows.Forms.Timer(components);
+			vediCodiciToolStripMenuItem = new ToolStripMenuItem();
 			menuStrip1.SuspendLayout();
 			statusStrip1.SuspendLayout();
 			SuspendLayout();
@@ -175,7 +176,7 @@
 			// 
 			// TESTtsmi
 			// 
-			TESTtsmi.DropDownItems.AddRange(new ToolStripItem[] { mSGBOXToolStripMenuItem,asyncTestToolStripMenuItem });
+			TESTtsmi.DropDownItems.AddRange(new ToolStripItem[] { mSGBOXToolStripMenuItem,asyncTestToolStripMenuItem,vediCodiciToolStripMenuItem });
 			TESTtsmi.Name = "TESTtsmi";
 			TESTtsmi.Size = new Size(45,20);
 			TESTtsmi.Text = "TEST";
@@ -247,6 +248,13 @@
 			// 
 			refreshTimer.Tick += refreshTimer_Tick;
 			// 
+			// vediCodiciToolStripMenuItem
+			// 
+			vediCodiciToolStripMenuItem.Name = "vediCodiciToolStripMenuItem";
+			vediCodiciToolStripMenuItem.Size = new Size(180,22);
+			vediCodiciToolStripMenuItem.Text = "Vedi codici";
+			vediCodiciToolStripMenuItem.Click += vediCodiciToolStripMenuItem_Click;
+			// 
 			// Form1
 			// 
 			AutoScaleDimensions = new SizeF(7F,15F);
@@ -295,5 +303,6 @@
 		private ToolStripMenuItem activeTsMenuItem;
 		private System.Windows.Forms.Timer refreshTimer;
 		private ToolStripMenuItem busyTsMenuItem;
+		private ToolStripMenuItem vediCodiciToolStripMenuItem;
 	}
 }

@@ -15,7 +15,7 @@ namespace DbWin
 		public string pwd;
 		public string db;
 
-		public ConnectionString(string server, string port, string user, string password, string database)
+		public ConnectionString(string server,string port,string user,string password,string database)
 		{
 			srv = server;
 			prt = port;
@@ -28,9 +28,9 @@ namespace DbWin
 		{
 			srv = ocs.srv;
 			prt = ocs.prt;
-			usr	= ocs.usr;
-			pwd	= ocs.pwd;
-			db	= ocs.db;
+			usr = ocs.usr;
+			pwd = ocs.pwd;
+			db = ocs.db;
 		}
 
 		public ConnectionString()

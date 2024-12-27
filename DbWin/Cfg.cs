@@ -3,11 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
 using Fred68.CfgReader;
 
-#pragma warning disable CS8602	// Dereferenziamento di un riferimento eventualmente Null.
-#pragma warning disable CS8618	// La variabile che non ammette i valori Null deve contenere un valore non Null quando si esce dal costruttore.
+#pragma warning disable CS8602   // Dereferenziamento di un riferimento eventualmente Null.                                                            
+#pragma warning disable CS8618   // La variabile che non ammette i valori Null deve contenere un valore non Null quando si esce dal costruttore.                                                                                                                 
 
 namespace DbWin
 {
@@ -15,26 +14,26 @@ namespace DbWin
 	/// <summary>
 	/// DICHIARARE QUI LE VARIABILI DEL FILE DI CONFIGURAZIONE
 	/// </summary>
-	public class Cfg2 : CfgReader
+	public class Cfg2:CfgReader
 	{
-		public string CONN_server;	
+		public string CONN_server;
 		public string CONN_port;
 		public string CONN_user;
 		public string CONN_password;
 		public string CONN_database;
 	}
 
-	public class Msg2 : CfgReader
+	public class Msg2:CfgReader
 	{
 		public string MsgClosing;
 		public string MsgDisconnecting;
 		public string MsgDisconnected;
 		public string MsgConnected;
 		public string MsgNotConnected;
-		
+
 		public string MnuClosing;
 		public string MnuDisconnecting;
-		public string MnuStatus;	
+		public string MnuStatus;
 		public string MnuConnecting;
 		public string MnuConnect;
 		public string MnuDisconnect;
@@ -55,7 +54,7 @@ namespace DbWin
 		public string MnuOK;
 	}
 
-	public static class Cfg 
+	public static class Cfg
 	{
 		public static Cfg2 Config;
 		public static Msg2 Msg;
@@ -65,19 +64,19 @@ namespace DbWin
 			Config = new Cfg2();
 			Config.CHR_ListSeparator = @";";
 			Config.ReadConfiguration("DbWin.cfg");
-			#if DEBUG
+#if DEBUG
 			MsgBox.Show(Config.DumpEntries());
-			#endif
+#endif
 			Config.GetNames(true);
 
 			Msg = new Msg2();
 			Msg.CHR_ListSeparator = @";";
 			Msg.ReadConfiguration("DbWin.msg");
-			#if DEBUG
+#if DEBUG
 			MsgBox.Show(Msg.DumpEntries());
-			#endif
+#endif
 			Msg.GetNames(true);
-			
+
 		}
 	}
 }

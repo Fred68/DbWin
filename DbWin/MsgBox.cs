@@ -9,11 +9,11 @@
 //using System.Windows.Forms;
 //using System.Windows.Forms.VisualStyles;
 
-#pragma warning disable CS8602	// Dereferenziamento di un riferimento eventualmente Null.
+#pragma warning disable CS8602  // Dereferenziamento di un riferimento eventualmente Null.                                                            
 
 namespace DbWin
 {
-	public sealed class MsgBox : Form
+	public sealed class MsgBox:Form
 	{
 
 		public static readonly float maxScreenSizeRatio = 0.8f;
@@ -34,7 +34,7 @@ namespace DbWin
 		/// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
 		protected override void Dispose(bool disposing)
 		{
-			if(disposing && (components != null))
+			if(disposing && components != null)
 			{
 				components.Dispose();
 			}
@@ -131,10 +131,10 @@ namespace DbWin
 
 		private void AdjustSize()
 		{
-			textBox1.Height = this.ClientSize.Height - flowLayoutPanel1.Height;
+			textBox1.Height = ClientSize.Height - flowLayoutPanel1.Height;
 		}
 
-		private MsgBox(string message, string caption, MessageBoxButtons buttons, ScrollBars scrollbars)
+		private MsgBox(string message,string caption,MessageBoxButtons buttons,ScrollBars scrollbars)
 		{
 			InitializeComponent();
 
@@ -194,12 +194,12 @@ namespace DbWin
 					button3.DialogResult = DialogResult.Continue;
 					break;
 			}
-			#warning Usare lingua IT, EN o altra.
+#warning Usare lingua IT, EN o altra.
 			button1.Text = button1.DialogResult.ToString();
 			button2.Text = button2.DialogResult.ToString();
 			button3.Text = button3.DialogResult.ToString();
-			
-			
+
+
 			textBox1.Text = message;
 			Text = caption;
 
@@ -208,13 +208,13 @@ namespace DbWin
 			Screen scr = Screen.FromControl(this);
 			int xMax = (int)(scr.Bounds.Width * maxScreenSizeRatio);
 			int yMax = (int)(scr.Bounds.Height * maxScreenSizeRatio);
-			
-			bool scrBx,scrBy;
-			scrBx = (scrollbars == ScrollBars.Horizontal) || (scrollbars == ScrollBars.Both);
-			scrBy = (scrollbars == ScrollBars.Vertical) || (scrollbars == ScrollBars.Both);
 
-			Size increase = TextRenderer.MeasureText(message, textBox1.Font) - textBox1.Size;
-			if(this.Width + increase.Width > xMax) 
+			bool scrBx, scrBy;
+			scrBx = scrollbars == ScrollBars.Horizontal || scrollbars == ScrollBars.Both;
+			scrBy = scrollbars == ScrollBars.Vertical || scrollbars == ScrollBars.Both;
+
+			Size increase = TextRenderer.MeasureText(message,textBox1.Font) - textBox1.Size;
+			if(Width + increase.Width > xMax)
 			{
 				Width = xMax;
 				scrBx = true;
@@ -223,7 +223,7 @@ namespace DbWin
 			{
 				Width += increase.Width;
 			}
-			if(this.Height + increase.Height > yMax) 
+			if(Height + increase.Height > yMax)
 			{
 				Height = yMax;
 				scrBy = true;
@@ -254,9 +254,9 @@ namespace DbWin
 			ResumeLayout(true);
 		}
 
-		public static DialogResult Show(string message, string caption = "", MessageBoxButtons buttons = MessageBoxButtons.OK, ScrollBars scrollbars = ScrollBars.None)
+		public static DialogResult Show(string message,string caption = "",MessageBoxButtons buttons = MessageBoxButtons.OK,ScrollBars scrollbars = ScrollBars.None)
 		{
-			return (new MsgBox( message, caption, buttons, scrollbars)).ShowDialog();
+			return new MsgBox(message,caption,buttons,scrollbars).ShowDialog();
 		}
 	}
 }

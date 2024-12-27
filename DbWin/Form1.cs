@@ -205,6 +205,16 @@ namespace DbWin
 			}
 		}
 
+		void ShowMsgConnection(Task<string> t)
+		{
+			string msg = t.Result;
+			busy.busy = false;
+			UpdateForm();
+			#if DEBUG
+			MsgBox.Show(msg);
+			#endif
+		}
+
 		public void Disconnetti()
 		{
 			if(conn != null)
@@ -232,26 +242,31 @@ namespace DbWin
 				token = cts.Token;
 				busy.busy = true;
 				Task<string> task = Task<string>.Factory.StartNew(() => conn.GetStatus(info),token);
-				task.ContinueWith(ShowMsgStatus);
+				task.ContinueWith(ShowTaskMsg);
 			}
 		}
 
-		void ShowMsgStatus(Task<string> t)
+		void ShowTaskMsg(Task<string> t)
 		{
 			string st = t.Result;
 			busy.busy = false;
 			UpdateForm();
-			BeginInvoke(new Action(() => MsgBox.Show(st,Cfg.Msg.MnuStatus)));
+			BeginInvoke(new Action(() => MsgBox.Show(st)));
 		}
-		void ShowMsgConnection(Task<string> t)
+
+		void VediCodici()
 		{
-			string msg = t.Result;
-			busy.busy = false;
-			UpdateForm();
-#if DEBUG
-			MsgBox.Show(msg);
-#endif
+			if(!busy.busy)
+			{
+				cts = new CancellationTokenSource();
+				token = cts.Token;
+				busy.busy = true;
+				Task<string> task = Task<string>.Factory.StartNew(() => conn.VediCodici("100%","%",100),token);
+				task.ContinueWith(ShowTaskMsg);
+			}
 		}
+
+
 		/*******************************************/
 		// Handlers
 		/*******************************************/
@@ -332,5 +347,9 @@ namespace DbWin
 			busy.Invalidate();
 		}
 
+		private void vediCodiciToolStripMenuItem_Click(object sender,EventArgs e)
+		{
+			VediCodici();	
+		}
 	}
 }

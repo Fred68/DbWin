@@ -14,11 +14,14 @@ namespace DbWin
 
 		public bool busy
 		{
-			get { return _busy; }
+			get
+			{
+				return _busy;
+			}
 			set
 			{
 				_busy = value;
-				_itm.Text = txt [ busy ? 0 : 1]; 
+				_itm.Text = txt[busy ? 0 : 1];
 				_itm.Invalidate();
 			}
 
@@ -29,7 +32,7 @@ namespace DbWin
 			_itm.Invalidate();
 		}
 
-		public Busy(ToolStripItem item, string busy, string not_busy)
+		public Busy(ToolStripItem item,string busy,string not_busy)
 		{
 			txt = new string[2];
 			txt[0] = busy;
@@ -37,6 +40,6 @@ namespace DbWin
 			_busy = false;
 			_itm = item;
 		}
-		
+
 	}
 }

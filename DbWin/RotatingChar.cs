@@ -8,7 +8,7 @@ namespace DbWin
 {
 	internal class RotatingChar
 	{
-		private char[] _ch = {'|', '/', '-', '\\'};
+		private char[] _ch = { '|','/','-','\\' };
 		int _ich;
 		ToolStripItem _itm;
 
@@ -29,7 +29,7 @@ namespace DbWin
 			{
 				_ich++;
 				if(_ich >= _ch.Length)
-					_ich=0;
+					_ich = 0;
 			}
 			_itm.Text = _ch[_ich].ToString();
 			_itm.Invalidate();
