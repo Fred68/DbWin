@@ -413,6 +413,16 @@ SELECT COUNT(*) AS `COUNT` FROM dbc00.codici WHERE dbc00.codici.cod LIKE _cod;
 END//
 DELIMITER ;
 
+-- Dump della struttura di procedura dbc01.DatiUtente
+DELIMITER //
+CREATE PROCEDURE `DatiUtente`(
+	IN `_id` INT
+)
+BEGIN
+	SELECT ut.utente, ut.utenteSQL, ut.sigla, ut.can_write FROM dbc02.utenti AS ut WHERE ut.id = _id;
+END//
+DELIMITER ;
+
 -- Dump della struttura di procedura dbc01.Esplodi
 DELIMITER //
 CREATE PROCEDURE `Esplodi`(
@@ -764,11 +774,13 @@ DELIMITER ;
 -- Dump della struttura di procedura dbc01.NomeUtente
 DELIMITER //
 CREATE PROCEDURE `NomeUtente`()
+    SQL SECURITY INVOKER
     COMMENT 'Estrae i dati dell''utente connesso'
 BEGIN
 	DECLARE idu, stu INT DEFAULT(-1);
 	CALL StatoUtente(idu,stu);
-	SELECT ut.utente, ut.utenteSQL, ut.sigla, ut.can_write FROM dbc02.utenti AS ut WHERE ut.id = idu;
+	CALL DatiUtente(idu);
+	-- SELECT ut.utente, ut.utenteSQL, ut.sigla, ut.can_write FROM dbc02.utenti AS ut WHERE ut.id = idu;
 END//
 DELIMITER ;
 
@@ -825,20 +837,22 @@ CREATE PROCEDURE `StatoUtente`(
 	INOUT `_uid` INT,
 	INOUT `_st` TINYINT
 )
+    SQL SECURITY INVOKER
     COMMENT 'Legge lo StatoUtente(INOUT _uid INT, INOUT _st TINYINT), soltanto se  _uid = -1. Altrimenti non fa né modifica nulla.'
 BEGIN
-DECLARE x INT;
+-- DECLARE x INT;
 DECLARE cusr, cusrName VARCHAR(50);
 IF _uid = -1 THEN
 	SET _st = 0;
 	SELECT CURRENT_USER() INTO cusr;
 	SELECT SUBSTRING_INDEX(cusr, "@", 1) INTO cusrName;
-	SELECT count(*) FROM dbc02.utenti uc WHERE uc.utenteSQL = cusr AND uc.utente = cusrName INTO X;
-	IF	x=1 THEN	
-		SELECT uc.can_write FROM dbc02.utenti uc WHERE uc.utenteSQL = cusr INTO _st;
-		SELECT uc.id FROM dbc02.utenti uc WHERE uc.utenteSQL = cusr INTO _uid;
-		-- UPDATE u_connessi SET lasttime = NOW() WHERE idc = _uid;
-	END IF;
+	CALL _StatoUtente(cusr, cusrName, _uid, _st);
+	-- SELECT count(*) FROM dbc02.utenti uc WHERE uc.utenteSQL = cusr AND uc.utente = cusrName INTO X;
+	-- IF	x=1 THEN	
+	--	SELECT uc.can_write FROM dbc02.utenti uc WHERE uc.utenteSQL = cusr INTO _st;
+	--	SELECT uc.id FROM dbc02.utenti uc WHERE uc.utenteSQL = cusr INTO _uid;
+	--	-- UPDATE u_connessi SET lasttime = NOW() WHERE idc = _uid;
+	-- END IF;
 END IF;
 END//
 DELIMITER ;
@@ -850,7 +864,6 @@ CREATE PROCEDURE `VediCodici`(
 	IN `_cod` VARCHAR(255),
 	IN `_mod` CHAR(1)
 )
-    SQL SECURITY INVOKER
     COMMENT 'Elenca tutti i codici (senza filtri)'
 BEGIN
 SELECT c.cod AS `CODICE`, c.mod AS `MODIFICA`, c.descrizione AS `DESCRIZIONE`,
@@ -1262,6 +1275,26 @@ RETURN n;
 END//
 DELIMITER ;
 
+-- Dump della struttura di procedura dbc01._StatoUtente
+DELIMITER //
+CREATE PROCEDURE `_StatoUtente`(
+	IN `_usr` VARCHAR(50),
+	IN `_usrname` VARCHAR(50),
+	OUT `_uid` INT,
+	OUT `_st` TINYINT
+)
+    DETERMINISTIC
+BEGIN
+	DECLARE x INT;
+	SELECT count(*) FROM dbc02.utenti uc WHERE uc.utenteSQL = _usr AND uc.utente = _usrName INTO X;
+	IF	x=1 THEN	
+		SELECT uc.can_write FROM dbc02.utenti uc WHERE uc.utenteSQL = _usr INTO _st;
+		SELECT uc.id FROM dbc02.utenti uc WHERE uc.utenteSQL = _usr INTO _uid;
+		-- UPDATE u_connessi SET lasttime = NOW() WHERE idc = _uid;
+	END IF;
+END//
+DELIMITER ;
+
 -- Dump della struttura di funzione dbc01._Tipo
 DELIMITER //
 CREATE FUNCTION `_Tipo`(
@@ -1313,7 +1346,7 @@ CREATE TABLE IF NOT EXISTS `aggiornato` (
   CONSTRAINT `FK_aggiornato_utenti` FOREIGN KEY (`id`) REFERENCES `utenti` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
--- Dump dei dati della tabella dbc02.aggiornato: ~0 rows (circa)
+-- Dump dei dati della tabella dbc02.aggiornato: ~6 rows (circa)
 REPLACE INTO `aggiornato` (`id`, `commerciali`, `costruttori`, `materiali`, `prodotti`) VALUES
 	(1, 1, 1, 0, 1),
 	(2, 0, 1, 2, 1),

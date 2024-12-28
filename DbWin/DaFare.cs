@@ -16,11 +16,14 @@ using System.Threading.Tasks;
 #warning	Lettura e scrittura dei contenuti delle tabelle: commerciali, costruttori, materiali, prodotti.
 
 #warning	*** CODICI ***
-#warning	Lettura di tutti i dati di un codice. Capire come leggere i nomi dei campi.
 
 #warning	*** FORM DI INPUT ***
+#warning	Form dinamico, con:
+#warning	- tipo di dato o lista valori, label, readonly, allinea sotto o a lato...
 
-#warning	*** PROVILEGI SQL ***
-#warning	Verifica privilegi invoker e definer.
+
+#warning	*** GUI ***
+
+#warning	*** RICERCA ***
 
 namespace DbWin	{}

@@ -66,6 +66,7 @@
 			btClose.TabIndex = 0;
 			btClose.Text = "Close";
 			btClose.UseVisualStyleBackColor = true;
+			btClose.Click += btClose_Click;
 			// 
 			// GridBox
 			// 

@@ -60,12 +60,14 @@ namespace DbWin
 		public string	MnuViewCodes;
 		public string	MnuQuery;
 		public string	MnuConfig;
+		public string	MnuViewCode;
+		public string	MnuViewDescr;
 	}
 
 	public static class CFG
 	{
-		static string _cfgFile = "DbWin.cfg";
-		static string _msgFile = "DbWin.msg";
+		public readonly static string _cfgFile = "DbWin.cfg";
+		public readonly static string _msgFile = "DbWin.msg";
 		
 		public static Cfg Config;
 		public static Msg Msg;
@@ -93,7 +95,7 @@ namespace DbWin
 		public static string DumpEntries()
 		{
 			StringBuilder sb = new StringBuilder();
-			sb.AppendLine($"Configuration files:{Environment.NewLine}{_cfgFile}{Environment.NewLine}{_msgFile}");
+			//sb.AppendLine($"Configuration files:{Environment.NewLine}{_cfgFile}{Environment.NewLine}{_msgFile}");
 			FieldInfo[] finfos;
 			foreach(object obj in new object[] {Config, Msg })
 				{

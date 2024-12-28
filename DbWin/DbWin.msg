@@ -42,8 +42,12 @@ STR MnuPort			=		"Porta"
 STR MnuUser			=		"Utente"
 STR MnuCancel		=		"Annulla"
 
-STR MnuViewCodes	=		"Vedi codici"
+
 STR MnuQuery		=		"Interroga"
+STR MnuViewCodes	=		"Codici"
+STR MnuViewCode		=		"Codice singolo"
+STR MnuViewDescr	=		"Descrizioni"
+
 
 [.]
 
@@ -52,8 +56,8 @@ STR MnuQuery		=		"Interroga"
 # Messages
 STR MsgClosing =			"Exit program ?"
 STR MsgDisconnecting =		"Disconnect ?"
-STR MsgDisconnected =		"Disconnected"
-STR MsgConnected =			"Connected"
+STR MsgDisconnected	=		"Disconnected"
+STR MsgConnected	=		"Connected"
 STR MsgNotConnected =		"Not connected"
 
 # Menus and titles
@@ -79,8 +83,11 @@ STR MnuPort			=		"Port"
 STR MnuUser			=		"User"
 STR MnuCancel		=		"Cancel"
 
-STR MnuViewCodes	=		"View Codes"
+
 STR MnuQuery		=		"Query"
+STR MnuViewCodes	=		"Codes"
+STR MnuViewCode		=		"Single code"
+STR MnuViewDescr	=		"Descriptions"
 
 [.]
 

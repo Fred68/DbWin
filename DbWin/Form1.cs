@@ -59,9 +59,14 @@ namespace DbWin
 			dettagliToolStripMenuItem.Text = CFG.Msg.MnuDetails;
 			utenteToolStripMenuItem.Text = CFG.Msg.MnuUser;
 			interrogaToolStripMenuItem.Text = CFG.Msg.MnuQuery;
-			vediCodiciToolStripMenuItem1.Text = CFG.Msg.MnuViewCodes;
 			vediCodiciToolStripMenuItem2.Text = CFG.Msg.MnuViewCodes;
 			configurazioneToolStripMenuItem.Text = CFG.Msg.MnuConfig;
+
+			toolStripMenuItem1.Text = CFG.Msg.MnuViewCodes;
+			vediCodiceToolStripMenuItem.Text = CFG.Msg.MnuViewCode;
+			descrizioniToolStripMenuItem.Text = CFG.Msg.MnuViewDescr;
+
+
 			ResumeLayout(true);
 		}
 
@@ -84,6 +89,11 @@ namespace DbWin
 			refreshTimer.Start();
 			busy.busy = false;
 			UpdateForm();
+
+			if(CFG.Config.INI_quick)
+			{
+				Connetti();
+			}
 		}
 
 		/// <summary>
@@ -97,10 +107,13 @@ namespace DbWin
 			ConnectionState st = conn.Status;           // Se non è connesso, chiede conferma di chiusura
 			if((st == ConnectionState.Closed) || (st == ConnectionState.Broken))
 			{
-				if(MessageBox.Show(CFG.Msg.MsgClosing,CFG.Msg.MnuClosing,MessageBoxButtons.OKCancel,MessageBoxIcon.Warning) != DialogResult.OK)
+				if(!CFG.Config.INI_quick)
 				{
-					e.Cancel = true;                    // Se la chiusura non è confermata, annulla il comando
-					UpdateForm();
+					if(MessageBox.Show(CFG.Msg.MsgClosing,CFG.Msg.MnuClosing,MessageBoxButtons.OKCancel,MessageBoxIcon.Warning) != DialogResult.OK)
+					{
+						e.Cancel = true;                    // Se la chiusura non è confermata, annulla il comando
+						UpdateForm();
+					}
 				}
 			}
 			else
@@ -125,6 +138,7 @@ namespace DbWin
 			try
 			{
 				strb.AppendLine(Application.ProductName);
+				strb.AppendLine("Copyright: " + Application.CompanyName);
 				if(asm != null)
 				{
 					System.Version? v = asm.GetName().Version;
@@ -137,10 +151,14 @@ namespace DbWin
 							strb.AppendLine("Assembly name: " + n);
 						strb.AppendLine("BuildTime time: " + File.GetCreationTime(asm.Location).ToString());
 						strb.AppendLine("BuildTime number: " + BuildTime(asm,true));
-						strb.AppendLine("Executable path: " + Application.ExecutablePath);
+						string fn = Path.GetFullPath(Application.ExecutablePath);
+						string pth = fn.Substring(0,fn.LastIndexOf(Path.GetFileName(fn)));
+						strb.AppendLine("Path: " + pth);
+						strb.AppendLine("Executable: " + Path.GetFileName(fn));
+						strb.AppendLine($"Config file: {CFG._cfgFile}");
+						strb.AppendLine($"Text msg file: {CFG._msgFile}");
 					}
 				}
-				strb.AppendLine("Copyright: " + Application.CompanyName);
 			}
 			catch { }
 			return strb.ToString();
@@ -168,11 +186,6 @@ namespace DbWin
 		/*******************************************/
 		// Functions
 		/*******************************************/
-
-		public void UpdateRotchar()
-		{
-			rotchar.Update();
-		}
 
 		public void UpdateForm()
 		{
@@ -216,7 +229,17 @@ namespace DbWin
 			{
 				if(conn.Status == System.Data.ConnectionState.Open)
 				{
-					if(MessageBox.Show(CFG.Msg.MsgDisconnecting,CFG.Msg.MnuDisconnecting,MessageBoxButtons.OKCancel,MessageBoxIcon.Warning) == DialogResult.OK)
+					bool dsc = false;
+					if(CFG.Config.INI_quick)
+					{
+						dsc = true;
+					}
+					else
+					{
+						dsc = (MessageBox.Show(CFG.Msg.MsgDisconnecting,CFG.Msg.MnuDisconnecting,MessageBoxButtons.OKCancel,MessageBoxIcon.Warning) == DialogResult.OK);
+					}
+
+					if(dsc)
 					{
 						string msg = conn.Disconnect();
 #if DEBUG
@@ -274,19 +297,43 @@ namespace DbWin
 				cts = new CancellationTokenSource();
 				token = cts.Token;
 				busy.busy = true;
-				Task<string> task = Task<string>.Factory.StartNew(() => conn.VediCodici("100%","%",100),token);
+				Task<string> task = Task<string>.Factory.StartNew(() => conn.VediCodiciString("100*","*",100),token);
 				task.ContinueWith(ShowTaskMsg);
 			}
 		}
 
-		void VediCodiciDataTable()
+		void VediCodici()
 		{
 			if(!busy.busy)
 			{
 				cts = new CancellationTokenSource();
 				token = cts.Token;
 				busy.busy = true;
-				Task<DataTable> task = Task<DataTable>.Factory.StartNew(() => conn.VediCodiciDT("%","%",100),token);
+				Task<DataTable> task = Task<DataTable>.Factory.StartNew(() => conn.VediCodici("100*","?",100),token);
+				task.ContinueWith(ShowTaskDataTable);
+			}
+		}
+
+		void VediDescrizioni()
+		{
+			if(!busy.busy)
+			{
+				cts = new CancellationTokenSource();
+				token = cts.Token;
+				busy.busy = true;
+				Task<DataTable> task = Task<DataTable>.Factory.StartNew(() => conn.VediDescrizioni("*","*",100),token);
+				task.ContinueWith(ShowTaskDataTable);
+			}
+		}
+
+		void VediCodiceSingolo()
+		{
+			if(!busy.busy)
+			{
+				cts = new CancellationTokenSource();
+				token = cts.Token;
+				busy.busy = true;
+				Task<DataTable> task = Task<DataTable>.Factory.StartNew(() => conn.VediCodiceSingolo("102.11.100?","a"),token);
 				task.ContinueWith(ShowTaskDataTable);
 			}
 		}
@@ -378,30 +425,34 @@ namespace DbWin
 			busy.Invalidate();
 		}
 
-		private void vediCodiciToolStripMenuItem_Click(object sender,EventArgs e)
-		{
-			VediCodiciString();
-		}
-
 		private void dataTableToolStripMenuItem_Click(object sender,EventArgs e)
 		{
-			VediCodiciDataTable();
-		}
-
-		private void vediCodiciToolStripMenuItem1_Click(object sender,EventArgs e)
-		{
-			VediCodiciString();
+			VediCodici();
 		}
 
 		private void vediCodiciToolStripMenuItem2_Click(object sender,EventArgs e)
 		{
-			VediCodiciDataTable();
+			VediCodici();
 		}
 
 		private void configurazioneToolStripMenuItem_Click(object sender,EventArgs e)
 		{
 			MsgBox.Show(CFG.DumpEntries());
+		}
 
+		private void vediCodiceToolStripMenuItem_Click(object sender,EventArgs e)
+		{
+			VediCodiceSingolo();
+		}
+
+		private void toolStripMenuItem1_Click(object sender,EventArgs e)
+		{
+			VediCodiciString();
+		}
+
+		private void descrizioniToolStripMenuItem_Click(object sender,EventArgs e)
+		{
+			VediDescrizioni();
 		}
 	}
 }

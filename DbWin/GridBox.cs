@@ -13,11 +13,17 @@ namespace DbWin
 {
 	public partial class GridBox:Form
 	{
+		DataTable dtbl;
 		public GridBox(DataTable dt)
 		{
 			InitializeComponent();
 			AdjustSize();
-			dataGridView1.DataSource = dt;
+			dtbl = dt;
+			dataGridView1.DataSource = dtbl;
+			this.Text = dtbl.TableName;
+			#if DEBUG
+			this.Text += $" {GetDataTypes()}";
+			#endif
 		}
 
 		void AdjustSize()
@@ -27,7 +33,25 @@ namespace DbWin
 
 		private void GridBox_ResizeEnd(object sender,EventArgs e)
 		{
-			AdjustSize();	
+			AdjustSize();
+		}
+
+		string GetDataTypes()
+		{
+			StringBuilder sb = new StringBuilder();
+			if(dataGridView1.DataSource != null)
+			{
+				foreach(DataColumn dc in dtbl.Columns)
+				{
+					sb.Append($"[{dc.DataType.Name}] ");
+				}
+			}
+			return sb.ToString();
+		}
+
+		private void btClose_Click(object sender,EventArgs e)
+		{
+			Close();
 		}
 	}
 }

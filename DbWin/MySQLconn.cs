@@ -22,6 +22,15 @@ namespace DbWin
 		DataTable? dtConn;
 
 		/*******************************************/
+		// Tools
+		/*******************************************/
+
+		public static string ReplaceWildcards(string s)
+		{
+			return s.Replace('*','%').Replace('?','_');
+		}
+
+		/*******************************************/
 		// Properties
 		/*******************************************/
 
@@ -469,12 +478,12 @@ namespace DbWin
 		/// <param name="mod">Modifica (con wildcard %)</param>
 		/// <param name="limit">Numero massimo di righe</param>
 		/// <returns></returns>
-		public string VediCodici(string cod, string mod, int limit)
+		public string VediCodiciString(string cod, string mod, int limit)
 		{
 			StringBuilder sb = new StringBuilder();
 			if( conn != null )
 			{
-				string sql = $"CALL VediCodici({limit},\"{cod}\",\"{mod}\");";
+				string sql = $"CALL VediCodici({limit},\"{ReplaceWildcards(cod)}\",\"{ReplaceWildcards(mod)}\");";
 				MsgBox.Show(sql);
 				sb.AppendLine($"--- {"Vedi codici"} ---");
 				sb.AppendLine(ExecuteSQLCommand(sql,SQLqueryType.Reader));
@@ -493,12 +502,12 @@ namespace DbWin
 		/// <param name="mod">Modifica (con wildcard %)</param>
 		/// <param name="limit">Numero massimo di righe</param>
 		/// <returns></returns>
-		public DataTable VediCodiciDT(string cod, string mod, int limit)
+		public DataTable VediCodici(string cod, string mod, int limit)
 		{
 			DataTable dt = new DataTable();
 			if(conn != null)
 			{
-				string sql = $"CALL VediCodici({limit},\"{cod}\",\"{mod}\");";
+				string sql = $"CALL VediCodici({limit},\"{ReplaceWildcards(cod)}\",\"{ReplaceWildcards(mod)}\");";
 				MsgBox.Show(sql);
 				ExecuteSQLReadDataTable(sql, ref dt);
 			}
@@ -506,6 +515,54 @@ namespace DbWin
 			{
 				dt = EmptyDataTable("RESULT",CFG.Msg.MsgNotConnected);
 			}
+			dt.TableName = CFG.Msg.MnuViewCodes;
+			return dt;
+		}
+
+		/// <summary>
+		/// Vedi descrizioni
+		/// </summary>
+		/// <param name="cod">Codice (con wildcard %)</param>
+		/// <param name="mod">Modifica (con wildcard %)</param>
+		/// <param name="limit">Numero massimo di righe</param>
+		/// <returns></returns>
+		public DataTable VediDescrizioni(string cod, string mod, int limit)
+		{
+			DataTable dt = new DataTable();
+			if(conn != null)
+			{
+				string sql = $"CALL VediDescrizioni({limit},\"{ReplaceWildcards(cod)}\",\"{ReplaceWildcards(mod)}\");";
+				MsgBox.Show(sql);
+				ExecuteSQLReadDataTable(sql, ref dt);
+			}
+			else
+			{
+				dt = EmptyDataTable("RESULT",CFG.Msg.MsgNotConnected);
+			}
+			dt.TableName = CFG.Msg.MnuViewDescr;
+			return dt;
+		}
+
+		/// <summary>
+		/// Tutti i dati di un codice singolo
+		/// </summary>
+		/// <param name="cod">Codice (con wildcard %)</param>
+		/// <param name="mod">Modifica (con wildcard %)</param>
+		/// <returns></returns>
+		public DataTable VediCodiceSingolo(string cod, string mod)
+		{
+			DataTable dt = new DataTable();
+			if(conn != null)
+			{
+				string sql = $"CALL GetCode(\"{ReplaceWildcards(cod)}\",\"{ReplaceWildcards(mod)}\");";
+				MsgBox.Show(sql);
+				ExecuteSQLReadDataTable(sql, ref dt);
+			}
+			else
+			{
+				dt = EmptyDataTable("RESULT",CFG.Msg.MsgNotConnected);
+			}
+			dt.TableName = CFG.Msg.MnuViewCode;
 			return dt;
 		}
 

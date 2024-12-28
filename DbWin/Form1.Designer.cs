@@ -43,16 +43,18 @@
 			utenteToolStripMenuItem = new ToolStripMenuItem();
 			esciToolStripMenuItem = new ToolStripMenuItem();
 			interrogaToolStripMenuItem = new ToolStripMenuItem();
-			vediCodiciToolStripMenuItem1 = new ToolStripMenuItem();
 			vediCodiciToolStripMenuItem2 = new ToolStripMenuItem();
+			vediCodiceToolStripMenuItem = new ToolStripMenuItem();
+			descrizioniToolStripMenuItem = new ToolStripMenuItem();
 			helpToolStripMenuItem = new ToolStripMenuItem();
 			informazioniToolStripMenuItem = new ToolStripMenuItem();
 			dettagliToolStripMenuItem = new ToolStripMenuItem();
+			configurazioneToolStripMenuItem = new ToolStripMenuItem();
 			TESTtsmi = new ToolStripMenuItem();
 			mSGBOXToolStripMenuItem = new ToolStripMenuItem();
 			asyncTestToolStripMenuItem = new ToolStripMenuItem();
-			vediCodiciToolStripMenuItem = new ToolStripMenuItem();
 			dataTableToolStripMenuItem = new ToolStripMenuItem();
+			toolStripMenuItem1 = new ToolStripMenuItem();
 			activeTsMenuItem = new ToolStripMenuItem();
 			busyTsMenuItem = new ToolStripMenuItem();
 			statusStrip1 = new StatusStrip();
@@ -60,7 +62,6 @@
 			toolStripStatusLabel2 = new ToolStripStatusLabel();
 			toolStripStatusLabel3 = new ToolStripStatusLabel();
 			refreshTimer = new System.Windows.Forms.Timer(components);
-			configurazioneToolStripMenuItem = new ToolStripMenuItem();
 			menuStrip1.SuspendLayout();
 			statusStrip1.SuspendLayout();
 			SuspendLayout();
@@ -160,24 +161,31 @@
 			// 
 			// interrogaToolStripMenuItem
 			// 
-			interrogaToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { vediCodiciToolStripMenuItem1,vediCodiciToolStripMenuItem2 });
+			interrogaToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { vediCodiciToolStripMenuItem2,vediCodiceToolStripMenuItem,descrizioniToolStripMenuItem });
 			interrogaToolStripMenuItem.Name = "interrogaToolStripMenuItem";
 			interrogaToolStripMenuItem.Size = new Size(67,20);
 			interrogaToolStripMenuItem.Text = "Interroga";
 			// 
-			// vediCodiciToolStripMenuItem1
-			// 
-			vediCodiciToolStripMenuItem1.Name = "vediCodiciToolStripMenuItem1";
-			vediCodiciToolStripMenuItem1.Size = new Size(131,22);
-			vediCodiciToolStripMenuItem1.Text = "Vedi codici";
-			vediCodiciToolStripMenuItem1.Click += vediCodiciToolStripMenuItem1_Click;
-			// 
 			// vediCodiciToolStripMenuItem2
 			// 
 			vediCodiciToolStripMenuItem2.Name = "vediCodiciToolStripMenuItem2";
-			vediCodiciToolStripMenuItem2.Size = new Size(131,22);
-			vediCodiciToolStripMenuItem2.Text = "Vedi codici";
+			vediCodiciToolStripMenuItem2.Size = new Size(180,22);
+			vediCodiciToolStripMenuItem2.Text = "Codici";
 			vediCodiciToolStripMenuItem2.Click += vediCodiciToolStripMenuItem2_Click;
+			// 
+			// vediCodiceToolStripMenuItem
+			// 
+			vediCodiceToolStripMenuItem.Name = "vediCodiceToolStripMenuItem";
+			vediCodiceToolStripMenuItem.Size = new Size(180,22);
+			vediCodiceToolStripMenuItem.Text = "Codice singolo";
+			vediCodiceToolStripMenuItem.Click += vediCodiceToolStripMenuItem_Click;
+			// 
+			// descrizioniToolStripMenuItem
+			// 
+			descrizioniToolStripMenuItem.Name = "descrizioniToolStripMenuItem";
+			descrizioniToolStripMenuItem.Size = new Size(180,22);
+			descrizioniToolStripMenuItem.Text = "Descrizioni";
+			descrizioniToolStripMenuItem.Click += descrizioniToolStripMenuItem_Click;
 			// 
 			// helpToolStripMenuItem
 			// 
@@ -189,20 +197,27 @@
 			// informazioniToolStripMenuItem
 			// 
 			informazioniToolStripMenuItem.Name = "informazioniToolStripMenuItem";
-			informazioniToolStripMenuItem.Size = new Size(180,22);
+			informazioniToolStripMenuItem.Size = new Size(155,22);
 			informazioniToolStripMenuItem.Text = "Info";
 			informazioniToolStripMenuItem.Click += informazioniToolStripMenuItem_Click;
 			// 
 			// dettagliToolStripMenuItem
 			// 
 			dettagliToolStripMenuItem.Name = "dettagliToolStripMenuItem";
-			dettagliToolStripMenuItem.Size = new Size(180,22);
+			dettagliToolStripMenuItem.Size = new Size(155,22);
 			dettagliToolStripMenuItem.Text = "Dettagli";
 			dettagliToolStripMenuItem.Click += dettagliToolStripMenuItem_Click;
 			// 
+			// configurazioneToolStripMenuItem
+			// 
+			configurazioneToolStripMenuItem.Name = "configurazioneToolStripMenuItem";
+			configurazioneToolStripMenuItem.Size = new Size(155,22);
+			configurazioneToolStripMenuItem.Text = "Configurazione";
+			configurazioneToolStripMenuItem.Click += configurazioneToolStripMenuItem_Click;
+			// 
 			// TESTtsmi
 			// 
-			TESTtsmi.DropDownItems.AddRange(new ToolStripItem[] { mSGBOXToolStripMenuItem,asyncTestToolStripMenuItem,vediCodiciToolStripMenuItem,dataTableToolStripMenuItem });
+			TESTtsmi.DropDownItems.AddRange(new ToolStripItem[] { mSGBOXToolStripMenuItem,asyncTestToolStripMenuItem,dataTableToolStripMenuItem,toolStripMenuItem1 });
 			TESTtsmi.Name = "TESTtsmi";
 			TESTtsmi.Size = new Size(45,20);
 			TESTtsmi.Text = "TEST";
@@ -210,7 +225,7 @@
 			// mSGBOXToolStripMenuItem
 			// 
 			mSGBOXToolStripMenuItem.Name = "mSGBOXToolStripMenuItem";
-			mSGBOXToolStripMenuItem.Size = new Size(131,22);
+			mSGBOXToolStripMenuItem.Size = new Size(126,22);
 			mSGBOXToolStripMenuItem.Text = "MsgBox";
 			mSGBOXToolStripMenuItem.Visible = false;
 			mSGBOXToolStripMenuItem.Click += MsgBoxToolStripMenuItem_Click;
@@ -218,24 +233,24 @@
 			// asyncTestToolStripMenuItem
 			// 
 			asyncTestToolStripMenuItem.Name = "asyncTestToolStripMenuItem";
-			asyncTestToolStripMenuItem.Size = new Size(131,22);
+			asyncTestToolStripMenuItem.Size = new Size(126,22);
 			asyncTestToolStripMenuItem.Text = "async test";
 			asyncTestToolStripMenuItem.Visible = false;
 			asyncTestToolStripMenuItem.Click += asyncTestToolStripMenuItem_Click;
 			// 
-			// vediCodiciToolStripMenuItem
-			// 
-			vediCodiciToolStripMenuItem.Name = "vediCodiciToolStripMenuItem";
-			vediCodiciToolStripMenuItem.Size = new Size(131,22);
-			vediCodiciToolStripMenuItem.Text = "Vedi codici";
-			vediCodiciToolStripMenuItem.Click += vediCodiciToolStripMenuItem_Click;
-			// 
 			// dataTableToolStripMenuItem
 			// 
 			dataTableToolStripMenuItem.Name = "dataTableToolStripMenuItem";
-			dataTableToolStripMenuItem.Size = new Size(131,22);
+			dataTableToolStripMenuItem.Size = new Size(126,22);
 			dataTableToolStripMenuItem.Text = "DataTable";
 			dataTableToolStripMenuItem.Click += dataTableToolStripMenuItem_Click;
+			// 
+			// toolStripMenuItem1
+			// 
+			toolStripMenuItem1.Name = "toolStripMenuItem1";
+			toolStripMenuItem1.Size = new Size(126,22);
+			toolStripMenuItem1.Text = "Codici";
+			toolStripMenuItem1.Click += toolStripMenuItem1_Click;
 			// 
 			// activeTsMenuItem
 			// 
@@ -288,13 +303,6 @@
 			// 
 			refreshTimer.Tick += refreshTimer_Tick;
 			// 
-			// configurazioneToolStripMenuItem
-			// 
-			configurazioneToolStripMenuItem.Name = "configurazioneToolStripMenuItem";
-			configurazioneToolStripMenuItem.Size = new Size(180,22);
-			configurazioneToolStripMenuItem.Text = "Configurazione";
-			configurazioneToolStripMenuItem.Click += configurazioneToolStripMenuItem_Click;
-			// 
 			// Form1
 			// 
 			AutoScaleDimensions = new SizeF(7F,15F);
@@ -343,11 +351,12 @@
 		private ToolStripMenuItem activeTsMenuItem;
 		private System.Windows.Forms.Timer refreshTimer;
 		private ToolStripMenuItem busyTsMenuItem;
-		private ToolStripMenuItem vediCodiciToolStripMenuItem;
 		private ToolStripMenuItem dataTableToolStripMenuItem;
 		private ToolStripMenuItem interrogaToolStripMenuItem;
-		private ToolStripMenuItem vediCodiciToolStripMenuItem1;
 		private ToolStripMenuItem vediCodiciToolStripMenuItem2;
 		private ToolStripMenuItem configurazioneToolStripMenuItem;
+		private ToolStripMenuItem vediCodiceToolStripMenuItem;
+		private ToolStripMenuItem descrizioniToolStripMenuItem;
+		private ToolStripMenuItem toolStripMenuItem1;
 	}
 }
