@@ -115,12 +115,12 @@ namespace DbWin
 				}
 				else
 				{
-					sb.AppendLine($"{Cfg.Msg.MsgConnected}: {conn.State.ToString()}");
+					sb.AppendLine($"{CFG.Msg.MsgConnected}: {conn.State.ToString()}");
 				}
 			}
 			catch(MySql.Data.MySqlClient.MySqlException ex)
 			{
-				sb.AppendLine($"{ex.Number}:{ex.Message}" + $"\n{Cfg.Msg.MnuConnString}: {cstr.ToString()}");
+				sb.AppendLine($"{ex.Number}:{ex.Message}" + $"\n{CFG.Msg.MnuConnString}: {cstr.ToString()}");
 				Disconnect();
 
 			}
@@ -137,11 +137,11 @@ namespace DbWin
 			{
 				conn.Close();
 				conn = null;
-				sb.AppendLine(Cfg.Msg.MsgDisconnected);
+				sb.AppendLine(CFG.Msg.MsgDisconnected);
 			}
 			else
 			{
-				sb.AppendLine(Cfg.Msg.MsgNotConnected);
+				sb.AppendLine(CFG.Msg.MsgNotConnected);
 			}
 			return sb.ToString().Trim();
 		}
@@ -160,19 +160,19 @@ namespace DbWin
 			{
 				if( (nfo & Info.ConnectionString) != 0 )
 				{
-					sb.AppendLine($"{Cfg.Msg.MnuConnString}:{Environment.NewLine}{cstr.ToString().Trim()}");
+					sb.AppendLine($"{CFG.Msg.MnuConnString}:{Environment.NewLine}{cstr.ToString().Trim()}");
 				}
 
 				if ( (nfo & Info.Status) != 0  )
 				{
-					sb.AppendLine($"{Cfg.Msg.MnuConnecting}: {conn.State.ToString().Trim()}");
+					sb.AppendLine($"{CFG.Msg.MnuConnecting}: {conn.State.ToString().Trim()}");
 				}
 
 				if ( (nfo & Info.Schema) != 0  )
 				{
 					if(dtConn != null)
 					{
-						sb.AppendLine($"--- {Cfg.Msg.MnuSchema} ---");
+						sb.AppendLine($"--- {CFG.Msg.MnuSchema} ---");
 						sb.AppendLine($"{Environment.NewLine}{DataTableToString(dtConn)}");
 						#if DEBUG
 						Thread.Sleep(1000);
@@ -182,7 +182,7 @@ namespace DbWin
 
 				if ( (nfo & Info.Functions) != 0  )
 				{
-					sb.AppendLine($"--- {Cfg.Msg.MnuFunctions} ---");
+					sb.AppendLine($"--- {CFG.Msg.MnuFunctions} ---");
 					sb.AppendLine(ExecuteSQLCommand("CALL ListaFunzioni();",SQLqueryType.Reader));
 					#if DEBUG
 					Thread.Sleep(1000);
@@ -190,7 +190,7 @@ namespace DbWin
 				}
 				if ( (nfo & Info.Procedures) != 0  )
 				{
-					sb.AppendLine($"--- {Cfg.Msg.MnuProcedures} ---");
+					sb.AppendLine($"--- {CFG.Msg.MnuProcedures} ---");
 					sb.AppendLine(ExecuteSQLCommand("CALL ListaProcedure();",SQLqueryType.Reader));
 					#if DEBUG
 					Thread.Sleep(1000);
@@ -198,7 +198,7 @@ namespace DbWin
 				}
 				if ( (nfo & Info.User) != 0  )
 				{
-					sb.AppendLine($"--- {Cfg.Msg.MnuUser} ---");
+					sb.AppendLine($"--- {CFG.Msg.MnuUser} ---");
 					sb.AppendLine(ExecuteSQLCommand("CALL NomeUtente();",SQLqueryType.Reader));
 					#if DEBUG
 					Thread.Sleep(1000);
@@ -207,7 +207,7 @@ namespace DbWin
 			}
 			else
 			{
-				sb.AppendLine($"{Cfg.Msg.MsgNotConnected}");
+				sb.AppendLine($"{CFG.Msg.MsgNotConnected}");
 			}
 
 			return sb.ToString();
@@ -481,7 +481,7 @@ namespace DbWin
 			}
 			else
 			{
-				sb.AppendLine($"{Cfg.Msg.MsgNotConnected}");
+				sb.AppendLine($"{CFG.Msg.MsgNotConnected}");
 			}
 			return sb.ToString();
 		}
@@ -504,7 +504,7 @@ namespace DbWin
 			}
 			else
 			{
-				dt = EmptyDataTable("RESULT",Cfg.Msg.MsgNotConnected);
+				dt = EmptyDataTable("RESULT",CFG.Msg.MsgNotConnected);
 			}
 			return dt;
 		}

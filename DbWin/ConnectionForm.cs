@@ -43,17 +43,17 @@ namespace DbWin
 		public void ReplaceText()
 		{
 			SuspendLayout();
-			label1.Text = Cfg.Msg.MnuServer;
-			label2.Text = Cfg.Msg.MnuPort;
-			label3.Text = Cfg.Msg.MnuUser;
-			label3.Text = Cfg.Msg.MnuUser;
-			label4.Text = Cfg.Msg.MnuPassword;
-			label5.Text = Cfg.Msg.MnuDatabase;
+			label1.Text = CFG.Msg.MnuServer;
+			label2.Text = CFG.Msg.MnuPort;
+			label3.Text = CFG.Msg.MnuUser;
+			label3.Text = CFG.Msg.MnuUser;
+			label4.Text = CFG.Msg.MnuPassword;
+			label5.Text = CFG.Msg.MnuDatabase;
 			
-			Text = Cfg.Msg.MnuConnecting;
+			Text = CFG.Msg.MnuConnecting;
 
-			button1.Text = Cfg.Msg.MnuOK;
-			button2.Text = Cfg.Msg.MnuCancel;
+			button1.Text = CFG.Msg.MnuOK;
+			button2.Text = CFG.Msg.MnuCancel;
 
 			ResumeLayout(true);
 		}

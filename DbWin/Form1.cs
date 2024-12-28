@@ -4,6 +4,7 @@ using System.Data;
 using System.Reflection;
 using System.Text;
 using static Fred68.CfgReader.CfgReader;
+using static Org.BouncyCastle.Math.EC.ECCurve;
 
 
 
@@ -31,7 +32,7 @@ namespace DbWin
 		{
 			InitializeComponent();
 			ReplaceGUIText();
-			cs = new ConnectionString(Cfg.Config.CONN_server,Cfg.Config.CONN_port,Cfg.Config.CONN_user,Cfg.Config.CONN_password,Cfg.Config.CONN_database);
+			cs = new ConnectionString(CFG.Config.CONN_server,CFG.Config.CONN_port,CFG.Config.CONN_user,CFG.Config.CONN_password,CFG.Config.CONN_database);
 			conn = new MySQLconn();
 			rotchar = new RotatingChar(activeTsMenuItem);
 			busy = new Busy(busyTsMenuItem,"B"," ");
@@ -41,26 +42,26 @@ namespace DbWin
 		{
 			SuspendLayout();
 			Text = "DesignToolsServer";
-			fileToolStripMenuItem.Text = Cfg.Msg.MnuConnecting;
-			parametriDiConnessioneToolStripMenuItem.Text = Cfg.Msg.MnuParameters;
-			connettiToolStripMenuItem.Text = Cfg.Msg.MnuConnect;
-			disconnettiToolStripMenuItem.Text = Cfg.Msg.MnuDisconnect;
-			statoToolStripMenuItem.Text = Cfg.Msg.MnuStatus;
-			statoToolStripMenuItem1.Text = Cfg.Msg.MnuStatus;
-			connectionStringToolStripMenuItem.Text = Cfg.Msg.MnuConnString;
-			schemaToolStripMenuItem.Text = Cfg.Msg.MnuSchema;
-			proceduresToolStripMenuItem.Text = Cfg.Msg.MnuProcedures;
-			functionsToolStripMenuItem.Text = Cfg.Msg.MnuFunctions;
-			utenteToolStripMenuItem.Text = Cfg.Msg.MnuUser;
-			esciToolStripMenuItem.Text = Cfg.Msg.MnuExit;
+			fileToolStripMenuItem.Text = CFG.Msg.MnuConnecting;
+			parametriDiConnessioneToolStripMenuItem.Text = CFG.Msg.MnuParameters;
+			connettiToolStripMenuItem.Text = CFG.Msg.MnuConnect;
+			disconnettiToolStripMenuItem.Text = CFG.Msg.MnuDisconnect;
+			statoToolStripMenuItem.Text = CFG.Msg.MnuStatus;
+			statoToolStripMenuItem1.Text = CFG.Msg.MnuStatus;
+			connectionStringToolStripMenuItem.Text = CFG.Msg.MnuConnString;
+			schemaToolStripMenuItem.Text = CFG.Msg.MnuSchema;
+			proceduresToolStripMenuItem.Text = CFG.Msg.MnuProcedures;
+			functionsToolStripMenuItem.Text = CFG.Msg.MnuFunctions;
+			utenteToolStripMenuItem.Text = CFG.Msg.MnuUser;
+			esciToolStripMenuItem.Text = CFG.Msg.MnuExit;
 			helpToolStripMenuItem.Text = "?";
-			informazioniToolStripMenuItem.Text = Cfg.Msg.MnuNfo;
-			dettagliToolStripMenuItem.Text = Cfg.Msg.MnuDetails;
-			utenteToolStripMenuItem.Text = Cfg.Msg.MnuUser;
-			interrogaToolStripMenuItem.Text = Cfg.Msg.MnuQuery;
-			vediCodiciToolStripMenuItem1.Text = Cfg.Msg.MnuViewCodes;
-			vediCodiciToolStripMenuItem2.Text = Cfg.Msg.MnuViewCodes;
-
+			informazioniToolStripMenuItem.Text = CFG.Msg.MnuNfo;
+			dettagliToolStripMenuItem.Text = CFG.Msg.MnuDetails;
+			utenteToolStripMenuItem.Text = CFG.Msg.MnuUser;
+			interrogaToolStripMenuItem.Text = CFG.Msg.MnuQuery;
+			vediCodiciToolStripMenuItem1.Text = CFG.Msg.MnuViewCodes;
+			vediCodiciToolStripMenuItem2.Text = CFG.Msg.MnuViewCodes;
+			configurazioneToolStripMenuItem.Text = CFG.Msg.MnuConfig;
 			ResumeLayout(true);
 		}
 
@@ -96,7 +97,7 @@ namespace DbWin
 			ConnectionState st = conn.Status;           // Se non è connesso, chiede conferma di chiusura
 			if((st == ConnectionState.Closed) || (st == ConnectionState.Broken))
 			{
-				if(MessageBox.Show(Cfg.Msg.MsgClosing,Cfg.Msg.MnuClosing,MessageBoxButtons.OKCancel,MessageBoxIcon.Warning) != DialogResult.OK)
+				if(MessageBox.Show(CFG.Msg.MsgClosing,CFG.Msg.MnuClosing,MessageBoxButtons.OKCancel,MessageBoxIcon.Warning) != DialogResult.OK)
 				{
 					e.Cancel = true;                    // Se la chiusura non è confermata, annulla il comando
 					UpdateForm();
@@ -209,23 +210,13 @@ namespace DbWin
 			}
 		}
 
-		void ShowMsgConnection(Task<string> t)
-		{
-			string msg = t.Result;
-			busy.busy = false;
-			UpdateForm();
-#if DEBUG
-			MsgBox.Show(msg);
-#endif
-		}
-
 		public void Disconnetti()
 		{
 			if(conn != null)
 			{
 				if(conn.Status == System.Data.ConnectionState.Open)
 				{
-					if(MessageBox.Show(Cfg.Msg.MsgDisconnecting,Cfg.Msg.MnuDisconnecting,MessageBoxButtons.OKCancel,MessageBoxIcon.Warning) == DialogResult.OK)
+					if(MessageBox.Show(CFG.Msg.MsgDisconnecting,CFG.Msg.MnuDisconnecting,MessageBoxButtons.OKCancel,MessageBoxIcon.Warning) == DialogResult.OK)
 					{
 						string msg = conn.Disconnect();
 #if DEBUG
@@ -250,12 +241,30 @@ namespace DbWin
 			}
 		}
 
+		void ShowMsgConnection(Task<string> t)
+		{
+			string msg = t.Result;
+			busy.busy = false;
+			UpdateForm();
+#if DEBUG
+			MsgBox.Show(msg);
+#endif
+		}
+
 		void ShowTaskMsg(Task<string> t)
 		{
 			string st = t.Result;
 			busy.busy = false;
 			UpdateForm();
 			BeginInvoke(new Action(() => MsgBox.Show(st)));
+		}
+
+		void ShowTaskDataTable(Task<DataTable> t)
+		{
+			DataTable dt = t.Result;
+			busy.busy = false;
+			UpdateForm();
+			BeginInvoke(new Action(() => ShowDataTable(dt)));
 		}
 
 		void VediCodiciString()
@@ -278,15 +287,8 @@ namespace DbWin
 				token = cts.Token;
 				busy.busy = true;
 				Task<DataTable> task = Task<DataTable>.Factory.StartNew(() => conn.VediCodiciDT("%","%",100),token);
-				task.ContinueWith(ShowDT);
+				task.ContinueWith(ShowTaskDataTable);
 			}
-		}
-		void ShowDT(Task<DataTable> t)
-		{
-			DataTable dt = t.Result;
-			busy.busy = false;
-			UpdateForm();
-			BeginInvoke(new Action(() => ShowDataTable(dt)));
 		}
 
 		void ShowDataTable(DataTable dt)
@@ -295,8 +297,6 @@ namespace DbWin
 			gb.Show();
 
 		}
-
-
 
 		/*******************************************/
 		// Handlers
@@ -395,9 +395,12 @@ namespace DbWin
 
 		private void vediCodiciToolStripMenuItem2_Click(object sender,EventArgs e)
 		{
-			#warning Nuovo Form interroga codici
 			VediCodiciDataTable();
-			#warning Nuovo Form vedi data table
+		}
+
+		private void configurazioneToolStripMenuItem_Click(object sender,EventArgs e)
+		{
+			MsgBox.Show(CFG.DumpEntries());
 
 		}
 	}
