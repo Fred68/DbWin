@@ -5,8 +5,7 @@ using System.Reflection;
 using System.Text;
 using static Fred68.CfgReader.CfgReader;
 using static Org.BouncyCastle.Math.EC.ECCurve;
-
-
+using Fred68.InputForm;
 
 namespace DbWin
 {
@@ -20,6 +19,8 @@ namespace DbWin
 		Busy busy;
 		static CancellationTokenSource? cts = null;         // new CancellationTokenSource();
 		CancellationToken token = CancellationToken.None;   // cts.Token;
+
+		InputForm inf;
 
 		/*******************************************/
 		// Ctors and main functions
@@ -36,6 +37,8 @@ namespace DbWin
 			conn = new MySQLconn();
 			rotchar = new RotatingChar(activeTsMenuItem);
 			busy = new Busy(busyTsMenuItem,"B"," ");
+
+			inf = new InputForm();
 		}
 
 		private void ReplaceGUIText()

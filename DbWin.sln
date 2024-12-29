@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DbWin", "DbWin\DbWin.csproj
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CfgReaderLib", "..\Fred68\CfgReader.NET\CfgReaderLib\CfgReaderLib.csproj", "{AA9CA405-B4C7-431C-B915-291EDA9820B8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InputForm", "..\Fred68\InputForm\InputForm\InputForm.csproj", "{E8F2C83C-F5A0-4F34-9468-D035F44369C1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{AA9CA405-B4C7-431C-B915-291EDA9820B8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AA9CA405-B4C7-431C-B915-291EDA9820B8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AA9CA405-B4C7-431C-B915-291EDA9820B8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E8F2C83C-F5A0-4F34-9468-D035F44369C1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E8F2C83C-F5A0-4F34-9468-D035F44369C1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E8F2C83C-F5A0-4F34-9468-D035F44369C1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E8F2C83C-F5A0-4F34-9468-D035F44369C1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

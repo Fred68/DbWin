@@ -26,6 +26,7 @@ namespace DbWin
 		public string	CONN_password;
 		public string	CONN_database;
 		public bool		INI_quick;
+		public DateTime	INI_dt;
 	}
 
 	public class Msg:CfgReader

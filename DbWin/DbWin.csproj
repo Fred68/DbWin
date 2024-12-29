@@ -17,6 +17,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Fred68\CfgReader.NET\CfgReaderLib\CfgReaderLib.csproj" />
+    <ProjectReference Include="..\..\Fred68\InputForm\InputForm\InputForm.csproj" />
   </ItemGroup>
 
   <ItemGroup>
