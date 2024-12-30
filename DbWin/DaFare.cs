@@ -9,11 +9,11 @@ using System.Threading.Tasks;
 
 #warning	*** DA FARE ***
 
-#warning	*** TABELLE CON I NOMI DI commerciali, costruttori, materiali, prodotti.
-#warning	Lettura delle tabelle (funzioni MySQL).
+#warning	*** TABELLE CON I NOMI DI costruttori, materiali, prodotti.
+//			Lettura delle tabelle (funzioni MySQL).
 #warning	Verifica se refresh necessario
 #warning	Scrittura dopo refresh
-#warning	Lettura e scrittura dei contenuti delle tabelle: commerciali, costruttori, materiali, prodotti.
+#warning	Lettura e scrittura dei contenuti delle tabelle: costruttori, materiali, prodotti.
 
 #warning	*** CODICI ***
 

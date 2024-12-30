@@ -157,7 +157,7 @@ CREATE TABLE IF NOT EXISTS `costruttori` (
   UNIQUE KEY `uk_costruttore` (`costruttore`)
 ) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=latin1 COMMENT='Tabella dei costruttori.';
 
--- Dump dei dati della tabella dbc00.costruttori: ~7 rows (circa)
+-- Dump dei dati della tabella dbc00.costruttori: ~9 rows (circa)
 REPLACE INTO `costruttori` (`id`, `costruttore`) VALUES
 	(2, 'Bosch'),
 	(4, 'Camozzi'),
@@ -223,7 +223,7 @@ CREATE TABLE IF NOT EXISTS `materiali` (
   UNIQUE KEY `uk_materiale` (`materiale`)
 ) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=latin1 COMMENT='Tabella dei materiali.';
 
--- Dump dei dati della tabella dbc00.materiali: ~10 rows (circa)
+-- Dump dei dati della tabella dbc00.materiali: ~11 rows (circa)
 REPLACE INTO `materiali` (`id`, `materiale`) VALUES
 	(19, '18NiCrMo5'),
 	(6, '39NiCrMo3'),
@@ -278,7 +278,7 @@ CREATE TABLE IF NOT EXISTS `prodotti` (
   UNIQUE KEY `uk_prodotto` (`prodotto`)
 ) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=latin1 COMMENT='Tabella dei tipi di prodotto.';
 
--- Dump dei dati della tabella dbc00.prodotti: ~10 rows (circa)
+-- Dump dei dati della tabella dbc00.prodotti: ~13 rows (circa)
 REPLACE INTO `prodotti` (`id`, `prodotto`) VALUES
 	(11, '???'),
 	(12, 'Giunto'),
@@ -531,7 +531,6 @@ CREATE PROCEDURE `GetCode`(
 	IN `_cod` VARCHAR(255),
 	IN `_mod` VARCHAR(1)
 )
-    SQL SECURITY INVOKER
     COMMENT 'GetCode(_cod,_mod): estrae tutti i dati di un codice'
 BEGIN
 DECLARE n_cod INT;
@@ -771,6 +770,28 @@ SELECT ROUTINE_NAME, ROUTINE_COMMENT FROM INFORMATION_SCHEMA.ROUTINES WHERE ROUT
 END//
 DELIMITER ;
 
+-- Dump della struttura di procedura dbc01.ListaTabella
+DELIMITER //
+CREATE PROCEDURE `ListaTabella`(
+	IN `_tab` VARCHAR(20)
+)
+BEGIN
+	DECLARE n INT;
+	SET _tab = TRIM(_tab);
+	IF LENGTH(_tab) > 0 THEN
+		SELECT COUNT(*) FROM information_schema.TABLES  WHERE TABLE_SCHEMA = 'dbc00' AND TABLE_NAME = _tab INTO n;
+		IF n = 1 THEN
+			SET @stm = CONCAT("SELECT * FROM dbc00.",_tab," ORDER BY id;");
+			PREPARE stmt FROM @stm;
+ 			EXECUTE stmt;
+ 			DEALLOCATE PREPARE stmt;
+ 		ELSE
+ 			SELECT "ERRORE",CONCAT(_tab," non trovata");
+		END IF;
+	END IF;
+END//
+DELIMITER ;
+
 -- Dump della struttura di procedura dbc01.NomeUtente
 DELIMITER //
 CREATE PROCEDURE `NomeUtente`()
@@ -799,7 +820,7 @@ BEGIN
 	SET _tab = TRIM(_tab);
 	SET n = -1;
 	SET u = -1;
-	IF LENGTH(_tab) > 1 THEN
+	IF LENGTH(_tab) > 0 THEN
 		SELECT COUNT(*) FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = 'dbc02' AND TABLE_NAME = 'aggiornato' AND COLUMN_NAME = _tab INTO n;
 		SELECT COUNT(*) FROM information_schema.TABLES  WHERE TABLE_SCHEMA = 'dbc00' AND TABLE_NAME = _tab INTO n1;
 		-- Se diversi: errore n <- -1
@@ -887,7 +908,6 @@ CREATE PROCEDURE `VediDescrizioni`(
 	IN `_cod` VARCHAR(255),
 	IN `_mod` CHAR(1)
 )
-    SQL SECURITY INVOKER
     COMMENT 'Elenca codici con descrizioni complete'
 BEGIN
 SELECT c.cod AS CODICE,
@@ -1338,22 +1358,21 @@ USE `dbc02`;
 -- Dump della struttura di tabella dbc02.aggiornato
 CREATE TABLE IF NOT EXISTS `aggiornato` (
   `id` int unsigned NOT NULL COMMENT 'ID dell''utente',
-  `commerciali` int unsigned NOT NULL DEFAULT '0' COMMENT '0 invariato 1 modificato',
-  `costruttori` int unsigned NOT NULL DEFAULT '0',
-  `materiali` int unsigned NOT NULL DEFAULT '0',
-  `prodotti` int unsigned NOT NULL DEFAULT '0',
+  `costruttori` int unsigned NOT NULL DEFAULT '0' COMMENT '0 invariato 1 modificato',
+  `materiali` int unsigned NOT NULL DEFAULT '0' COMMENT '0 invariato 1 modificato',
+  `prodotti` int unsigned NOT NULL DEFAULT '0' COMMENT '0 invariato 1 modificato',
   KEY `FK_aggiornato_utenti` (`id`),
   CONSTRAINT `FK_aggiornato_utenti` FOREIGN KEY (`id`) REFERENCES `utenti` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- Dump dei dati della tabella dbc02.aggiornato: ~6 rows (circa)
-REPLACE INTO `aggiornato` (`id`, `commerciali`, `costruttori`, `materiali`, `prodotti`) VALUES
-	(1, 1, 1, 0, 1),
-	(2, 0, 1, 2, 1),
-	(3, 0, 1, 0, 1),
-	(4, 0, 1, 0, 0),
-	(5, 0, 1, 0, 0),
-	(6, 0, 0, 0, 0);
+REPLACE INTO `aggiornato` (`id`, `costruttori`, `materiali`, `prodotti`) VALUES
+	(1, 3, 0, 0),
+	(2, 1, 2, 0),
+	(3, 1, 0, 0),
+	(4, 1, 0, 0),
+	(5, 1, 0, 0),
+	(6, 1, 0, 0);
 
 -- Dump della struttura di tabella dbc02.utenti
 CREATE TABLE IF NOT EXISTS `utenti` (
