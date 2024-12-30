@@ -1,11 +1,12 @@
-using MySqlX.XDevAPI.Relational;
-using Org.BouncyCastle.Pqc.Crypto.Lms;
+//using MySqlX.XDevAPI.Relational;
+//using Org.BouncyCastle.Pqc.Crypto.Lms;
 using System.Data;
 using System.Reflection;
 using System.Text;
-using static Fred68.CfgReader.CfgReader;
-using static Org.BouncyCastle.Math.EC.ECCurve;
-using Fred68.InputForm;
+//using static Fred68.CfgReader.CfgReader;
+//using static Org.BouncyCastle.Math.EC.ECCurve;
+using Fred68.InputForms;
+using InputForms;
 
 namespace DbWin
 {
@@ -20,7 +21,7 @@ namespace DbWin
 		static CancellationTokenSource? cts = null;         // new CancellationTokenSource();
 		CancellationToken token = CancellationToken.None;   // cts.Token;
 
-		InputForm inf;
+		//InputForm inf;
 
 		/*******************************************/
 		// Ctors and main functions
@@ -38,7 +39,7 @@ namespace DbWin
 			rotchar = new RotatingChar(activeTsMenuItem);
 			busy = new Busy(busyTsMenuItem,"B"," ");
 
-			inf = new InputForm();
+			//inf = new InputForm();
 		}
 
 		private void ReplaceGUIText()
@@ -309,11 +310,19 @@ namespace DbWin
 		{
 			if(!busy.busy)
 			{
-				cts = new CancellationTokenSource();
-				token = cts.Token;
-				busy.busy = true;
-				Task<DataTable> task = Task<DataTable>.Factory.StartNew(() => conn.VediCodici("100*","?",100),token);
-				task.ContinueWith(ShowTaskDataTable);
+				FormData fd = new FormData();
+				fd.Add("Codice","*");
+				fd.Add("Modifica","*");
+				fd.Add("Limite",100);
+				if((new InputForm(fd)).ShowDialog()==DialogResult.OK)
+				{
+					//MsgBox.Show(fd.Dump());
+					cts = new CancellationTokenSource();
+					token = cts.Token;
+					busy.busy = true;
+					Task<DataTable> task = Task<DataTable>.Factory.StartNew(() => conn.VediCodici(fd["Codice"],fd["Modifica"],fd["Limite"]),token);
+					task.ContinueWith(ShowTaskDataTable);
+				}
 			}
 		}
 
@@ -321,11 +330,18 @@ namespace DbWin
 		{
 			if(!busy.busy)
 			{
-				cts = new CancellationTokenSource();
-				token = cts.Token;
-				busy.busy = true;
-				Task<DataTable> task = Task<DataTable>.Factory.StartNew(() => conn.VediDescrizioni("*","*",100),token);
-				task.ContinueWith(ShowTaskDataTable);
+				FormData fd = new FormData();
+				fd.Add("Codice","*");
+				fd.Add("Modifica","*");
+				fd.Add("Limite",100);
+				if((new InputForm(fd)).ShowDialog()==DialogResult.OK)
+				{
+					cts = new CancellationTokenSource();
+					token = cts.Token;
+					busy.busy = true;
+					Task<DataTable> task = Task<DataTable>.Factory.StartNew(() => conn.VediDescrizioni(fd["Codice"],fd["Modifica"],fd["Limite"]),token);
+					task.ContinueWith(ShowTaskDataTable);
+				}
 			}
 		}
 
@@ -333,11 +349,17 @@ namespace DbWin
 		{
 			if(!busy.busy)
 			{
-				cts = new CancellationTokenSource();
-				token = cts.Token;
-				busy.busy = true;
-				Task<DataTable> task = Task<DataTable>.Factory.StartNew(() => conn.VediCodiceSingolo("102.11.100?","a"),token);
-				task.ContinueWith(ShowTaskDataTable);
+				FormData fd = new FormData();
+				fd.Add("Codice","*");
+				fd.Add("Modifica","*");
+				if((new InputForm(fd)).ShowDialog()==DialogResult.OK)
+				{
+					cts = new CancellationTokenSource();
+					token = cts.Token;
+					busy.busy = true;
+					Task<DataTable> task = Task<DataTable>.Factory.StartNew(() => conn.VediCodiceSingolo(fd["Codice"],fd["Modifica"]),token);
+					task.ContinueWith(ShowTaskDataTable);
+				}
 			}
 		}
 
