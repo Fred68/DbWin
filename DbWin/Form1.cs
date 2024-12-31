@@ -69,7 +69,7 @@ namespace DbWin
 			toolStripMenuItem1.Text = CFG.Msg.MnuViewCodes;
 			vediCodiceToolStripMenuItem.Text = CFG.Msg.MnuViewCode;
 			descrizioniToolStripMenuItem.Text = CFG.Msg.MnuViewDescr;
-
+			esplodiToolStripMenuItem.Text = CFG.Msg.MnuExplode;
 
 			ResumeLayout(true);
 		}
@@ -314,7 +314,7 @@ namespace DbWin
 				fd.Add("Codice","*");
 				fd.Add("Modifica","*");
 				fd.Add("Limite",100);
-				if((new InputForm(fd)).ShowDialog()==DialogResult.OK)
+				if((new InputForm(fd)).ShowDialog() == DialogResult.OK)
 				{
 					//MsgBox.Show(fd.Dump());
 					cts = new CancellationTokenSource();
@@ -334,7 +334,7 @@ namespace DbWin
 				fd.Add("Codice","*");
 				fd.Add("Modifica","*");
 				fd.Add("Limite",100);
-				if((new InputForm(fd)).ShowDialog()==DialogResult.OK)
+				if((new InputForm(fd)).ShowDialog() == DialogResult.OK)
 				{
 					cts = new CancellationTokenSource();
 					token = cts.Token;
@@ -352,7 +352,7 @@ namespace DbWin
 				FormData fd = new FormData();
 				fd.Add("Codice","100*");
 				fd.Add("Modifica","a");
-				if((new InputForm(fd)).ShowDialog()==DialogResult.OK)
+				if((new InputForm(fd)).ShowDialog() == DialogResult.OK)
 				{
 					cts = new CancellationTokenSource();
 					token = cts.Token;
@@ -363,7 +363,7 @@ namespace DbWin
 			}
 		}
 
-		void VediCodiceSingolo(string cod, string mod)
+		void VediCodiceSingolo(string cod,string mod)
 		{
 			if(!busy.busy)
 			{
@@ -375,6 +375,42 @@ namespace DbWin
 			}
 		}
 
+		void EsplodiCodiceString()
+		{
+			if(!busy.busy)
+			{
+				FormData fd = new FormData();
+				fd.Add("Codice","100*");
+				fd.Add("Modifica","a");
+				fd.Add("Profondità",100);
+				if((new InputForm(fd)).ShowDialog() == DialogResult.OK)
+
+					cts = new CancellationTokenSource();
+					token = cts.Token;
+					busy.busy = true;
+					Task<string> task = Task<string>.Factory.StartNew(() => conn.EsplodiCodiceString(fd["Codice"],fd["Modifica"],fd["Profondità"]),token);
+					task.ContinueWith(ShowTaskMsg);
+			}	
+		}
+
+		void EsplodiCodice()
+		{
+			if(!busy.busy)
+			{
+				FormData fd = new FormData();
+				fd.Add("Codice","100.12.002");
+				fd.Add("Modifica","d");
+				fd.Add("Profondità",100);
+				if((new InputForm(fd)).ShowDialog() == DialogResult.OK)
+				{
+					cts = new CancellationTokenSource();
+					token = cts.Token;
+					busy.busy = true;
+					Task<DataTable> task = Task<DataTable>.Factory.StartNew(() => conn.EsplodiCodice(fd["Codice"],fd["Modifica"],fd["Profondità"]),token);
+					task.ContinueWith(ShowTaskDataTable);
+				}
+			}
+		}
 		void ShowDataTable(DataTable dt)
 		{
 			GridBox gb = new GridBox(dt,VediCodiceSingolo);
@@ -489,6 +525,11 @@ namespace DbWin
 		private void descrizioniToolStripMenuItem_Click(object sender,EventArgs e)
 		{
 			VediDescrizioni();
+		}
+
+		private void esplodiToolStripMenuItem_Click(object sender,EventArgs e)
+		{
+			EsplodiCodice();
 		}
 	}
 }

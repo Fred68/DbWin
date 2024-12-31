@@ -497,6 +497,44 @@ namespace DbWin
 			return sb.ToString();
 		}
 
+		public string EsplodiCodiceString(string cod, string mod, int limit)
+		{
+			StringBuilder sb = new StringBuilder();
+			if( conn != null )
+			{
+				string sql = $"CALL Esplodi(\"{ReplaceWildcards(cod)}\",\"{ReplaceWildcards(mod)}\",{limit});";
+				#if DEBUG
+				MsgBox.Show(sql);
+				#endif
+				sb.AppendLine($"--- {"Esplodi codice"} ---");
+				sb.AppendLine(ExecuteSQLCommand(sql,SQLqueryType.Reader));
+			}
+			else
+			{
+				sb.AppendLine($"{CFG.Msg.MsgNotConnected}");
+			}
+			return sb.ToString();
+		}
+
+		public DataTable EsplodiCodice(string cod, string mod, int limit)
+		{
+			DataTable dt = new DataTable();
+			if( conn != null )
+			{
+				string sql = $"CALL Esplodi(\"{ReplaceWildcards(cod)}\",\"{ReplaceWildcards(mod)}\",{limit});";
+				#if DEBUG
+				MsgBox.Show(sql);
+				#endif
+				ExecuteSQLReadDataTable(sql, ref dt);
+			}
+			else
+			{
+				dt = EmptyDataTable("RESULT",CFG.Msg.MsgNotConnected);
+			}
+			dt.TableName = CFG.Msg.MnuExplode;
+			return dt;
+		}
+
 		/// <summary>
 		/// Vedi codici (in una tabella di dati)
 		/// </summary>

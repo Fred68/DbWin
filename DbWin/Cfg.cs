@@ -31,6 +31,15 @@ namespace DbWin
 		public List<string>	P_show;
 		public List<string>	P_rdonly;
 		public List<string>	P_drop;
+		public List<string>	C_show;
+		public List<string>	C_rdonly;
+		public List<string>	C_drop;
+		public List<string>	A_show;
+		public List<string>	A_rdonly;
+		public List<string>	A_drop;
+		public List<string>	S_show;
+		public List<string>	S_rdonly;
+		public List<string>	S_drop;
 	}
 
 	public class Msg:CfgReader
@@ -67,6 +76,7 @@ namespace DbWin
 		public string	MnuConfig;
 		public string	MnuViewCode;
 		public string	MnuViewDescr;
+		public string	MnuExplode;
 	}
 
 	public static class CFG

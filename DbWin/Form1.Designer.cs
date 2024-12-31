@@ -62,6 +62,7 @@
 			toolStripStatusLabel2 = new ToolStripStatusLabel();
 			toolStripStatusLabel3 = new ToolStripStatusLabel();
 			refreshTimer = new System.Windows.Forms.Timer(components);
+			esplodiToolStripMenuItem = new ToolStripMenuItem();
 			menuStrip1.SuspendLayout();
 			statusStrip1.SuspendLayout();
 			SuspendLayout();
@@ -161,7 +162,7 @@
 			// 
 			// interrogaToolStripMenuItem
 			// 
-			interrogaToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { vediCodiciToolStripMenuItem2,vediCodiceToolStripMenuItem,descrizioniToolStripMenuItem });
+			interrogaToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { vediCodiciToolStripMenuItem2,vediCodiceToolStripMenuItem,descrizioniToolStripMenuItem,esplodiToolStripMenuItem });
 			interrogaToolStripMenuItem.Name = "interrogaToolStripMenuItem";
 			interrogaToolStripMenuItem.Size = new Size(67,20);
 			interrogaToolStripMenuItem.Text = "Interroga";
@@ -303,6 +304,13 @@
 			// 
 			refreshTimer.Tick += refreshTimer_Tick;
 			// 
+			// esplodiToolStripMenuItem
+			// 
+			esplodiToolStripMenuItem.Name = "esplodiToolStripMenuItem";
+			esplodiToolStripMenuItem.Size = new Size(180,22);
+			esplodiToolStripMenuItem.Text = "Esplodi";
+			esplodiToolStripMenuItem.Click += esplodiToolStripMenuItem_Click;
+			// 
 			// Form1
 			// 
 			AutoScaleDimensions = new SizeF(7F,15F);
@@ -358,5 +366,6 @@
 		private ToolStripMenuItem vediCodiceToolStripMenuItem;
 		private ToolStripMenuItem descrizioniToolStripMenuItem;
 		private ToolStripMenuItem toolStripMenuItem1;
+		private ToolStripMenuItem esplodiToolStripMenuItem;
 	}
 }

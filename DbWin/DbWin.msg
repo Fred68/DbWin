@@ -47,7 +47,7 @@ STR MnuQuery		=		"Interroga"
 STR MnuViewCodes	=		"Codici"
 STR MnuViewCode		=		"Codice singolo"
 STR MnuViewDescr	=		"Descrizioni"
-
+STR MnuExplode		=		"Esplodi"
 
 [.]
 
@@ -88,6 +88,7 @@ STR MnuQuery		=		"Query"
 STR MnuViewCodes	=		"Codes"
 STR MnuViewCode		=		"Single code"
 STR MnuViewDescr	=		"Descriptions"
+STR MnuExplode		=		"Explode"
 
 [.]
 
