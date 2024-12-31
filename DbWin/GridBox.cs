@@ -11,19 +11,23 @@ using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace DbWin
 {
+	public delegate void ShowCodeFunc(string cod, string mod);
 	public partial class GridBox:Form
 	{
 		DataTable dtbl;
-		public GridBox(DataTable dt)
+		ShowCodeFunc _shw;
+
+		public GridBox(DataTable dt, ShowCodeFunc shw)
 		{
 			InitializeComponent();
 			AdjustSize();
 			dtbl = dt;
 			dataGridView1.DataSource = dtbl;
+			_shw = shw;
 			this.Text = dtbl.TableName;
-			#if DEBUG
+#if DEBUG
 			this.Text += $" {GetDataTypes()}";
-			#endif
+#endif
 		}
 
 		void AdjustSize()
@@ -52,6 +56,30 @@ namespace DbWin
 		private void btClose_Click(object sender,EventArgs e)
 		{
 			Close();
+		}
+
+		private void dataGridView1_CellDoubleClick(object sender,DataGridViewCellEventArgs e)
+		{
+			int row = e.RowIndex;
+			if(row != -1)
+			{
+				DataRow drow = dtbl.Rows[row];
+				string cod, mod;
+				try
+				{
+					cod = (string)drow["CODICE"];
+					mod = (string)drow["MODIFICA"];
+					_shw(cod,mod);
+				}
+				catch
+				{
+					cod = mod = string.Empty;
+				}
+				#if DEBUG
+				MessageBox.Show(cod+mod);
+				#endif
+
+			}
 		}
 	}
 }

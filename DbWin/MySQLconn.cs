@@ -484,7 +484,9 @@ namespace DbWin
 			if( conn != null )
 			{
 				string sql = $"CALL VediCodici({limit},\"{ReplaceWildcards(cod)}\",\"{ReplaceWildcards(mod)}\");";
+				#if DEBUG
 				MsgBox.Show(sql);
+				#endif
 				sb.AppendLine($"--- {"Vedi codici"} ---");
 				sb.AppendLine(ExecuteSQLCommand(sql,SQLqueryType.Reader));
 			}
@@ -508,7 +510,9 @@ namespace DbWin
 			if(conn != null)
 			{
 				string sql = $"CALL VediCodici({limit},\"{ReplaceWildcards(cod)}\",\"{ReplaceWildcards(mod)}\");";
+				#if DEBUG
 				MsgBox.Show(sql);
+				#endif
 				ExecuteSQLReadDataTable(sql, ref dt);
 			}
 			else
@@ -532,7 +536,9 @@ namespace DbWin
 			if(conn != null)
 			{
 				string sql = $"CALL VediDescrizioni({limit},\"{ReplaceWildcards(cod)}\",\"{ReplaceWildcards(mod)}\");";
+				#if DEBUG
 				MsgBox.Show(sql);
+				#endif
 				ExecuteSQLReadDataTable(sql, ref dt);
 			}
 			else
@@ -555,7 +561,9 @@ namespace DbWin
 			if(conn != null)
 			{
 				string sql = $"CALL GetCode(\"{ReplaceWildcards(cod)}\",\"{ReplaceWildcards(mod)}\");";
+				#if DEBUG
 				MsgBox.Show(sql);
+				#endif
 				ExecuteSQLReadDataTable(sql, ref dt);
 			}
 			else

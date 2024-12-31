@@ -350,8 +350,8 @@ namespace DbWin
 			if(!busy.busy)
 			{
 				FormData fd = new FormData();
-				fd.Add("Codice","*");
-				fd.Add("Modifica","*");
+				fd.Add("Codice","100*");
+				fd.Add("Modifica","a");
 				if((new InputForm(fd)).ShowDialog()==DialogResult.OK)
 				{
 					cts = new CancellationTokenSource();
@@ -363,11 +363,22 @@ namespace DbWin
 			}
 		}
 
+		void VediCodiceSingolo(string cod, string mod)
+		{
+			if(!busy.busy)
+			{
+				cts = new CancellationTokenSource();
+				token = cts.Token;
+				busy.busy = true;
+				Task<DataTable> task = Task<DataTable>.Factory.StartNew(() => conn.VediCodiceSingolo(cod,mod),token);
+				task.ContinueWith(ShowTaskDataTable);
+			}
+		}
+
 		void ShowDataTable(DataTable dt)
 		{
-			GridBox gb = new GridBox(dt);
+			GridBox gb = new GridBox(dt,VediCodiceSingolo);
 			gb.Show();
-
 		}
 
 		/*******************************************/
