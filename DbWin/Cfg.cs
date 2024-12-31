@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -27,6 +28,9 @@ namespace DbWin
 		public string	CONN_database;
 		public bool		INI_quick;
 		public DateTime	INI_dt;
+		public List<string>	P_show;
+		public List<string>	P_rdonly;
+		public List<string>	P_drop;
 	}
 
 	public class Msg:CfgReader
@@ -96,18 +100,30 @@ namespace DbWin
 		public static string DumpEntries()
 		{
 			StringBuilder sb = new StringBuilder();
-			//sb.AppendLine($"Configuration files:{Environment.NewLine}{_cfgFile}{Environment.NewLine}{_msgFile}");
+
 			FieldInfo[] finfos;
 			foreach(object obj in new object[] {Config, Msg })
-				{
+			{
 				Type t = obj.GetType();
 				sb.AppendLine($"{Environment.NewLine}{t.Name}:");
-				
 				finfos = t.GetFields();			
-				
 				foreach(FieldInfo finfo in finfos)
 					{
-					sb.AppendLine($"{finfo.Name} = {finfo.GetValue(obj).ToString()}");
+						string name = finfo.Name;
+						var prop = finfo.GetValue(obj);
+						if(prop is IEnumerable<string>)
+						{
+							sb.Append(finfo.Name+" = {"); 
+							foreach (var listitem in prop as IEnumerable<string>)	// Solo List<string>; per altri: aggiungere else if...!
+							{
+								sb.Append(listitem.ToString()+";");
+							}
+							sb.AppendLine("}");
+						}
+						else
+						{
+							sb.AppendLine($"{finfo.Name} = {prop.ToString()}");	
+						}
 					}
 			}
 			return sb.ToString();

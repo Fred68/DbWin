@@ -64,20 +64,25 @@ namespace DbWin
 			if(row != -1)
 			{
 				DataRow drow = dtbl.Rows[row];
-				string cod, mod;
-				try
+				string tableName = dtbl.TableName;
+				
+				if((tableName == CFG.Msg.MnuViewCode) || (tableName == CFG.Msg.MnuViewCodes) || (tableName ==  CFG.Msg.MnuViewDescr))
 				{
-					cod = (string)drow["CODICE"];
-					mod = (string)drow["MODIFICA"];
-					_shw(cod,mod);
+					string cod, mod;
+					try
+					{
+						cod = (string)drow["CODICE"];
+						mod = (string)drow["MODIFICA"];
+						_shw(cod,mod);
+					}
+					catch
+					{
+						cod = mod = string.Empty;
+					}
+					#if DEBUG
+					MessageBox.Show(dtbl.TableName + Environment.NewLine + cod+mod);
+					#endif
 				}
-				catch
-				{
-					cod = mod = string.Empty;
-				}
-				#if DEBUG
-				MessageBox.Show(cod+mod);
-				#endif
 
 			}
 		}

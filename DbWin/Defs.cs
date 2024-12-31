@@ -26,6 +26,6 @@ namespace DbWin
 		NoQuery,
 		Scalar
 	}
-	
+
 }
 
