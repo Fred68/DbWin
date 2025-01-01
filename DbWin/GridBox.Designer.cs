@@ -43,7 +43,7 @@
 			dataGridView1.Location = new Point(0,0);
 			dataGridView1.Name = "dataGridView1";
 			dataGridView1.ReadOnly = true;
-			dataGridView1.Size = new Size(800,377);
+			dataGridView1.Size = new Size(828,377);
 			dataGridView1.TabIndex = 0;
 			dataGridView1.CellDoubleClick += dataGridView1_CellDoubleClick;
 			// 
@@ -55,13 +55,13 @@
 			flowLayoutPanel1.FlowDirection = FlowDirection.RightToLeft;
 			flowLayoutPanel1.Location = new Point(0,421);
 			flowLayoutPanel1.Name = "flowLayoutPanel1";
-			flowLayoutPanel1.Size = new Size(800,29);
+			flowLayoutPanel1.Size = new Size(828,29);
 			flowLayoutPanel1.TabIndex = 1;
 			// 
 			// btClose
 			// 
 			btClose.DialogResult = DialogResult.OK;
-			btClose.Location = new Point(722,3);
+			btClose.Location = new Point(750,3);
 			btClose.Name = "btClose";
 			btClose.Size = new Size(75,23);
 			btClose.TabIndex = 0;
@@ -73,7 +73,7 @@
 			// 
 			AutoScaleDimensions = new SizeF(7F,15F);
 			AutoScaleMode = AutoScaleMode.Font;
-			ClientSize = new Size(800,450);
+			ClientSize = new Size(828,450);
 			Controls.Add(flowLayoutPanel1);
 			Controls.Add(dataGridView1);
 			Name = "GridBox";

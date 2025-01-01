@@ -7,9 +7,14 @@ using System.Text;
 //using static Org.BouncyCastle.Math.EC.ECCurve;
 using Fred68.InputForms;
 using InputForms;
+using Org.BouncyCastle.Bcpg.OpenPgp;
 
 namespace DbWin
 {
+
+	public delegate void ShowCodeFunc(string cod, string mod);		// Delegate per mostrare un singolo codice
+	public delegate void ShowDataTableFunc(DataTable dt);			// Delegate per mostrare un DataTable
+
 	public partial class Form1:Form
 	{
 
@@ -293,6 +298,13 @@ namespace DbWin
 			UpdateForm();
 			BeginInvoke(new Action(() => ShowDataTable(dt)));
 		}
+		void EditTaskDataTable(Task<DataTable> t)
+		{
+			DataTable dt = t.Result;
+			busy.busy = false;
+			UpdateForm();
+			BeginInvoke(new Action(() => EditDataTable(dt)));
+		}
 
 		void VediCodiciString()
 		{
@@ -345,7 +357,7 @@ namespace DbWin
 			}
 		}
 
-		void VediCodiceSingolo()
+		void VediCodice()
 		{
 			if(!busy.busy)
 			{
@@ -371,7 +383,7 @@ namespace DbWin
 				token = cts.Token;
 				busy.busy = true;
 				Task<DataTable> task = Task<DataTable>.Factory.StartNew(() => conn.VediCodiceSingolo(cod,mod),token);
-				task.ContinueWith(ShowTaskDataTable);
+				task.ContinueWith(EditTaskDataTable);
 			}
 		}
 
@@ -411,10 +423,61 @@ namespace DbWin
 				}
 			}
 		}
+		
 		void ShowDataTable(DataTable dt)
 		{
-			GridBox gb = new GridBox(dt,VediCodiceSingolo);
+			GridBox gb = new GridBox(dt,VediCodiceSingolo);		// Evento per doppio click su un codice
 			gb.Show();
+		}
+
+		void EditDataTable(DataTable dt)
+		{
+			int iTipo = -1;
+			string tipo = string.Empty;
+			Type? tTipo = null;
+
+			int nRows = dt.Rows.Count;
+			int nCols = dt.Columns.Count;
+
+			MsgBox.Show($"Rows= {nRows}, Cols= {nCols}");
+			if(nRows != 1)
+			{
+				MsgBox.Show("Numero errato di righe.");
+				return;
+			}
+			
+			for(int i=0; i<nCols; i++)
+			{
+				if(dt.Columns[i].ColumnName == "TIPO")
+				{
+					iTipo = i;
+					tTipo = dt.Columns[i].DataType;
+					break;
+				}
+			}
+
+			if( (iTipo == -1) || (tTipo == null))
+			{
+				MsgBox.Show("Tipo di codice (colonna 'TIPO') mancante.");
+				return;
+			}
+			if(!(tTipo == typeof(string)))	// Non è null
+			{
+				MsgBox.Show("Colonna 'TIPO' con dati non string");
+				return;
+			}
+			
+			DataRow drc = dt.Rows[0];
+			tipo = (string)drc[iTipo];
+			MsgBox.Show($"Tipo= {tipo}");
+
+			List<string> lShow = CFG.GetList(CFG.ListType.Show,tipo);
+			List<string> lReadOnly = CFG.GetList(CFG.ListType.Readonly,tipo);
+			List<string> lDropdown = CFG.GetList(CFG.ListType.Dropdown,tipo);
+
+			GridBox gb = new GridBox(dt,VediCodiceSingolo);		// Evento per doppio click su un codice
+			gb.Show();
+			
 		}
 
 		/*******************************************/
@@ -514,7 +577,7 @@ namespace DbWin
 
 		private void vediCodiceToolStripMenuItem_Click(object sender,EventArgs e)
 		{
-			VediCodiceSingolo();
+			VediCodice();
 		}
 
 		private void toolStripMenuItem1_Click(object sender,EventArgs e)

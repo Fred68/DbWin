@@ -7,6 +7,7 @@ using System.Security.Permissions;
 using System.Text;
 using System.Threading.Tasks;
 using Fred68.CfgReader;
+using Org.BouncyCastle.Math.EC.Multiplier;
 using static Fred68.CfgReader.CfgReader;
 
 
@@ -81,6 +82,12 @@ namespace DbWin
 
 	public static class CFG
 	{
+		public enum ListType
+		{
+			Show,
+			Readonly,
+			Dropdown
+		}
 		public readonly static string _cfgFile = "DbWin.cfg";
 		public readonly static string _msgFile = "DbWin.msg";
 		
@@ -96,6 +103,7 @@ namespace DbWin
 			MsgBox.Show(Config.DumpEntries());
 #endif
 			Config.GetNames(true);
+			ClearEmpyStringsInLists();
 
 			Msg = new Msg();
 			Msg.CHR_ListSeparator = @";";
@@ -137,6 +145,55 @@ namespace DbWin
 					}
 			}
 			return sb.ToString();
+		}
+		
+		public static List<string> GetList(ListType lst, string tipo)
+		{
+			List<string> list = new List<string>();
+			switch(tipo)
+			{
+				case "P":
+				{
+					return SelectList(lst, Config.P_show, Config.P_rdonly, Config.P_drop);
+				}
+				case "A":
+				{
+					return SelectList(lst, Config.A_show, Config.A_rdonly, Config.A_drop);
+				}
+				case "C":
+				{
+					return SelectList(lst, Config.C_show, Config.C_rdonly, Config.C_drop);
+				}
+				case "S":
+				{
+					return SelectList(lst, Config.S_show, Config.S_rdonly, Config.S_drop);
+				}
+
+			}
+			return list;
+		}
+
+		private static List<string> SelectList(ListType lt, List<string> show, List<string> rdonly, List<string> dropdwn)
+		{
+			switch(lt)
+			{
+				case ListType.Show:
+					return show;
+				case ListType.Readonly:
+					return rdonly;
+				case ListType.Dropdown:
+					return dropdwn;
+				default:
+					return new List<string>();
+			}
+		}
+		private static void ClearEmpyStringsInLists()
+		{
+			List<string>[] lstl = {Config.P_show, Config.P_rdonly, Config.P_drop,Config.A_show, Config.A_rdonly, Config.A_drop,Config.C_show, Config.C_rdonly, Config.C_drop,Config.S_show, Config.S_rdonly, Config.S_drop,};
+			foreach(List<string> lst in lstl)
+			{
+				lst.RemoveAll(s => string.IsNullOrWhiteSpace(s));
+			}
 		}
 	}
 }

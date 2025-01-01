@@ -11,19 +11,19 @@ using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace DbWin
 {
-	public delegate void ShowCodeFunc(string cod, string mod);
+	
 	public partial class GridBox:Form
 	{
 		DataTable dtbl;
 		ShowCodeFunc _shw;
 
-		public GridBox(DataTable dt, ShowCodeFunc shw)
+		public GridBox(DataTable dt, ShowCodeFunc shwDelegate)
 		{
 			InitializeComponent();
 			AdjustSize();
 			dtbl = dt;
 			dataGridView1.DataSource = dtbl;
-			_shw = shw;
+			_shw = shwDelegate;
 			this.Text = dtbl.TableName;
 #if DEBUG
 			this.Text += $" {GetDataTypes()}";
@@ -61,7 +61,7 @@ namespace DbWin
 		private void dataGridView1_CellDoubleClick(object sender,DataGridViewCellEventArgs e)
 		{
 			int row = e.RowIndex;
-			if(row != -1)
+			if((row >= 0) && (row < dtbl.Rows.Count))
 			{
 				DataRow drow = dtbl.Rows[row];
 				string tableName = dtbl.TableName;
@@ -86,5 +86,6 @@ namespace DbWin
 
 			}
 		}
+
 	}
 }
