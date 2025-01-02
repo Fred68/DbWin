@@ -49,6 +49,7 @@ namespace DbWin
 		/// </summary>
 		private void InitializeComponent()
 		{
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MsgBox));
 			flowLayoutPanel1 = new FlowLayoutPanel();
 			button1 = new Button();
 			button2 = new Button();
@@ -116,6 +117,7 @@ namespace DbWin
 			Controls.Add(textBox1);
 			Controls.Add(flowLayoutPanel1);
 			FormBorderStyle = FormBorderStyle.Fixed3D;
+			Icon = (Icon)resources.GetObject("$this.Icon");
 			MaximizeBox = false;
 			MinimizeBox = false;
 			MinimumSize = new Size(300,100);

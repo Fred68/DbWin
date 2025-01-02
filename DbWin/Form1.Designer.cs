@@ -29,6 +29,7 @@
 		private void InitializeComponent()
 		{
 			components = new System.ComponentModel.Container();
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
 			menuStrip1 = new MenuStrip();
 			fileToolStripMenuItem = new ToolStripMenuItem();
 			parametriDiConnessioneToolStripMenuItem = new ToolStripMenuItem();
@@ -46,6 +47,7 @@
 			vediCodiciToolStripMenuItem2 = new ToolStripMenuItem();
 			vediCodiceToolStripMenuItem = new ToolStripMenuItem();
 			descrizioniToolStripMenuItem = new ToolStripMenuItem();
+			esplodiToolStripMenuItem = new ToolStripMenuItem();
 			helpToolStripMenuItem = new ToolStripMenuItem();
 			informazioniToolStripMenuItem = new ToolStripMenuItem();
 			dettagliToolStripMenuItem = new ToolStripMenuItem();
@@ -62,7 +64,6 @@
 			toolStripStatusLabel2 = new ToolStripStatusLabel();
 			toolStripStatusLabel3 = new ToolStripStatusLabel();
 			refreshTimer = new System.Windows.Forms.Timer(components);
-			esplodiToolStripMenuItem = new ToolStripMenuItem();
 			menuStrip1.SuspendLayout();
 			statusStrip1.SuspendLayout();
 			SuspendLayout();
@@ -170,23 +171,30 @@
 			// vediCodiciToolStripMenuItem2
 			// 
 			vediCodiciToolStripMenuItem2.Name = "vediCodiciToolStripMenuItem2";
-			vediCodiciToolStripMenuItem2.Size = new Size(180,22);
+			vediCodiciToolStripMenuItem2.Size = new Size(153,22);
 			vediCodiciToolStripMenuItem2.Text = "Codici";
 			vediCodiciToolStripMenuItem2.Click += vediCodiciToolStripMenuItem2_Click;
 			// 
 			// vediCodiceToolStripMenuItem
 			// 
 			vediCodiceToolStripMenuItem.Name = "vediCodiceToolStripMenuItem";
-			vediCodiceToolStripMenuItem.Size = new Size(180,22);
+			vediCodiceToolStripMenuItem.Size = new Size(153,22);
 			vediCodiceToolStripMenuItem.Text = "Codice singolo";
 			vediCodiceToolStripMenuItem.Click += vediCodiceToolStripMenuItem_Click;
 			// 
 			// descrizioniToolStripMenuItem
 			// 
 			descrizioniToolStripMenuItem.Name = "descrizioniToolStripMenuItem";
-			descrizioniToolStripMenuItem.Size = new Size(180,22);
+			descrizioniToolStripMenuItem.Size = new Size(153,22);
 			descrizioniToolStripMenuItem.Text = "Descrizioni";
 			descrizioniToolStripMenuItem.Click += descrizioniToolStripMenuItem_Click;
+			// 
+			// esplodiToolStripMenuItem
+			// 
+			esplodiToolStripMenuItem.Name = "esplodiToolStripMenuItem";
+			esplodiToolStripMenuItem.Size = new Size(153,22);
+			esplodiToolStripMenuItem.Text = "Esplodi";
+			esplodiToolStripMenuItem.Click += esplodiToolStripMenuItem_Click;
 			// 
 			// helpToolStripMenuItem
 			// 
@@ -304,13 +312,6 @@
 			// 
 			refreshTimer.Tick += refreshTimer_Tick;
 			// 
-			// esplodiToolStripMenuItem
-			// 
-			esplodiToolStripMenuItem.Name = "esplodiToolStripMenuItem";
-			esplodiToolStripMenuItem.Size = new Size(180,22);
-			esplodiToolStripMenuItem.Text = "Esplodi";
-			esplodiToolStripMenuItem.Click += esplodiToolStripMenuItem_Click;
-			// 
 			// Form1
 			// 
 			AutoScaleDimensions = new SizeF(7F,15F);
@@ -318,9 +319,10 @@
 			ClientSize = new Size(800,450);
 			Controls.Add(statusStrip1);
 			Controls.Add(menuStrip1);
+			Icon = (Icon)resources.GetObject("$this.Icon");
 			MainMenuStrip = menuStrip1;
 			Name = "Form1";
-			Text = "DesignToolsServer";
+			Text = "titolo";
 			FormClosing += Form1_FormClosing;
 			Load += Form1_Load;
 			menuStrip1.ResumeLayout(false);

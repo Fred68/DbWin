@@ -43,8 +43,7 @@ namespace DbWin
 			conn = new MySQLconn();
 			rotchar = new RotatingChar(activeTsMenuItem);
 			busy = new Busy(busyTsMenuItem,"B"," ");
-
-			//inf = new InputForm();
+			if(this.Icon != null)	InputForm.SetIcon(this.Icon);
 		}
 
 		private void ReplaceGUIText()
@@ -439,7 +438,7 @@ namespace DbWin
 			int nRows = dt.Rows.Count;
 			int nCols = dt.Columns.Count;
 
-			MsgBox.Show($"Rows= {nRows}, Cols= {nCols}");
+			//MsgBox.Show($"Rows= {nRows}, Cols= {nCols}");
 			if(nRows != 1)
 			{
 				MsgBox.Show("Numero errato di righe.");
@@ -469,16 +468,48 @@ namespace DbWin
 			
 			DataRow drc = dt.Rows[0];
 			tipo = (string)drc[iTipo];
-			MsgBox.Show($"Tipo= {tipo}");
+			//MsgBox.Show($"Tipo= {tipo}");
 
 			List<string> lShow = CFG.GetList(CFG.ListType.Show,tipo);
 			List<string> lReadOnly = CFG.GetList(CFG.ListType.Readonly,tipo);
 			List<string> lDropdown = CFG.GetList(CFG.ListType.Dropdown,tipo);
 
-			GridBox gb = new GridBox(dt,VediCodiceSingolo);		// Evento per doppio click su un codice
-			gb.Show();
+			FormData fd = new FormData();
+
+			//StringBuilder sb = new StringBuilder();
+			foreach(string s in lShow)
+			{
+				if(dt.Columns.Contains(s))
+				{
+					int indx = dt.Columns.IndexOf(s);
+					Type tp = dt.Columns[indx].DataType;
+					bool bRo = lReadOnly.Contains(s);
+					bool bDr = lDropdown.Contains(s);
+					string roStr,drStr;
+					roStr = drStr = string.Empty;
+					if(bRo)	roStr = "[R]";
+					if(bDr)	drStr = "[*]";
+					
+					fd.Add(s, drc[indx], bRo,bDr);
+
+					//sb.AppendLine($"{indx}[{tp.ToString()}]:{s}{roStr}{drStr}={drc[indx].ToString()}");
+				}
+
+			}
+			//MsgBox.Show(sb.ToString());
+
+			#warning COMPLETARE
+
+			InputForm inf = new InputForm(fd);
+			inf.ShowDialog();
+
+
+
+			//GridBox gb = new GridBox(dt,VediCodiceSingolo);		// Evento per doppio click su un codice
+			//gb.Show();
 			
 		}
+
 
 		/*******************************************/
 		// Handlers

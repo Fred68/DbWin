@@ -28,6 +28,7 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ConnectionForm));
 			tbSvr = new TextBox();
 			tbPrt = new TextBox();
 			tbUsr = new TextBox();
@@ -166,6 +167,7 @@
 			Controls.Add(tbUsr);
 			Controls.Add(tbPrt);
 			Controls.Add(tbSvr);
+			Icon = (Icon)resources.GetObject("$this.Icon");
 			Name = "ConnectionForm";
 			StartPosition = FormStartPosition.CenterScreen;
 			Load += ConnectionForm_Load;

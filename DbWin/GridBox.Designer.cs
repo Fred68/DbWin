@@ -28,6 +28,7 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(GridBox));
 			dataGridView1 = new DataGridView();
 			flowLayoutPanel1 = new FlowLayoutPanel();
 			btClose = new Button();
@@ -76,6 +77,7 @@
 			ClientSize = new Size(828,450);
 			Controls.Add(flowLayoutPanel1);
 			Controls.Add(dataGridView1);
+			Icon = (Icon)resources.GetObject("$this.Icon");
 			Name = "GridBox";
 			Text = "GridBox";
 			ResizeEnd += GridBox_ResizeEnd;
