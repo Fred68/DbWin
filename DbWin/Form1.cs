@@ -435,17 +435,16 @@ namespace DbWin
 			string tipo = string.Empty;
 			Type? tTipo = null;
 
-			int nRows = dt.Rows.Count;
+			int nRows = dt.Rows.Count;							// Numeri di riche e di colonne
 			int nCols = dt.Columns.Count;
 
-			//MsgBox.Show($"Rows= {nRows}, Cols= {nCols}");
-			if(nRows != 1)
+			if(nRows != 1)										// Edit possibile solo il codice è unico (una riga soltanto)
 			{
 				MsgBox.Show("Numero errato di righe.");
 				return;
 			}
 			
-			for(int i=0; i<nCols; i++)
+			for(int i=0; i<nCols; i++)							// Cerca la colonna con il TIPO
 			{
 				if(dt.Columns[i].ColumnName == "TIPO")
 				{
@@ -455,7 +454,7 @@ namespace DbWin
 				}
 			}
 
-			if( (iTipo == -1) || (tTipo == null))
+			if( (iTipo == -1) || (tTipo == null))				// Se la colonna TIPO non esiste, interrompe con errore
 			{
 				MsgBox.Show("Tipo di codice (colonna 'TIPO') mancante.");
 				return;
@@ -466,43 +465,46 @@ namespace DbWin
 				return;
 			}
 			
-			DataRow drc = dt.Rows[0];
-			tipo = (string)drc[iTipo];
-			//MsgBox.Show($"Tipo= {tipo}");
+			DataRow drc = dt.Rows[0];							// Dati della riga
+			tipo = (string)drc[iTipo];							// Tipo di record (P, A, C, S)
 
-			List<string> lShow = CFG.GetList(CFG.ListType.Show,tipo);
+			List<string> lShow = CFG.GetList(CFG.ListType.Show,tipo);				// Legge i campi dalla configurazione
 			List<string> lReadOnly = CFG.GetList(CFG.ListType.Readonly,tipo);
 			List<string> lDropdown = CFG.GetList(CFG.ListType.Dropdown,tipo);
 
-			FormData fd = new FormData();
-
-			//StringBuilder sb = new StringBuilder();
-			foreach(string s in lShow)
+			FormData fd = new FormData();						// Prepara i dati per l'Input Form
+			foreach(string s in lShow)							// Nome del campo
 			{
 				if(dt.Columns.Contains(s))
 				{
-					int indx = dt.Columns.IndexOf(s);
-					Type tp = dt.Columns[indx].DataType;
-					bool bRo = lReadOnly.Contains(s);
-					bool bDr = lDropdown.Contains(s);
-					string roStr,drStr;
-					roStr = drStr = string.Empty;
-					if(bRo)	roStr = "[R]";
-					if(bDr)	drStr = "[*]";
-					
+					int indx = dt.Columns.IndexOf(s);			// Indice
+					Type tp = dt.Columns[indx].DataType;		// Tipo di dato
+					bool bRo = lReadOnly.Contains(s);			// Readonly
+					bool bDr = lDropdown.Contains(s);			// Dropdown
 					fd.Add(s, drc[indx], bRo,bDr);
-
-					//sb.AppendLine($"{indx}[{tp.ToString()}]:{s}{roStr}{drStr}={drc[indx].ToString()}");
 				}
 
 			}
-			//MsgBox.Show(sb.ToString());
 
-			#warning COMPLETARE
+			
+			if(fd.Count > 0)
+			{
+				InputForm inf = new InputForm(fd);
+				if(inf.ShowDialog() == DialogResult.OK)
+				{
+					if(fd.isModified)
+					{
+						MsgBox.Show($"Update / insert:{Environment.NewLine}{fd.Dump()}");
+					}
+					#warning COMPLETARE: modifica o aggiunta... Domanda, poi chiamata al database
+				}
+			}
+			else
+			{
+				MsgBox.Show("Nessun dato trovato");
+			}
 
-			InputForm inf = new InputForm(fd);
-			inf.ShowDialog();
-
+			
 
 
 			//GridBox gb = new GridBox(dt,VediCodiceSingolo);		// Evento per doppio click su un codice

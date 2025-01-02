@@ -460,7 +460,7 @@ namespace DbWin
 						da.Fill(dt);
 					}
 				}
-				catch(Exception ex)
+				catch
 				{
 					dt.Clear();
 				}
