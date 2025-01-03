@@ -126,23 +126,26 @@ namespace DbWin
 				sb.AppendLine($"{Environment.NewLine}{t.Name}:");
 				finfos = t.GetFields();			
 				foreach(FieldInfo finfo in finfos)
+				{
+					string name = finfo.Name;
+					var prop = finfo.GetValue(obj);
+					if(prop is IEnumerable<string>)
 					{
-						string name = finfo.Name;
-						var prop = finfo.GetValue(obj);
-						if(prop is IEnumerable<string>)
+						sb.Append(finfo.Name+" = {"); 
+						foreach (var listitem in prop as IEnumerable<string>)	// Solo List<string>; per altri: aggiungere else if...!
 						{
-							sb.Append(finfo.Name+" = {"); 
-							foreach (var listitem in prop as IEnumerable<string>)	// Solo List<string>; per altri: aggiungere else if...!
-							{
-								sb.Append(listitem.ToString()+";");
-							}
-							sb.AppendLine("}");
+							sb.Append(listitem.ToString()+";");
 						}
-						else
+						sb.AppendLine("}");
+					}
+					else 
+					{
+						if(prop != null)
 						{
 							sb.AppendLine($"{finfo.Name} = {prop.ToString()}");	
 						}
 					}
+				}
 			}
 			return sb.ToString();
 		}

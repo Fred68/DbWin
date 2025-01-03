@@ -4,8 +4,8 @@
 
 SECTIONPREFIXOFF					# Nomi delle variabili semplici
 
-[IT] = OFF
-[EN] = ON
+[IT] = ON
+[EN] = OFF
 
 
 

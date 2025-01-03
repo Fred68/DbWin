@@ -49,7 +49,7 @@ namespace DbWin
 		private void ReplaceGUIText()
 		{
 			SuspendLayout();
-			Text = "DesignToolsServer";
+			Text = Application.ProductName;
 			fileToolStripMenuItem.Text = CFG.Msg.MnuConnecting;
 			parametriDiConnessioneToolStripMenuItem.Text = CFG.Msg.MnuParameters;
 			connettiToolStripMenuItem.Text = CFG.Msg.MnuConnect;
@@ -395,12 +395,13 @@ namespace DbWin
 				fd.Add("Modifica","a");
 				fd.Add("Profondità",100);
 				if((new InputForm(fd)).ShowDialog() == DialogResult.OK)
-
+				{
 					cts = new CancellationTokenSource();
 					token = cts.Token;
 					busy.busy = true;
 					Task<string> task = Task<string>.Factory.StartNew(() => conn.EsplodiCodiceString(fd["Codice"],fd["Modifica"],fd["Profondità"]),token);
 					task.ContinueWith(ShowTaskMsg);
+				}
 			}	
 		}
 
@@ -489,7 +490,7 @@ namespace DbWin
 			
 			if(fd.Count > 0)
 			{
-				InputForm inf = new InputForm(fd);
+				InputForm inf = new InputForm(fd,true,60);
 				if(inf.ShowDialog() == DialogResult.OK)
 				{
 					if(fd.isModified)
