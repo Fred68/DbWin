@@ -7,13 +7,14 @@ using System.Text;
 //using static Org.BouncyCastle.Math.EC.ECCurve;
 using Fred68.InputForms;
 using InputForms;
-using Org.BouncyCastle.Bcpg.OpenPgp;
+//using Org.BouncyCastle.Bcpg.OpenPgp;
+//using static Org.BouncyCastle.Crypto.Engines.SM2Engine;
 
 namespace DbWin
 {
 
 	public delegate void ShowCodeFunc(string cod, string mod);		// Delegate per mostrare un singolo codice
-	public delegate void ShowDataTableFunc(DataTable dt);			// Delegate per mostrare un DataTable
+	public delegate void ShowDataTableFunc(DataTable dt);           // Delegate per mostrare un DataTable
 
 	public partial class Form1:Form
 	{
@@ -26,10 +27,8 @@ namespace DbWin
 		static CancellationTokenSource? cts = null;         // new CancellationTokenSource();
 		CancellationToken token = CancellationToken.None;   // cts.Token;
 
-		//InputForm inf;
-
 		/*******************************************/
-		// Ctors and main functions
+		// Ctors e funzioni principali
 		/*******************************************/
 
 		/// <summary>
@@ -43,7 +42,8 @@ namespace DbWin
 			conn = new MySQLconn();
 			rotchar = new RotatingChar(activeTsMenuItem);
 			busy = new Busy(busyTsMenuItem,"B"," ");
-			if(this.Icon != null)	InputForm.SetIcon(this.Icon);
+			if(this.Icon != null)
+				InputForm.SetIcon(this.Icon);
 		}
 
 		private void ReplaceGUIText()
@@ -132,7 +132,7 @@ namespace DbWin
 		}
 
 		/*******************************************/
-		// Version and help
+		// Versione e help
 		/*******************************************/
 
 		/// <summary>
@@ -192,7 +192,7 @@ namespace DbWin
 		}
 
 		/*******************************************/
-		// Functions
+		// Funzioni con chiamata diretta
 		/*******************************************/
 
 		public void UpdateForm()
@@ -260,6 +260,54 @@ namespace DbWin
 			UpdateForm();
 		}
 
+		void ShowDataTable(DataTable dt)
+		{
+			GridBox gb = new GridBox(dt,VediCodiceSingolo);     // Evento per doppio click su un codice
+			gb.Show();
+		}
+
+		/*******************************************/
+		// Funzioni dopo completamento task
+		/*******************************************/
+
+		void ShowTaskDataTable(Task<DataTable> t)
+		{
+			DataTable dt = t.Result;
+			busy.busy = false;
+			UpdateForm();
+			BeginInvoke(new Action(() => ShowDataTable(dt)));
+		}
+		
+		void EditTaskDataTable(Task<DataTable> t)
+		{
+			DataTable dt = t.Result;
+			busy.busy = false;
+			UpdateForm();
+			BeginInvoke(new Action(() => EditDataTable(dt)));
+		}
+
+		void ShowMsgConnection(Task<string> t)
+		{
+			string msg = t.Result;
+			busy.busy = false;
+			UpdateForm();
+			#if DEBUG
+			MsgBox.Show(msg);
+			#endif
+		}
+
+		void ShowTaskMsg(Task<string> t)
+		{
+			string st = t.Result;
+			busy.busy = false;
+			UpdateForm();
+			BeginInvoke(new Action(() => MsgBox.Show(st)));
+		}
+
+		/*******************************************/
+		// Funzioni con task
+		/*******************************************/
+
 		public void ShowStatus(Info info)
 		{
 			if(!busy.busy)
@@ -272,41 +320,11 @@ namespace DbWin
 			}
 		}
 
-		void ShowMsgConnection(Task<string> t)
-		{
-			string msg = t.Result;
-			busy.busy = false;
-			UpdateForm();
-#if DEBUG
-			MsgBox.Show(msg);
-#endif
-		}
 
-		void ShowTaskMsg(Task<string> t)
-		{
-			string st = t.Result;
-			busy.busy = false;
-			UpdateForm();
-			BeginInvoke(new Action(() => MsgBox.Show(st)));
-		}
-
-		void ShowTaskDataTable(Task<DataTable> t)
-		{
-			DataTable dt = t.Result;
-			busy.busy = false;
-			UpdateForm();
-			BeginInvoke(new Action(() => ShowDataTable(dt)));
-		}
-		void EditTaskDataTable(Task<DataTable> t)
-		{
-			DataTable dt = t.Result;
-			busy.busy = false;
-			UpdateForm();
-			BeginInvoke(new Action(() => EditDataTable(dt)));
-		}
-
+		#region FUNZIONI DA DISABILITARE
 		void VediCodiciString()
 		{
+			#if false
 			if(!busy.busy)
 			{
 				cts = new CancellationTokenSource();
@@ -315,7 +333,29 @@ namespace DbWin
 				Task<string> task = Task<string>.Factory.StartNew(() => conn.VediCodiciString("100*","*",100),token);
 				task.ContinueWith(ShowTaskMsg);
 			}
+			#endif
 		}
+		void EsplodiCodiceString()
+		{
+			#if false
+			if(!busy.busy)
+			{
+				FormData fd = new FormData();
+				fd.Add("Codice","100*");
+				fd.Add("Modifica","a");
+				fd.Add("Profondità",100);
+				if((new InputForm(fd)).ShowDialog() == DialogResult.OK)
+				{
+					cts = new CancellationTokenSource();
+					token = cts.Token;
+					busy.busy = true;
+					Task<string> task = Task<string>.Factory.StartNew(() => conn.EsplodiCodiceString(fd["Codice"],fd["Modifica"],fd["Profondità"]),token);
+					task.ContinueWith(ShowTaskMsg);
+				}
+			}
+			#endif
+		}
+		#endregion
 
 		void VediCodici()
 		{
@@ -386,25 +426,6 @@ namespace DbWin
 			}
 		}
 
-		void EsplodiCodiceString()
-		{
-			if(!busy.busy)
-			{
-				FormData fd = new FormData();
-				fd.Add("Codice","100*");
-				fd.Add("Modifica","a");
-				fd.Add("Profondità",100);
-				if((new InputForm(fd)).ShowDialog() == DialogResult.OK)
-				{
-					cts = new CancellationTokenSource();
-					token = cts.Token;
-					busy.busy = true;
-					Task<string> task = Task<string>.Factory.StartNew(() => conn.EsplodiCodiceString(fd["Codice"],fd["Modifica"],fd["Profondità"]),token);
-					task.ContinueWith(ShowTaskMsg);
-				}
-			}	
-		}
-
 		void EsplodiCodice()
 		{
 			if(!busy.busy)
@@ -423,11 +444,18 @@ namespace DbWin
 				}
 			}
 		}
-		
-		void ShowDataTable(DataTable dt)
+
+
+		void ContaCodici(string cod,string mod)
 		{
-			GridBox gb = new GridBox(dt,VediCodiceSingolo);		// Evento per doppio click su un codice
-			gb.Show();
+			if(!busy.busy)
+			{
+				cts = new CancellationTokenSource();
+				token = cts.Token;
+				busy.busy = true;
+				Task<DataTable> task = Task<DataTable>.Factory.StartNew(() => conn.ContaCodici(cod,mod),token);
+				task.ContinueWith(ShowTaskDataTable);
+			}
 		}
 
 		void EditDataTable(DataTable dt)
@@ -436,16 +464,16 @@ namespace DbWin
 			string tipo = string.Empty;
 			Type? tTipo = null;
 
-			int nRows = dt.Rows.Count;							// Numeri di riche e di colonne
+			int nRows = dt.Rows.Count;                          // Numeri di riche e di colonne
 			int nCols = dt.Columns.Count;
 
-			if(nRows != 1)										// Edit possibile solo il codice è unico (una riga soltanto)
+			if(nRows != 1)                                      // Edit possibile solo il codice è unico (una riga soltanto)
 			{
 				MsgBox.Show("Numero errato di righe.");
 				return;
 			}
-			
-			for(int i=0; i<nCols; i++)							// Cerca la colonna con il TIPO
+
+			for(int i = 0;i < nCols;i++)                            // Cerca la colonna con il TIPO
 			{
 				if(dt.Columns[i].ColumnName == "TIPO")
 				{
@@ -455,49 +483,66 @@ namespace DbWin
 				}
 			}
 
-			if( (iTipo == -1) || (tTipo == null))				// Se la colonna TIPO non esiste, interrompe con errore
+			if((iTipo == -1) || (tTipo == null))                // Se la colonna TIPO non esiste, interrompe con errore
 			{
 				MsgBox.Show("Tipo di codice (colonna 'TIPO') mancante.");
 				return;
 			}
-			if(!(tTipo == typeof(string)))	// Non è null
+			if(!(tTipo == typeof(string)))  // Non è null
 			{
 				MsgBox.Show("Colonna 'TIPO' con dati non string");
 				return;
 			}
-			
-			DataRow drc = dt.Rows[0];							// Dati della riga
-			tipo = (string)drc[iTipo];							// Tipo di record (P, A, C, S)
 
-			List<string> lShow = CFG.GetList(CFG.ListType.Show,tipo);				// Legge i campi dalla configurazione
+			DataRow drc = dt.Rows[0];                           // Dati della riga
+			tipo = (string)drc[iTipo];                          // Tipo di record (P, A, C, S)
+
+			List<string> lShow = CFG.GetList(CFG.ListType.Show,tipo);               // Legge i campi dalla configurazione
 			List<string> lReadOnly = CFG.GetList(CFG.ListType.Readonly,tipo);
 			List<string> lDropdown = CFG.GetList(CFG.ListType.Dropdown,tipo);
 
-			FormData fd = new FormData();						// Prepara i dati per l'Input Form
-			foreach(string s in lShow)							// Nome del campo
+			FormData fd = new FormData();                       // Prepara i dati per l'Input Form
+			foreach(string s in lShow)                          // Nome del campo
 			{
 				if(dt.Columns.Contains(s))
 				{
-					int indx = dt.Columns.IndexOf(s);			// Indice
-					Type tp = dt.Columns[indx].DataType;		// Tipo di dato
-					bool bRo = lReadOnly.Contains(s);			// Readonly
-					bool bDr = lDropdown.Contains(s);			// Dropdown
-					fd.Add(s, drc[indx], bRo,bDr);
+					int indx = dt.Columns.IndexOf(s);           // Indice
+					Type tp = dt.Columns[indx].DataType;        // Tipo di dato
+					bool bRo = lReadOnly.Contains(s);           // Readonly
+					bool bDr = lDropdown.Contains(s);           // Dropdown
+					fd.Add(s,drc[indx],bRo,bDr);
 				}
 
 			}
 
-			
 			if(fd.Count > 0)
 			{
 				InputForm inf = new InputForm(fd,true,60);
 				if(inf.ShowDialog() == DialogResult.OK)
 				{
-					if(fd.isModified)
+					string cod = string.Empty;
+					string mod = string.Empty;
+					if(fd.isValid)								// Estrae il codice
+					{
+						
+						try
+						{
+							cod = fd["CODICE"];
+							mod = fd["MODIFICA"];
+						}
+						catch(KeyNotFoundException ex)
+						{
+							MsgBox.Show("Errore: " + ex.Message);
+							fd.isValid = false;
+						}
+					}
+
+					if(fd.isValid)								// Controlla se esiste già
 					{
 						MsgBox.Show($"Update / insert:{Environment.NewLine}{fd.Dump()}");
+						ContaCodici(cod,mod);
 					}
-					#warning COMPLETARE: modifica o aggiunta... Domanda, poi chiamata al database
+#warning COMPLETARE: Mostrare modifica o aggiunta, chiedere, inserire, mostrare il risultato dell'inserimento
 				}
 			}
 			else
@@ -505,12 +550,12 @@ namespace DbWin
 				MsgBox.Show("Nessun dato trovato");
 			}
 
-			
+
 
 
 			//GridBox gb = new GridBox(dt,VediCodiceSingolo);		// Evento per doppio click su un codice
 			//gb.Show();
-			
+
 		}
 
 
@@ -627,6 +672,11 @@ namespace DbWin
 		private void esplodiToolStripMenuItem_Click(object sender,EventArgs e)
 		{
 			EsplodiCodice();
+		}
+
+		private void contaCodiciToolStripMenuItem_Click(object sender,EventArgs e)
+		{
+			ContaCodici("100.11.123","a");
 		}
 	}
 }

@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using MySql.Data.MySqlClient;
 using Org.BouncyCastle.Tls.Crypto;      // Per MySqlConnection
 using System.Data.Common;
+using Mysqlx.Crud;
 
 namespace DbWin
 {
@@ -393,7 +394,7 @@ namespace DbWin
 						case SQLqueryType.NoQuery:			// ExecuteNonQuery 
 						{
 							int lines = cmd.ExecuteNonQuery();
-							sb.AppendLine($"NonQuery():{lines} linee.");
+							//sb.AppendLine($"NonQuery():{lines} linee.");
 						}
 						break;
 						case SQLqueryType.Scalar:			// ExecuteScalar 
@@ -404,12 +405,12 @@ namespace DbWin
 							{
 								s = Convert.ToString(obj);
 							}
-							sb.AppendLine($"Scalar():{s}.");
+							//sb.AppendLine($"Scalar():{s}.");
 						}
 						break;
 						case SQLqueryType.Reader:			// ExecuteReader 
 						{
-							sb.AppendLine($"Reader():");
+							//sb.AppendLine($"Reader():");
 							rdr = cmd.ExecuteReader();
 							
 							for(int i=0; i<rdr.FieldCount; i++)
@@ -471,17 +472,11 @@ namespace DbWin
 		// Query fuctions
 		/*******************************************/
 
-		/// <summary>
-		/// Vedi codici (in una stringa unica)
-		/// </summary>
-		/// <param name="cod">Codice (con wildcard %)</param>
-		/// <param name="mod">Modifica (con wildcard %)</param>
-		/// <param name="limit">Numero massimo di righe</param>
-		/// <returns></returns>
-		public string VediCodiciString(string cod, string mod, int limit)
+		#if false
+		public string VediCodiciString(string cod,string mod,int limit)
 		{
 			StringBuilder sb = new StringBuilder();
-			if( conn != null )
+			if(conn != null)
 			{
 				string sql = $"CALL VediCodici({limit},\"{ReplaceWildcards(cod)}\",\"{ReplaceWildcards(mod)}\");";
 				#if DEBUG
@@ -515,7 +510,7 @@ namespace DbWin
 			}
 			return sb.ToString();
 		}
-
+		#endif
 		public DataTable EsplodiCodice(string cod, string mod, int limit)
 		{
 			DataTable dt = new DataTable();
@@ -612,6 +607,25 @@ namespace DbWin
 			return dt;
 		}
 
+		public DataTable ContaCodici(string cod, string mod)
+		{
+			DataTable dt = new DataTable();
+			if( conn != null )
+			{
+				string sql = $"CALL ContaCodici(\"{ReplaceWildcards(cod)}\",\"{ReplaceWildcards(mod)}\");";
+				#if DEBUG
+				MsgBox.Show(sql);
+				#endif
+				ExecuteSQLReadDataTable(sql, ref dt);
+			}
+			else
+			{
+				dt = EmptyDataTable("RESULT",CFG.Msg.MsgNotConnected);
+			}
+			dt.TableName = "ContaCodici";
+			return dt;
+
+		}
 
 	}
 }
