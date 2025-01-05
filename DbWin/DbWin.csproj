@@ -12,6 +12,18 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="GestioneAttivita.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="CampiDaSelect.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="GestioneAttivita.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="MySql.Data" Version="9.1.0" />
   </ItemGroup>
 

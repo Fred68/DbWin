@@ -9,57 +9,39 @@ using System.Windows.Forms;
 namespace DbWin
 {
 
-	#warning	AGGIUNGERE COMMENTI E SPIEGAZIONI !!!!
+	
 
+	/// <summary>
+	/// Classe con coda di Task
+	/// </summary>
 	public class GestioneAttivita
 	{
-		public class DataTableInfo
-		{
-			DataTable _dt;
-			Task<DataTableInfo> _task;
-			Attivita _att;
 
-			public DataTable datatable
-			{
-				get
-				{
-					return _dt;
-				}
-			}
-			public Task<DataTableInfo> task
-			{
-				get
-				{
-					return _task;
-				}
-			}
-			public Attivita att
-			{
-				get
-				{
-					return _att;
-				}
-			}
 
-			public DataTableInfo(DataTable datatable,Task<DataTableInfo> task, Attivita att)
-			{
-				_dt = datatable;
-				_task = task;
-				_att = att;
-			}
-		}
+		/*******************************************/
+		// class Attivita
+		/*******************************************/
 
+		/// <summary>
+		/// Attività 
+		/// </summary>
 		public class Attivita
 		{
 			Task<DataTableInfo>		_task;				// Task
 			Func<DataTableInfo>		_func;				// Funzione eseguita dal task
-			DataTable?				_dt;				// Risultato della funzione eseguita nel task
-			Action<DataTable>?		_action;			// Funzione richiamata dalla funzione chiamata al completamento del task
+			DataTableInfo			_dtInfo;			// Risultato della funzione eseguita nel task
+			
+			Func<DataTable>			_dtFunc;			// Funzione che restituisce un DataTable, eseguita durante il Task
+			DataTableFunc			_continueFunc;		// Funzione richiamata al completamento del task
+			
 			CancellationToken		_token;				// Cancellation token and...
 			CancellationTokenSource _cts;				// ...source
 			GestioneAttivita		_gst;				// Gestione attività
 
-			public Action<DataTable>	action
+			/// <summary>
+			/// Action per chiamata da Form.BeginInvoke() con funzione lambda new Action(() => action) con action(DataTable)
+			/// </summary>
+			public DataTableFunc	action
 			{
 				get { return _action; }
 			}
@@ -69,21 +51,33 @@ namespace DbWin
 			/// </summary>
 			/// <param name="func">Func<DataTable>: funzione eseguita dal task</param>
 			/// <param name="action">Action<Task<DataTable>>: funzione chiamata al completamento del task</param>
-			public Attivita(Func<DataTableInfo> func, Action<DataTable> action, GestioneAttivita gst)
+			/// <param name="gst">classe per la gestione dell'attività</param>
+			public Attivita(Func<DataTable> dtFunc, DataTableFunc continueFunc, GestioneAttivita gst)
 			{
-				_cts = new CancellationTokenSource();					// Crea il token di cancellazione
-				_token = _cts.Token;
-				_func = func;
-				_action = action;										// Funzione richiamata dalla funzione chiamata al completamento del task
+				_cts = new CancellationTokenSource();	// Crea il token di cancellazione...
+				_token = _cts.Token;					// ...anche se non è usato.
 				_gst = gst;
-				_task = Task<DataTableInfo>.Factory.StartNew(_func,_token);
+
+				_dtFunc = dtFunc;
+				_continueFunc = continueFunc;
+
+
+				//_task = new Task<DataTableInfo>(_func, _cts.Token);		// Crea il task
+				_task = Task<DataTableInfo>.Factory.StartNew(_func,_token);		// Crea e avvia il task	ERRORE: CREARE FUNZIONE CHE LAVORA SU DataTableInfo, chiamando _func
 				_task.ContinueWith(_gst.AzioneAFineAttivita);
+				//_task.Start();
 			}
+
+
+
+
 		}
 	
-		Queue<Attivita>		_codaAttivita;
-		Form				_form;
-		Busy				busy; 
+		Queue<Attivita>		_codaAttivita;				// Coda delle attività
+		Form				_form;						// Form chiamante (per BeginInvoke()
+		bool				_busy;						// Indicatore se ci sono attività in corso non completate
+
+		public bool isBusy {get { return _busy; } }
 
 		/// <summary>
 		/// CTOR
@@ -93,29 +87,33 @@ namespace DbWin
 		{
 			_codaAttivita = new Queue<Attivita>();
 			_form = form;
+			_busy = false;
 		}
 
-		public void AvviaAttività(Func<DataTableInfo> func, Action<DataTable>  action)
+		//public void AvviaAttività(Func<DataTableInfo> func, Action<DataTable>  action)
+		public void AvviaAttività(Func<DataTableInfo> func, DataTableFunc action)
 		{
 			#warning	CREARE L'ATTIVITA'
 			#warning	SE NON E' BUSY: LANCIARLA
 			#warning	CREARE CICLO CON TIMER PER SVUOTARE LA CODA
-			busy.busy = true;
-			Attivita att = new Attivita(func, action, this);
+			_busy = true;
+			Attivita att = new Attivita(func, action, this);		// ERRORE: CREARE PRIMA UNA FUNZIONE
 			_codaAttivita.Enqueue(att);
 		}
+		
+		//DataTableInfo AzioneEsecuzioneAttivita()
+		//{
+		//	return
+		//}
 
 		void AzioneAFineAttivita(Task<DataTableInfo> t)
 		{
 			DataTableInfo dt = t.Result;
-			busy.busy = false;
+			_busy = false;
 			if(dt.att.action != null)
 			{
 				_form.BeginInvoke(new Action(() => dt.att.action(dt.datatable)));
 			}
 		}
-
-
-
 	}
 }

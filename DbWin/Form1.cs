@@ -1,24 +1,19 @@
-//using MySqlX.XDevAPI.Relational;
-//using Org.BouncyCastle.Pqc.Crypto.Lms;
 using System.Data;
 using System.Reflection;
 using System.Text;
 //using static Fred68.CfgReader.CfgReader;
-//using static Org.BouncyCastle.Math.EC.ECCurve;
 using Fred68.InputForms;
 using InputForms;
-//using Org.BouncyCastle.Bcpg.OpenPgp;
-//using static Org.BouncyCastle.Crypto.Engines.SM2Engine;
 
 namespace DbWin
 {
 
-	public delegate void ShowCodeFunc(string cod, string mod);		// Delegate per mostrare un singolo codice
-	public delegate void ShowDataTableFunc(DataTable dt);           // Delegate per mostrare un DataTable
+	public delegate void CodRevFunc(string cod, string mod);		// Delegate per operazioni su codice e revisione
+	
 
 	public partial class Form1:Form
 	{
-
+		//GestioneAttivita ga;
 		ConnectionString cs;
 		MySQLconn conn;
 		Color statStripBkCol;
@@ -44,6 +39,7 @@ namespace DbWin
 			busy = new Busy(busyTsMenuItem,"B"," ");
 			if(this.Icon != null)
 				InputForm.SetIcon(this.Icon);
+			//ga = new GestioneAttivita(this);
 		}
 
 		private void ReplaceGUIText()
@@ -277,6 +273,15 @@ namespace DbWin
 			UpdateForm();
 			BeginInvoke(new Action(() => ShowDataTable(dt)));
 		}
+
+		void AfterTask(Task<DataTableInfo> t)
+		{
+			DataTable dt = t.Result.datatable;
+			busy.busy = false;
+			UpdateForm();
+			//BeginInvoke(new Action(() => ShowDataTable(dt)));
+			BeginInvoke(new Action(() => t.Result.dtFunc(dt)));
+		}
 		
 		void EditTaskDataTable(Task<DataTable> t)
 		{
@@ -367,7 +372,6 @@ namespace DbWin
 				fd.Add("Limite",100);
 				if((new InputForm(fd)).ShowDialog() == DialogResult.OK)
 				{
-					//MsgBox.Show(fd.Dump());
 					cts = new CancellationTokenSource();
 					token = cts.Token;
 					busy.busy = true;
@@ -375,6 +379,36 @@ namespace DbWin
 					task.ContinueWith(ShowTaskDataTable);
 				}
 			}
+		}
+
+		#warning TRASFORMARE TUTTO DA Vedi*(){Task<>...)} A Vedi*() {DataTableInfo dti=...; Chiama(dti, ()=>conn.f(...))}
+		#warning Probabilmente non serve una collection (Queue, Stack o List) dei task, è sufficiente usare l'argomento per ContinueWith() in Chiama()
+		void VediCodici__2()
+		{
+			FormData fd = new FormData();
+			fd.Add("Codice","*");
+			fd.Add("Modifica","*");
+			fd.Add("Limite",100);
+			if((new InputForm(fd)).ShowDialog() == DialogResult.OK)
+			{
+				DataTableInfo dti = new DataTableInfo(new DataTable(),ShowDataTable);
+				
+				Chiama(()=>conn.VediCodici(dti,fd["Codice"],fd["Modifica"],fd["Limite"]));
+
+				//conn.VediCodici(dti,fd["Codice"],fd["Modifica"],fd["Limite"]);
+				//ga.AvviaAttività(() => conn.VediCodici(fd["Codice"],fd["Modifica"],fd["Limite"]),ShowDataTable);
+				//ga.AvviaAttività(() => conn.VediCodici(fd["Codice"],fd["Modifica"],fd["Limite"]),ShowDataTable);
+			}
+
+		}
+
+		void Chiama(Func<DataTableInfo> func)
+		{
+			cts = new CancellationTokenSource();
+			token = cts.Token;
+			Task<DataTableInfo> task = Task<DataTableInfo>.Factory.StartNew(func,token);
+			task.ContinueWith(AfterTask);
+
 		}
 
 		void VediDescrizioni()
@@ -661,7 +695,7 @@ namespace DbWin
 
 		private void toolStripMenuItem1_Click(object sender,EventArgs e)
 		{
-			VediCodiciString();
+			VediCodici__2();
 		}
 
 		private void descrizioniToolStripMenuItem_Click(object sender,EventArgs e)

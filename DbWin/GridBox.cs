@@ -15,9 +15,9 @@ namespace DbWin
 	public partial class GridBox:Form
 	{
 		DataTable dtbl;
-		ShowCodeFunc _shw;
+		CodRevFunc _shw;
 
-		public GridBox(DataTable dt, ShowCodeFunc shwDelegate)
+		public GridBox(DataTable dt, CodRevFunc shwDelegate)
 		{
 			InitializeComponent();
 			AdjustSize();

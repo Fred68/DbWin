@@ -468,6 +468,25 @@ namespace DbWin
 			}
 		}
 
+		public void ExecuteSQLReadDataTable(string sql, ref DataTableInfo dti)
+		{
+			if(conn != null)
+			{
+				try
+				{
+					MySqlCommand cmd = new MySqlCommand(sql, conn);
+					using (MySqlDataAdapter da = new MySqlDataAdapter(cmd))
+					{
+						da.Fill(dti.datatable);
+					}
+				}
+				catch
+				{
+					dti.datatable.Clear();
+				}
+			}
+		}
+
 		/*******************************************/
 		// Query fuctions
 		/*******************************************/
@@ -554,6 +573,26 @@ namespace DbWin
 			}
 			dt.TableName = CFG.Msg.MnuViewCodes;
 			return dt;
+		}
+
+		#warning TRASFORMARE TUTTO DA DataTable Vedi*(args) A DataTableInfoVedi*(DataTableInfo dti, args)
+		public DataTableInfo VediCodici(DataTableInfo dti, string cod, string mod, int limit)
+		{
+			dti.datatable = new DataTable();
+			if(conn != null)
+			{
+				string sql = $"CALL VediCodici({limit},\"{ReplaceWildcards(cod)}\",\"{ReplaceWildcards(mod)}\");";
+				#if DEBUG
+				MsgBox.Show(sql);
+				#endif
+				ExecuteSQLReadDataTable(sql, ref dti);
+			}
+			else
+			{
+				dti.datatable = EmptyDataTable("RESULT",CFG.Msg.MsgNotConnected);
+			}
+			dti.datatable.TableName = CFG.Msg.MnuViewCodes;
+			return dti;
 		}
 
 		/// <summary>
