@@ -352,6 +352,9 @@ namespace DbWin
 					dti.datatable.Clear();
 				}
 			}
+			#if DEBUG
+			Thread.Sleep(3000);
+			#endif
 		}
 
 		/*******************************************/

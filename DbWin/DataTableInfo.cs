@@ -8,8 +8,6 @@ using System.Threading.Tasks;
 namespace DbWin
 {
 	
-		public delegate void DataTableFunc(DataTable dt);				// Delegate per operazioni su DataTable
-
 		/*******************************************/
 		// class DataTableInfo
 		/*******************************************/
@@ -49,12 +47,19 @@ namespace DbWin
 				}
 			}
 			
+			///// <summary>
+			///// CTOR
+			///// </summary>
+			///// <param name="datatable"></param>
+			///// <param name="task">Task<DataTableInfo></param> da eseguire
+			///// <param name="att">Attivita (class) a cui appartiene il l'oggetto DataTableInfo</param>
+			///// 
+
 			/// <summary>
 			/// CTOR
 			/// </summary>
 			/// <param name="datatable">DataTable con i valori restituiti dalla query</param>
-			/// <param name="task">Task<DataTableInfo></param> da eseguire
-			/// <param name="att">Attivita (class) a cui appartiene il l'oggetto DataTableInfo</param>
+			/// <param name="dtFunc">delegate void DataTableFunc(DataTable dt) con operazioni da eseguire al completamento del task</param>
 			public DataTableInfo(DataTable datatable, DataTableFunc dtFunc)
 			{
 				_dt = datatable;

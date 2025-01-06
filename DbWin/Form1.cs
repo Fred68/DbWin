@@ -8,7 +8,6 @@ using InputForms;
 namespace DbWin
 {
 
-	public delegate void CodRevFunc(string cod, string mod);		// Delegate per operazioni su codice e revisione
 	
 
 	public partial class Form1:Form
@@ -18,7 +17,7 @@ namespace DbWin
 		Color statStripBkCol;
 		RotatingChar rotchar;
 		Busy busy;
-
+		#warning Rivedere Busy necessario ? Usare coda di lavori (se più task contemporanei).
 
 		/*******************************************/
 		// Ctors e funzioni principali
@@ -218,10 +217,8 @@ namespace DbWin
 			if(!busy.busy)
 			{
 				conn.ConnectionString = cs;
-				//cts = new CancellationTokenSource();
-				//token = cts.Token;
 				busy.busy = true;
-				Task<string> task = Task<string>.Factory.StartNew(() => conn.Connect()/*,token*/);
+				Task<string> task = Task<string>.Factory.StartNew(() => conn.Connect());
 				task.ContinueWith(ShowMsgConnection);
 			}
 		}
@@ -343,7 +340,9 @@ namespace DbWin
 					if(fd.isValid)								// Controlla se esiste già
 					{
 						MsgBox.Show($"Update / insert:{Environment.NewLine}{fd.Dump()}");
-						ContaCodici(cod,mod);
+						DataTableInfo dtnfo = ContaCodici(cod,mod);
+						ShowDataTable(dtnfo.datatable);
+
 					}
 #warning COMPLETARE: Mostrare modifica o aggiunta, chiedere, inserire, mostrare il risultato dell'inserimento
 				}
@@ -397,12 +396,28 @@ namespace DbWin
 		// Funzione per l'avvio di un task
 		/*******************************************/
 
-		void Chiama(Func<DataTableInfo> func)
+		/// <summary>
+		/// Avvia un Task per eseguire una funzione
+		/// </summary>
+		/// <param name="func">delegate o funzioen anonima che restituisce un oggetto DataTableInfo</param>
+		void Chiama(Func<DataTableInfo> func, TaskOptions topt = TaskOptions.Default)
 		{
 			CancellationTokenSource cts = new CancellationTokenSource();
 			CancellationToken token = cts.Token;
 			Task<DataTableInfo> task = Task<DataTableInfo>.Factory.StartNew(func,token);
-			task.ContinueWith(AfterTask);
+
+			if( (topt & TaskOptions.ExecAfterTask) !=0)			// Se deve eseguire l'operazione dopo il completamento del task...
+			{
+				if( (topt & TaskOptions.DoNotWait) !=0)			// Attende o no il completamento del task ?
+				{
+					task.ContinueWith(AfterTask);				// Se no, prenota esecuzione alla fine del task
+				}
+				else
+				{
+					task.Wait();								// Se sì, aspetta la fine del task...
+					AfterTask(task);							// ...ed esegue l'operazione
+				}
+			}
 		}
 
 
@@ -480,10 +495,11 @@ namespace DbWin
 			}
 		}
 
-		void ContaCodici(string cod,string mod)
+		DataTableInfo ContaCodici(string cod,string mod)
 		{
 			DataTableInfo dti = new DataTableInfo(new DataTable(),ShowDataTable);
-			Chiama(() => conn.ContaCodici(dti,cod,mod));
+			Chiama(() => conn.ContaCodici(dti,cod,mod),TaskOptions.ExecAfterTask);
+			return dti;
 		}
 
 
