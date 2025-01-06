@@ -13,12 +13,14 @@ namespace DbWin
 
 	public partial class Form1:Form
 	{
+		//GestioneAttivita ga;
 		ConnectionString cs;
 		MySQLconn conn;
 		Color statStripBkCol;
 		RotatingChar rotchar;
 		Busy busy;
-
+		static CancellationTokenSource? cts = null;         // new CancellationTokenSource();
+		CancellationToken token = CancellationToken.None;   // cts.Token;
 
 		/*******************************************/
 		// Ctors e funzioni principali
@@ -37,6 +39,7 @@ namespace DbWin
 			busy = new Busy(busyTsMenuItem,"B"," ");
 			if(this.Icon != null)
 				InputForm.SetIcon(this.Icon);
+			//ga = new GestioneAttivita(this);
 		}
 
 		private void ReplaceGUIText()
@@ -124,7 +127,6 @@ namespace DbWin
 			}
 		}
 
-
 		/*******************************************/
 		// Versione e help
 		/*******************************************/
@@ -185,7 +187,6 @@ namespace DbWin
 			return strb.ToString();
 		}
 
-
 		/*******************************************/
 		// Funzioni con chiamata diretta
 		/*******************************************/
@@ -218,10 +219,10 @@ namespace DbWin
 			if(!busy.busy)
 			{
 				conn.ConnectionString = cs;
-				//cts = new CancellationTokenSource();
-				//token = cts.Token;
+				cts = new CancellationTokenSource();
+				token = cts.Token;
 				busy.busy = true;
-				Task<string> task = Task<string>.Factory.StartNew(() => conn.Connect()/*,token*/);
+				Task<string> task = Task<string>.Factory.StartNew(() => conn.Connect(),token);
 				task.ContinueWith(ShowMsgConnection);
 			}
 		}
@@ -245,9 +246,9 @@ namespace DbWin
 					if(dsc)
 					{
 						string msg = conn.Disconnect();
-						#if DEBUG
+#if DEBUG
 						MsgBox.Show(msg);
-						#endif
+#endif
 						conn.ConnectionString = new ConnectionString();
 					}
 				}
@@ -257,7 +258,7 @@ namespace DbWin
 
 		void ShowDataTable(DataTable dt)
 		{
-			GridBox gb = new GridBox(dt,VediCodiceSingolo);     // Evento per doppio click su un codice
+			GridBox gb = new GridBox(dt,VediCodiceSingolo__2);     // Evento per doppio click su un codice
 			gb.Show();
 		}
 
@@ -343,7 +344,7 @@ namespace DbWin
 					if(fd.isValid)								// Controlla se esiste già
 					{
 						MsgBox.Show($"Update / insert:{Environment.NewLine}{fd.Dump()}");
-						ContaCodici(cod,mod);
+						ContaCodici__2(cod,mod);
 					}
 #warning COMPLETARE: Mostrare modifica o aggiunta, chiedere, inserire, mostrare il risultato dell'inserimento
 				}
@@ -361,11 +362,19 @@ namespace DbWin
 
 		}
 
-
 		/*******************************************/
 		// Funzioni dopo completamento task
 		/*******************************************/
 
+		#if false
+		void ShowTaskDataTable(Task<DataTable> t)
+		{
+			DataTable dt = t.Result;
+			busy.busy = false;
+			UpdateForm();
+			BeginInvoke(new Action(() => ShowDataTable(dt)));
+		}
+		#endif
 		void AfterTask(Task<DataTableInfo> t)
 		{
 			DataTable dt = t.Result.datatable;
@@ -374,6 +383,15 @@ namespace DbWin
 			BeginInvoke(new Action(() => t.Result.dtFunc(dt)));
 		}
 
+		#if false
+		void EditTaskDataTable(Task<DataTable> t)
+		{
+			DataTable dt = t.Result;
+			busy.busy = false;
+			UpdateForm();
+			BeginInvoke(new Action(() => EditDataTable(dt)));
+		}
+		#endif
 		void ShowMsgConnection(Task<string> t)
 		{
 			string msg = t.Result;
@@ -392,19 +410,18 @@ namespace DbWin
 			BeginInvoke(new Action(() => MsgBox.Show(st)));
 		}
 
-
 		/*******************************************/
 		// Funzione per l'avvio di un task
 		/*******************************************/
 
 		void Chiama(Func<DataTableInfo> func)
 		{
-			CancellationTokenSource cts = new CancellationTokenSource();
-			CancellationToken token = cts.Token;
+			cts = new CancellationTokenSource();
+			token = cts.Token;
 			Task<DataTableInfo> task = Task<DataTableInfo>.Factory.StartNew(func,token);
 			task.ContinueWith(AfterTask);
-		}
 
+		}
 
 		/*******************************************/
 		// Funzioni con task
@@ -414,15 +431,68 @@ namespace DbWin
 		{
 			if(!busy.busy)
 			{
-				CancellationTokenSource cts = new CancellationTokenSource();
-				CancellationToken token = cts.Token;
+				cts = new CancellationTokenSource();
+				token = cts.Token;
 				busy.busy = true;
 				Task<string> task = Task<string>.Factory.StartNew(() => conn.GetStatus(info),token);
 				task.ContinueWith(ShowTaskMsg);
 			}
 		}
 
-		void VediCodici()
+
+		#if false
+		void VediCodiciString()
+		{
+			if(!busy.busy)
+			{
+				cts = new CancellationTokenSource();
+				token = cts.Token;
+				busy.busy = true;
+				Task<string> task = Task<string>.Factory.StartNew(() => conn.VediCodiciString("100*","*",100),token);
+				task.ContinueWith(ShowTaskMsg);
+			}
+		}
+		void EsplodiCodiceString()
+		{
+			if(!busy.busy)
+			{
+				FormData fd = new FormData();
+				fd.Add("Codice","100*");
+				fd.Add("Modifica","a");
+				fd.Add("Profondità",100);
+				if((new InputForm(fd)).ShowDialog() == DialogResult.OK)
+				{
+					cts = new CancellationTokenSource();
+					token = cts.Token;
+					busy.busy = true;
+					Task<string> task = Task<string>.Factory.StartNew(() => conn.EsplodiCodiceString(fd["Codice"],fd["Modifica"],fd["Profondità"]),token);
+					task.ContinueWith(ShowTaskMsg);
+				}
+			}
+		}
+		#endif	
+
+		#if false
+		void VediCodici_OLD()
+		{
+			if(!busy.busy)
+			{
+				FormData fd = new FormData();
+				fd.Add("Codice","*");
+				fd.Add("Modifica","*");
+				fd.Add("Limite",100);
+				if((new InputForm(fd)).ShowDialog() == DialogResult.OK)
+				{
+					cts = new CancellationTokenSource();
+					token = cts.Token;
+					busy.busy = true;
+					Task<DataTable> task = Task<DataTable>.Factory.StartNew(() => conn.VediCodici(fd["Codice"],fd["Modifica"],fd["Limite"]),token);
+					task.ContinueWith(ShowTaskDataTable);
+				}
+			}
+		}
+		#endif	
+		void VediCodici__2()
 		{
 			FormData fd = new FormData();
 			fd.Add("Codice","*");
@@ -436,7 +506,24 @@ namespace DbWin
 
 		}
 
-		void VediDescrizioni()
+		#if false
+		void VediDescrizioni_OLD()
+		{
+			if(!busy.busy)
+			{
+				FormData fd = new FormData();
+				fd.Add("Codice","*");
+				fd.Add("Modifica","*");
+				fd.Add("Limite",100);
+				if((new InputForm(fd)).ShowDialog() == DialogResult.OK)
+				{
+					Task<DataTable> task = Task<DataTable>.Factory.StartNew(() => conn.VediDescrizioni(fd["Codice"],fd["Modifica"],fd["Limite"]),token);
+					task.ContinueWith(ShowTaskDataTable);
+				}
+			}
+		} 
+		#endif
+		void VediDescrizioni__2()
 		{
 			FormData fd = new FormData();
 			fd.Add("Codice","*");
@@ -449,7 +536,26 @@ namespace DbWin
 			}
 		}
 
-		void VediCodice()
+		#if false
+		void VediCodice_OLD()
+		{
+			if(!busy.busy)
+			{
+				FormData fd = new FormData();
+				fd.Add("Codice","100*");
+				fd.Add("Modifica","a");
+				if((new InputForm(fd)).ShowDialog() == DialogResult.OK)
+				{
+					cts = new CancellationTokenSource();
+					token = cts.Token;
+					busy.busy = true;
+					Task<DataTable> task = Task<DataTable>.Factory.StartNew(() => conn.VediCodiceSingolo(fd["Codice"],fd["Modifica"]),token);
+					task.ContinueWith(ShowTaskDataTable);
+				}
+			}
+		} 
+		#endif
+		void VediCodice__2()
 		{
 			FormData fd = new FormData();
 			fd.Add("Codice","100*");
@@ -461,13 +567,46 @@ namespace DbWin
 			}
 		}
 
-		void VediCodiceSingolo(string cod,string mod)
+		#if false
+		void VediCodiceSingolo_OLD(string cod,string mod)
+		{
+			if(!busy.busy)
+			{
+				cts = new CancellationTokenSource();
+				token = cts.Token;
+				busy.busy = true;
+				Task<DataTable> task = Task<DataTable>.Factory.StartNew(() => conn.VediCodiceSingolo(cod,mod),token);
+				task.ContinueWith(EditTaskDataTable);
+			}
+		}
+		#endif
+		void VediCodiceSingolo__2(string cod,string mod)
 		{
 			DataTableInfo dti = new DataTableInfo(new DataTable(),EditDataTable);
 			Chiama(() => conn.VediCodiceSingolo(dti,cod,mod));
 		}
 
-		void EsplodiCodice()
+		#if false
+		void EsplodiCodice_OLD()
+		{
+			if(!busy.busy)
+			{
+				FormData fd = new FormData();
+				fd.Add("Codice","100.12.002");
+				fd.Add("Modifica","d");
+				fd.Add("Profondità",100);
+				if((new InputForm(fd)).ShowDialog() == DialogResult.OK)
+				{
+					cts = new CancellationTokenSource();
+					token = cts.Token;
+					busy.busy = true;
+					Task<DataTable> task = Task<DataTable>.Factory.StartNew(() => conn.EsplodiCodice(fd["Codice"],fd["Modifica"],fd["Profondità"]),token);
+					task.ContinueWith(ShowTaskDataTable);
+				}
+			}
+		}
+		#endif
+		void EsplodiCodice__2()
 		{
 			FormData fd = new FormData();
 			fd.Add("Codice","100.12.002");
@@ -480,11 +619,28 @@ namespace DbWin
 			}
 		}
 
-		void ContaCodici(string cod,string mod)
+
+		#if false
+		void ContaCodici_OLD(string cod,string mod)
+		{
+			if(!busy.busy)
+			{
+				cts = new CancellationTokenSource();
+				token = cts.Token;
+				busy.busy = true;
+				Task<DataTable> task = Task<DataTable>.Factory.StartNew(() => conn.ContaCodici(cod,mod),token);
+				task.ContinueWith(ShowTaskDataTable);
+			}
+		}
+		#endif
+		void ContaCodici__2(string cod,string mod)
 		{
 			DataTableInfo dti = new DataTableInfo(new DataTable(),ShowDataTable);
 			Chiama(() => conn.ContaCodici(dti,cod,mod));
 		}
+
+
+
 
 
 		/*******************************************/
@@ -569,12 +725,12 @@ namespace DbWin
 
 		private void dataTableToolStripMenuItem_Click(object sender,EventArgs e)
 		{
-			VediCodici();
+			VediCodici__2();
 		}
 
 		private void vediCodiciToolStripMenuItem2_Click(object sender,EventArgs e)
 		{
-			VediCodici();
+			VediCodici__2();
 		}
 
 		private void configurazioneToolStripMenuItem_Click(object sender,EventArgs e)
@@ -584,27 +740,27 @@ namespace DbWin
 
 		private void vediCodiceToolStripMenuItem_Click(object sender,EventArgs e)
 		{
-			VediCodice();
+			VediCodice__2();
 		}
 
 		private void toolStripMenuItem1_Click(object sender,EventArgs e)
 		{
-			VediCodici();
+			VediCodici__2();
 		}
 
 		private void descrizioniToolStripMenuItem_Click(object sender,EventArgs e)
 		{
-			VediDescrizioni();
+			VediDescrizioni__2();
 		}
 
 		private void esplodiToolStripMenuItem_Click(object sender,EventArgs e)
 		{
-			EsplodiCodice();
+			EsplodiCodice__2();
 		}
 
 		private void contaCodiciToolStripMenuItem_Click(object sender,EventArgs e)
 		{
-			ContaCodici("100.11.123","a");
+			ContaCodici__2("100.11.123","a");
 		}
 	}
 }

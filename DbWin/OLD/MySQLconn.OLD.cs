@@ -258,11 +258,127 @@ namespace DbWin
 			return dt;
 		}
 
+#if false		// MySQL async functions (non usate)
+		public static async Task<string> ExecuteNonQuery(string sql, MySqlConnection conn, CancellationToken token)
+		{
+			int lines = 0;
+			StringBuilder sb = new StringBuilder();
+			if(conn != null)
+			{
+				try
+				{
+					MySqlCommand cmd = new MySqlCommand(sql, conn);
+					lines = await cmd.ExecuteNonQueryAsync(token);
+					sb.AppendLine($"NonQuery():{lines} linee.");
+
+				}
+				catch(Exception ex)
+				{
+					sb.AppendLine(ex.ToString());
+				}
+			}
+			return sb.ToString();
+		}
+		public static async Task<string> ExecuteScalar(string sql, MySqlConnection conn, CancellationToken token)
+		{
+			object? obj = null;
+			StringBuilder sb = new StringBuilder();
+			if(conn != null)
+			{
+				try
+				{
+					MySqlCommand cmd = new MySqlCommand(sql, conn);
+					obj = await cmd.ExecuteScalarAsync(token);
+					string? s = string.Empty;
+					if(obj != null)
+					{
+						s = Convert.ToString(obj);
+					}
+					sb.AppendLine($"Scalar():{s}.");
+				}
+				catch(Exception ex)
+				{
+					sb.AppendLine(ex.ToString());
+				}
+			}
+			return sb.ToString();
+		}
+		public static async Task<string> ExecuteReader(string sql, MySqlConnection conn, CancellationToken token)
+		{
+			DbDataReader? rdr = null;		// Al posto di MySqlDataReader
+			StringBuilder sb = new StringBuilder();
+			if(conn != null)
+			{
+				try
+				{
+					MySqlCommand cmd = new MySqlCommand(sql, conn);
+					sb.AppendLine($"Reader():");
+					rdr = await cmd.ExecuteReaderAsync(token);
+					while(rdr.Read())
+					{
+						for(int i=0; i<rdr.FieldCount; i++)
+						{
+							sb.Append(rdr[i].ToString());
+							if(i != rdr.FieldCount-1)	sb.Append(", ");
+									
+						}
+						sb.Append(System.Environment.NewLine);
+					}
+					rdr.Close();
+					rdr = null;
+				}
+				catch(Exception ex)
+				{
+					sb.AppendLine(ex.ToString());
+				}
+			}
+			return sb.ToString();
+		}
+		public async Task<string> ExecuteSQLCommandAsync(string sql, SQLqueryType type, CancellationToken token, CancellationTokenSource cts)
+		{
+			
+			if( (token!=CancellationToken.None) && (cts!=null))
+				 {
+				 token.Register( () =>
+					{
+					MessageBox.Show("Task canceled");
+					cts.Dispose();
+					}
+					);
+				 }
+
+			string result = "";
+			if(conn != null)
+			{
+				switch(type)
+				{
+				
+					case SQLqueryType.NoQuery:
+					{
+						result = await ExecuteNonQuery(sql, conn, token);
+					}
+					break;
+					case SQLqueryType.Scalar:
+					{
+						result = await ExecuteScalar(sql, conn, token);
+					}
+					break;
+					case SQLqueryType.Reader:
+					{
+						result = await ExecuteReader(sql, conn, token);
+					}
+					break;
+				}
+			}
+			return result;
+		}
+		#endif
+
 		/// <summary>
-		/// Esegue un comando MySQL e restituisce il risultato come testo
+		/// Execute MySQL command (reader, non query or scalar)
 		/// </summary>
-		/// <param name="sql">Comando MySQL</param>
-		/// <param name="type">Tipo di query (non-query, scalar o reader)</param>
+		/// <param name="sql"></param>
+		/// <param name="type"></param>
 		/// <returns></returns>
 		public string ExecuteSQLCommand(string sql, SQLqueryType type)
 		{
@@ -278,6 +394,7 @@ namespace DbWin
 						case SQLqueryType.NoQuery:			// ExecuteNonQuery 
 						{
 							int lines = cmd.ExecuteNonQuery();
+							//sb.AppendLine($"NonQuery():{lines} linee.");
 						}
 						break;
 						case SQLqueryType.Scalar:			// ExecuteScalar 
@@ -288,10 +405,12 @@ namespace DbWin
 							{
 								s = Convert.ToString(obj);
 							}
+							//sb.AppendLine($"Scalar():{s}.");
 						}
 						break;
 						case SQLqueryType.Reader:			// ExecuteReader 
 						{
+							//sb.AppendLine($"Reader():");
 							rdr = cmd.ExecuteReader();
 							
 							for(int i=0; i<rdr.FieldCount; i++)
@@ -330,11 +449,25 @@ namespace DbWin
 			return sb.ToString();
 		}
 
-		/// <summary>
-		/// Esegue un comando MySQL e restituisce il risultato come DataTable (in un oggetto DataTableInfo)
-		/// </summary>
-		/// <param name="sql">Comando MySQL</param>
-		/// <param name="dti">DataTableInfo</param>
+		public void ExecuteSQLReadDataTable(string sql, ref DataTable dt)
+		{
+			if(conn != null)
+			{
+				try
+				{
+					MySqlCommand cmd = new MySqlCommand(sql, conn);
+					using (MySqlDataAdapter da = new MySqlDataAdapter(cmd))
+					{
+						da.Fill(dt);
+					}
+				}
+				catch
+				{
+					dt.Clear();
+				}
+			}
+		}
+
 		public void ExecuteSQLReadDataTable(string sql, ref DataTableInfo dti)
 		{
 			if(conn != null)
@@ -358,14 +491,63 @@ namespace DbWin
 		// Query fuctions
 		/*******************************************/
 
-		/// <summary>
-		/// Esplode un codice
-		/// </summary>
-		/// <param name="dti">DataTableInfo</param>
-		/// <param name="cod">Codice (con wildcard %)</param>
-		/// <param name="mod">Modifica (con wildcard %)</param>
-		/// <param name="limit">Numero massimo di righe</param>
-		/// <returns></returns>
+		#if false
+		public string VediCodiciString(string cod,string mod,int limit)
+		{
+			StringBuilder sb = new StringBuilder();
+			if(conn != null)
+			{
+				string sql = $"CALL VediCodici({limit},\"{ReplaceWildcards(cod)}\",\"{ReplaceWildcards(mod)}\");";
+				#if DEBUG
+				MsgBox.Show(sql);
+				#endif
+				sb.AppendLine($"--- {"Vedi codici"} ---");
+				sb.AppendLine(ExecuteSQLCommand(sql,SQLqueryType.Reader));
+			}
+			else
+			{
+				sb.AppendLine($"{CFG.Msg.MsgNotConnected}");
+			}
+			return sb.ToString();
+		}
+
+		public string EsplodiCodiceString(string cod, string mod, int limit)
+		{
+			StringBuilder sb = new StringBuilder();
+			if( conn != null )
+			{
+				string sql = $"CALL Esplodi(\"{ReplaceWildcards(cod)}\",\"{ReplaceWildcards(mod)}\",{limit});";
+				#if DEBUG
+				MsgBox.Show(sql);
+				#endif
+				sb.AppendLine($"--- {"Esplodi codice"} ---");
+				sb.AppendLine(ExecuteSQLCommand(sql,SQLqueryType.Reader));
+			}
+			else
+			{
+				sb.AppendLine($"{CFG.Msg.MsgNotConnected}");
+			}
+			return sb.ToString();
+		}
+		#endif
+		public DataTable EsplodiCodice(string cod, string mod, int limit)
+		{
+			DataTable dt = new DataTable();
+			if( conn != null )
+			{
+				string sql = $"CALL Esplodi(\"{ReplaceWildcards(cod)}\",\"{ReplaceWildcards(mod)}\",{limit});";
+				#if DEBUG
+				MsgBox.Show(sql);
+				#endif
+				ExecuteSQLReadDataTable(sql, ref dt);
+			}
+			else
+			{
+				dt = EmptyDataTable("RESULT",CFG.Msg.MsgNotConnected);
+			}
+			dt.TableName = CFG.Msg.MnuExplode;
+			return dt;
+		}
 		public DataTableInfo EsplodiCodice(DataTableInfo dti, string cod, string mod, int limit)
 		{
 			dti.datatable = new DataTable();
@@ -386,13 +568,30 @@ namespace DbWin
 		}
 
 		/// <summary>
-		/// Mostra i codici
+		/// Vedi codici (in una tabella di dati)
 		/// </summary>
-		/// <param name="dti">DataTableInfo</param>
 		/// <param name="cod">Codice (con wildcard %)</param>
 		/// <param name="mod">Modifica (con wildcard %)</param>
 		/// <param name="limit">Numero massimo di righe</param>
 		/// <returns></returns>
+		public DataTable VediCodici(string cod, string mod, int limit)
+		{
+			DataTable dt = new DataTable();
+			if(conn != null)
+			{
+				string sql = $"CALL VediCodici({limit},\"{ReplaceWildcards(cod)}\",\"{ReplaceWildcards(mod)}\");";
+				#if DEBUG
+				MsgBox.Show(sql);
+				#endif
+				ExecuteSQLReadDataTable(sql, ref dt);
+			}
+			else
+			{
+				dt = EmptyDataTable("RESULT",CFG.Msg.MsgNotConnected);
+			}
+			dt.TableName = CFG.Msg.MnuViewCodes;
+			return dt;
+		}
 		public DataTableInfo VediCodici(DataTableInfo dti, string cod, string mod, int limit)
 		{
 			dti.datatable = new DataTable();
@@ -412,14 +611,32 @@ namespace DbWin
 			return dti;
 		}
 
+		#warning TRASFORMARE TUTTO DA DataTable Vedi*(args) A DataTableInfoVedi*(DataTableInfo dti, args)
 		/// <summary>
-		/// Mostra le descrizioni
+		/// Vedi descrizioni
 		/// </summary>
-		/// <param name="dti">DataTableInfo</param>
 		/// <param name="cod">Codice (con wildcard %)</param>
 		/// <param name="mod">Modifica (con wildcard %)</param>
 		/// <param name="limit">Numero massimo di righe</param>
 		/// <returns></returns>
+		public DataTable VediDescrizioni(string cod, string mod, int limit)
+		{
+			DataTable dt = new DataTable();
+			if(conn != null)
+			{
+				string sql = $"CALL VediDescrizioni({limit},\"{ReplaceWildcards(cod)}\",\"{ReplaceWildcards(mod)}\");";
+				#if DEBUG
+				MsgBox.Show(sql);
+				#endif
+				ExecuteSQLReadDataTable(sql, ref dt);
+			}
+			else
+			{
+				dt = EmptyDataTable("RESULT",CFG.Msg.MsgNotConnected);
+			}
+			dt.TableName = CFG.Msg.MnuViewDescr;
+			return dt;
+		}
 		public DataTableInfo VediDescrizioni(DataTableInfo dti, string cod, string mod, int limit)
 		{
 			dti.datatable = new DataTable();
@@ -440,12 +657,29 @@ namespace DbWin
 		}
 
 		/// <summary>
-		/// Mostra tutti i dati di un codice singolo
+		/// Tutti i dati di un codice singolo
 		/// </summary>
-		/// <param name="dti"></param>
-		/// <param name="cod"></param>
-		/// <param name="mod"></param>
+		/// <param name="cod">Codice (con wildcard %)</param>
+		/// <param name="mod">Modifica (con wildcard %)</param>
 		/// <returns></returns>
+		public DataTable VediCodiceSingolo(string cod, string mod)
+		{
+			DataTable dt = new DataTable();
+			if(conn != null)
+			{
+				string sql = $"CALL GetCode(\"{ReplaceWildcards(cod)}\",\"{ReplaceWildcards(mod)}\");";
+				#if DEBUG
+				MsgBox.Show(sql);
+				#endif
+				ExecuteSQLReadDataTable(sql, ref dt);
+			}
+			else
+			{
+				dt = EmptyDataTable("RESULT",CFG.Msg.MsgNotConnected);
+			}
+			dt.TableName = CFG.Msg.MnuViewCode;
+			return dt;
+		}
 		public DataTableInfo VediCodiceSingolo(DataTableInfo dti, string cod, string mod)
 		{
 			dti.datatable = new DataTable();
@@ -465,13 +699,25 @@ namespace DbWin
 			return dti;
 		}
 
-		/// <summary>
-		/// Conta i codici corrispondenti
-		/// </summary>
-		/// <param name="dti">DataTableInfo</param>
-		/// <param name="cod">Codice (con wildcard %)</param>
-		/// <param name="mod">Modifica (con wildcard %)</param>
-		/// <returns></returns>
+		public DataTable ContaCodici(string cod, string mod)
+		{
+			DataTable dt = new DataTable();
+			if( conn != null )
+			{
+				string sql = $"CALL ContaCodici(\"{ReplaceWildcards(cod)}\",\"{ReplaceWildcards(mod)}\");";
+				#if DEBUG
+				MsgBox.Show(sql);
+				#endif
+				ExecuteSQLReadDataTable(sql, ref dt);
+			}
+			else
+			{
+				dt = EmptyDataTable("RESULT",CFG.Msg.MsgNotConnected);
+			}
+			dt.TableName = "ContaCodici";
+			return dt;
+
+		}
 		public DataTableInfo ContaCodici(DataTableInfo dti, string cod, string mod)
 		{
 			dti.datatable = new DataTable();
