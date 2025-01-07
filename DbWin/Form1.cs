@@ -254,44 +254,37 @@ namespace DbWin
 			gb.Show();
 		}
 
+
 		void EditDataTable(DataTableInfo dti)
 		{
 			int iTipo = -1;
-			string tipo = string.Empty;
+			string? tipo = string.Empty;
 			Type? tTipo = null;
 
-			int nRows = dti.datatable.Rows.Count;                          // Numeri di riche e di colonne
-			int nCols = dti.datatable.Columns.Count;
-
-			if(nRows != 1)                                      // Edit possibile solo il codice è unico (una riga soltanto)
+			if(dti.Righe != 1)									// Edit possibile solo il codice è unico (una riga soltanto)
 			{
-				MsgBox.Show("Numero errato di righe.");
+				MsgBox.Show("Ammessa tabella con una sola riga");
 				return;
 			}
 
-			for(int i = 0;i < nCols;i++)                            // Cerca la colonna con il TIPO
+			iTipo = dti.IndiceColonna("TIPO");					// Cerca la colonna con il TIPO
+			
+			if(iTipo != -1)										// Legge il tipo di dati
 			{
-				if(dti.datatable.Columns[i].ColumnName == "TIPO")
+				tTipo = dti.TipoColonna(iTipo);					// tTipo non è null, perché la colona esiste
+				if(tTipo != typeof(string))
 				{
-					iTipo = i;
-					tTipo = dti.datatable.Columns[i].DataType;
-					break;
+					MsgBox.Show("Colonna 'TIPO' con dati non string");
+					return;
 				}
 			}
-
-			if((iTipo == -1) || (tTipo == null))                // Se la colonna TIPO non esiste, interrompe con errore
+			else
 			{
-				MsgBox.Show("Tipo di codice (colonna 'TIPO') mancante.");
-				return;
-			}
-			if(!(tTipo == typeof(string)))  // Non è null
-			{
-				MsgBox.Show("Colonna 'TIPO' con dati non string");
+				MsgBox.Show("Colonna 'TIPO' mancante.");
 				return;
 			}
 
-			DataRow drc = dti.datatable.Rows[0];                           // Dati della riga
-			tipo = (string)drc[iTipo];                          // Tipo di record (P, A, C, S)
+			tipo = (string?)dti[0,iTipo];
 
 			List<string> lShow = CFG.GetList(CFG.ListType.Show,tipo);               // Legge i campi dalla configurazione
 			List<string> lReadOnly = CFG.GetList(CFG.ListType.Readonly,tipo);
@@ -306,7 +299,7 @@ namespace DbWin
 					Type tp = dti.datatable.Columns[indx].DataType;        // Tipo di dato
 					bool bRo = lReadOnly.Contains(s);           // Readonly
 					bool bDr = lDropdown.Contains(s);           // Dropdown
-					fd.Add(s,drc[indx],bRo,bDr);
+					fd.Add(s,dti[0,indx],bRo,bDr);
 				}
 
 			}
@@ -444,7 +437,7 @@ namespace DbWin
 			fd.Add("Limite",100);
 			if((new InputForm(fd)).ShowDialog() == DialogResult.OK)
 			{
-				DataTableInfo dti = new DataTableInfo(new DataTable(),ShowDataTable);
+				DataTableInfo dti = new DataTableInfo(ShowDataTable);
 				Chiama(()=>conn.VediCodici(dti,fd["Codice"],fd["Modifica"],fd["Limite"]));
 			}
 
@@ -458,7 +451,7 @@ namespace DbWin
 			fd.Add("Limite",100);
 			if((new InputForm(fd)).ShowDialog() == DialogResult.OK)
 			{
-				DataTableInfo dti = new DataTableInfo(new DataTable(),ShowDataTable);
+				DataTableInfo dti = new DataTableInfo(ShowDataTable);
 				Chiama(() => conn.VediDescrizioni(dti,fd["Codice"],fd["Modifica"],fd["Limite"]));
 			}
 		}
@@ -470,14 +463,14 @@ namespace DbWin
 			fd.Add("Modifica","a");
 			if((new InputForm(fd)).ShowDialog() == DialogResult.OK)
 			{
-				DataTableInfo dti = new DataTableInfo(new DataTable(),ShowDataTable);
+				DataTableInfo dti = new DataTableInfo(ShowDataTable);
 				Chiama(() => conn.VediCodiceSingolo(dti,fd["Codice"],fd["Modifica"]));
 			}
 		}
 
 		void VediCodiceSingolo(string cod,string mod)
 		{
-			DataTableInfo dti = new DataTableInfo(new DataTable(),EditDataTable);
+			DataTableInfo dti = new DataTableInfo(EditDataTable);
 			Chiama(() => conn.VediCodiceSingolo(dti,cod,mod));
 		}
 
@@ -489,14 +482,14 @@ namespace DbWin
 			fd.Add("Profondità",100);
 			if((new InputForm(fd)).ShowDialog() == DialogResult.OK)
 			{
-				DataTableInfo dti = new DataTableInfo(new DataTable(),ShowDataTable);
+				DataTableInfo dti = new DataTableInfo(ShowDataTable);
 				Chiama(() => conn.EsplodiCodice(dti,fd["Codice"],fd["Modifica"],fd["Profondità"]));
 			}
 		}
 
 		DataTableInfo ContaCodici(string cod,string mod)
 		{
-			DataTableInfo dti = new DataTableInfo(new DataTable(),ShowDataTable);
+			DataTableInfo dti = new DataTableInfo(ShowDataTable);
 			Chiama(() => conn.ContaCodici(dti,cod,mod),TaskOptions.ExecAfterTask);
 			return dti;
 		}
