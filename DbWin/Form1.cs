@@ -1,14 +1,11 @@
 using System.Data;
 using System.Reflection;
 using System.Text;
-//using static Fred68.CfgReader.CfgReader;
 using Fred68.InputForms;
 using InputForms;
 
 namespace DbWin
 {
-
-	
 
 	public partial class Form1:Form
 	{
@@ -17,7 +14,6 @@ namespace DbWin
 		Color statStripBkCol;
 		RotatingChar rotchar;
 		Busy busy;
-		#warning Rivedere Busy necessario ? Usare coda di lavori (se più task contemporanei).
 
 		/*******************************************/
 		// Ctors e funzioni principali
@@ -252,20 +248,20 @@ namespace DbWin
 			UpdateForm();
 		}
 
-		void ShowDataTable(DataTable dt)
+		void ShowDataTable(DataTableInfo dti)
 		{
-			GridBox gb = new GridBox(dt,VediCodiceSingolo);     // Evento per doppio click su un codice
+			GridBox gb = new GridBox(dti.datatable,VediCodiceSingolo);     // Evento per doppio click su un codice
 			gb.Show();
 		}
 
-		void EditDataTable(DataTable dt)
+		void EditDataTable(DataTableInfo dti)
 		{
 			int iTipo = -1;
 			string tipo = string.Empty;
 			Type? tTipo = null;
 
-			int nRows = dt.Rows.Count;                          // Numeri di riche e di colonne
-			int nCols = dt.Columns.Count;
+			int nRows = dti.datatable.Rows.Count;                          // Numeri di riche e di colonne
+			int nCols = dti.datatable.Columns.Count;
 
 			if(nRows != 1)                                      // Edit possibile solo il codice è unico (una riga soltanto)
 			{
@@ -275,10 +271,10 @@ namespace DbWin
 
 			for(int i = 0;i < nCols;i++)                            // Cerca la colonna con il TIPO
 			{
-				if(dt.Columns[i].ColumnName == "TIPO")
+				if(dti.datatable.Columns[i].ColumnName == "TIPO")
 				{
 					iTipo = i;
-					tTipo = dt.Columns[i].DataType;
+					tTipo = dti.datatable.Columns[i].DataType;
 					break;
 				}
 			}
@@ -294,7 +290,7 @@ namespace DbWin
 				return;
 			}
 
-			DataRow drc = dt.Rows[0];                           // Dati della riga
+			DataRow drc = dti.datatable.Rows[0];                           // Dati della riga
 			tipo = (string)drc[iTipo];                          // Tipo di record (P, A, C, S)
 
 			List<string> lShow = CFG.GetList(CFG.ListType.Show,tipo);               // Legge i campi dalla configurazione
@@ -304,10 +300,10 @@ namespace DbWin
 			FormData fd = new FormData();                       // Prepara i dati per l'Input Form
 			foreach(string s in lShow)                          // Nome del campo
 			{
-				if(dt.Columns.Contains(s))
+				if(dti.datatable.Columns.Contains(s))
 				{
-					int indx = dt.Columns.IndexOf(s);           // Indice
-					Type tp = dt.Columns[indx].DataType;        // Tipo di dato
+					int indx = dti.datatable.Columns.IndexOf(s);           // Indice
+					Type tp = dti.datatable.Columns[indx].DataType;        // Tipo di dato
 					bool bRo = lReadOnly.Contains(s);           // Readonly
 					bool bDr = lDropdown.Contains(s);           // Dropdown
 					fd.Add(s,drc[indx],bRo,bDr);
@@ -341,7 +337,9 @@ namespace DbWin
 					{
 						MsgBox.Show($"Update / insert:{Environment.NewLine}{fd.Dump()}");
 						DataTableInfo dtnfo = ContaCodici(cod,mod);
-						ShowDataTable(dtnfo.datatable);
+						//ShowDataTable(dtnfo.datatable);
+						ShowDataTable(dtnfo);
+						
 
 					}
 #warning COMPLETARE: Mostrare modifica o aggiunta, chiedere, inserire, mostrare il risultato dell'inserimento
@@ -367,10 +365,11 @@ namespace DbWin
 
 		void AfterTask(Task<DataTableInfo> t)
 		{
-			DataTable dt = t.Result.datatable;
+			DataTableInfo dti = t.Result;
+
 			busy.busy = false;
 			UpdateForm();
-			BeginInvoke(new Action(() => t.Result.dtFunc(dt)));
+			BeginInvoke(new Action(() => t.Result.dtFunc(dti)));
 		}
 
 		void ShowMsgConnection(Task<string> t)

@@ -8,7 +8,8 @@ using System.Threading.Tasks;
 namespace DbWin
 {
 	public delegate void CodRevFunc(string cod, string mod);		// Delegate per operazioni su codice e revisione
-	public delegate void DataTableFunc(DataTable dt);				// Delegate per operazioni su DataTable
+	public delegate void DataTableInfoFunc(DataTableInfo dti);		// Delegate per operazioni su DataTableInfo
+
 
 	/// <summary>
 	/// Connection information 

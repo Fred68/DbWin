@@ -185,7 +185,7 @@ namespace DbWin
 						sb.AppendLine($"--- {CFG.Msg.MnuSchema} ---");
 						sb.AppendLine($"{Environment.NewLine}{DataTableToString(dtConn)}");
 						#if DEBUG
-						Thread.Sleep(1000);
+						Thread.Sleep(8000);
 						#endif
 					}
 				}
@@ -353,7 +353,7 @@ namespace DbWin
 				}
 			}
 			#if DEBUG
-			Thread.Sleep(3000);
+			Thread.Sleep(8000);
 			#endif
 		}
 

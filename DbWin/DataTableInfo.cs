@@ -18,8 +18,10 @@ namespace DbWin
 		/// </summary>
 		public class DataTableInfo
 		{
-			DataTable		_dt;
-			DataTableFunc	_dtFunc;
+			DataTable			_dt;
+			//DataTableFunc		_dtFunc;
+			DataTableInfoFunc	_dtiFunc;
+
 
 			/// <summary>
 			/// DataTable
@@ -39,13 +41,22 @@ namespace DbWin
 			/// <summary>
 			/// DataTableFunc
 			/// </summary>
-			public DataTableFunc dtFunc
+			//public DataTableFunc dtFunc
+			//{
+			//	get
+			//	{
+			//		return _dtFunc;
+			//	}
+			//}
+
+			public DataTableInfoFunc dtFunc
 			{
 				get
 				{
-					return _dtFunc;
+					return _dtiFunc;
 				}
 			}
+
 			
 			///// <summary>
 			///// CTOR
@@ -55,16 +66,23 @@ namespace DbWin
 			///// <param name="att">Attivita (class) a cui appartiene il l'oggetto DataTableInfo</param>
 			///// 
 
-			/// <summary>
-			/// CTOR
-			/// </summary>
-			/// <param name="datatable">DataTable con i valori restituiti dalla query</param>
-			/// <param name="dtFunc">delegate void DataTableFunc(DataTable dt) con operazioni da eseguire al completamento del task</param>
-			public DataTableInfo(DataTable datatable, DataTableFunc dtFunc)
+			///// <summary>
+			///// CTOR
+			///// </summary>
+			///// <param name="datatable">DataTable con i valori restituiti dalla query</param>
+			///// <param name="dtFunc">delegate void DataTableFunc(DataTable dt) con operazioni da eseguire al completamento del task</param>
+			//public DataTableInfo(DataTable datatable, DataTableFunc dtFunc)
+			//{
+			//	_dt = datatable;
+			//	_dtFunc = dtFunc;
+			//}
+
+			public DataTableInfo(DataTable datatable, DataTableInfoFunc dtiFunc)
 			{
 				_dt = datatable;
-				_dtFunc = dtFunc;
+				_dtiFunc = dtiFunc;
 			}
+
 		}
 
 

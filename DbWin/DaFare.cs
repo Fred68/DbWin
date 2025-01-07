@@ -23,11 +23,17 @@ using System.Threading.Tasks;
 #warning	- pulsanti extra (con delegate)
 #warning	- Eventuale posizionamento
 
+#warning	-->>> DAR FARE !!! Funzione per la lettura dei valori di un DataTableInfo. Preparare la DataTableInfo con gli array dei campi letti, numero di righe ecc...
 #warning	Form per input, leggendo campi e valori da datatable (e configurazione)
 
 #warning	*** GUI ***
 #warning	Icona da disegnare
 
 #warning	*** RICERCA ***
+
+#warning	Rivedere Busy necessario ? Assicurarsi che i task in sequenza vengano avviati con il flag Wait.
+//#warning	Provare a lanciare due task, aumentando il ritardo a 10 secondi. Vedere se MySql è multithread oppure no.
+#warning	Assicurarsi che tutte le chiamate allochino oggetti DataTableInfo distinti.
+#warning	Controllare il flag busy per tutti i comandi. Ma imporre busy solo per quelli di modifica o inserimento di codici.
 
 namespace DbWin	{}
