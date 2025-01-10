@@ -18,8 +18,19 @@ namespace DbWin
 		/// </summary>
 		public class DataTableInfo
 		{
-			DataTable			_dt;				// DataTable
-			DataTableInfoFunc	_dtiFunc;			// Funzione su DataTableInfo
+			class DtiSingle
+				{
+					public DataTable			_dt;				// DataTable
+					public DataTableInfoFunc	_dtiFunc;			// Funzione su DataTableInfo
+
+					public DtiSingle(DataTable dt, DataTableInfoFunc dtiFunc)
+					{
+						_dt = dt;
+						_dtiFunc = dtiFunc;
+					}
+				}
+
+			Queue<DtiSingle> _dtQ;
 
 			/// <summary>
 			/// DataTable property
@@ -64,8 +75,8 @@ namespace DbWin
 			/// <param name="dtiFunc">Funzione su DataTableInfo</param>
 			public DataTableInfo(DataTableInfoFunc dtiFunc)
 			{
-				_dt = new DataTable();
-				_dtiFunc = dtiFunc;
+				_dtQ = new Queue<DtiSingle>();
+				_dtQ.Enqueue(new DtiSingle(new DataTable(),dtiFunc));
 			}
 
 			/// <summary>
