@@ -147,6 +147,18 @@ namespace DbWin
 				}
 			}
 
+			public int AggiungeColonna(string nome, Type tipo, dynamic x)
+			{
+				int i = -1;
+				if(IndiceColonna(nome) == -1)
+				{
+
+
+				}
+				// else {}: colonna già esistente
+
+				return i;
+			}
 	}
 
 

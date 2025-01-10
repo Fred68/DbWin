@@ -150,7 +150,7 @@ namespace DbWin
 			return sb.ToString();
 		}
 		
-		public static List<string> GetList(ListType lst, string tipo)
+		public static List<string> GetList(ListType lst, string? tipo)
 		{
 			List<string> list = new List<string>();
 			switch(tipo)
