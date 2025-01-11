@@ -9,6 +9,8 @@ using System.Threading.Tasks;
 
 #warning	*** DA FARE ***
 
+#warning	--->>> CAPIRE COME ACCODARE PIU' CONANDI ASINCRONI IN SEQUENZA E RICHIAMARLI. usando DataTableInfo
+
 #warning	*** TABELLE CON I NOMI DI costruttori, materiali, prodotti.
 //#warning	Lettura delle tabelle (funzioni MySQL).
 #warning	Verifica se refresh necessario

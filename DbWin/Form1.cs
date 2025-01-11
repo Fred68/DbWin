@@ -333,8 +333,16 @@ namespace DbWin
 					if(fd.isValid)								// Controlla se esiste già
 					{
 						MsgBox.Show($"Update / insert:{Environment.NewLine}{fd.Dump()}");
-						DataTableInfo dtnfo = ContaCodici(cod, mod, null /* Attende a fine del task */);
-						ShowDataTable(dtnfo);
+
+						#if true
+						// Attende fine del task, poi chiama ShowDataTable(dtnfo), funzione già inserita automaticamente in ContaCodici(...) 
+						DataTableInfo dtnfo = ContaCodici(cod, mod, null);
+						#endif
+
+						//DataTableInfo lavori = new DataTableInfo(ShowDataTable);
+						//DataTableInfo dtnfo = ContaCodici(cod, mod, lavori);
+						
+
 						
 
 					}
