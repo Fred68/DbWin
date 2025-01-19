@@ -258,6 +258,41 @@ namespace DbWin
 			gb.Show();
 		}
 
+		#warning	IMPORTANTE: Capire come gestire la coda di datatable in DataTableInfo.
+		void ViewCount(DataTableInfo dti)
+		{
+			bool ok = false;
+			int ic = dti.IndiceColonna("COUNT");
+			if(ic != -1)
+			{
+				long count = dti[0, ic];
+				if(count == 0)
+				{
+					ok = true;
+					MsgBox.Show("Nuovo codice da aggiungere");
+				}
+				else if(count == 1)
+				{
+					ok = true;
+					MsgBox.Show("Codice esistente da aggiornare");
+				}
+				else if(count > 1)
+				{
+					MsgBox.Show("Codici multipli");
+				}
+			}
+
+
+			if(ok)
+			{
+				#warning Estrarre l'ultima datatable.
+			}
+
+
+			#warning COMPLETARE: Mostrare modifica o aggiunta, chiedere, inserire, mostrare il risultato dell'inserimento
+
+			
+		}
 
 		void EditDataTable(DataTableInfo dti)
 		{
@@ -334,19 +369,10 @@ namespace DbWin
 					{
 						MsgBox.Show($"Update / insert:{Environment.NewLine}{fd.Dump()}");
 
-						#if true
-						// Attende fine del task, poi chiama ShowDataTable(dtnfo), funzione già inserita automaticamente in ContaCodici(...) 
-						DataTableInfo dtnfo = ContaCodici(cod, mod, null);
-						#endif
+						// dti.AggiungeColonna("Pippo",typeof(int), 10);
 
-						//DataTableInfo lavori = new DataTableInfo(ShowDataTable);
-						//DataTableInfo dtnfo = ContaCodici(cod, mod, lavori);
-						
-
-						
-
+						DataTableInfo dtnfo = ContaCodici(cod, mod, new DataTableInfo(ViewCount));		// Conta i codici, poi chiama la funzione che analizza il conteggio
 					}
-#warning COMPLETARE: Mostrare modifica o aggiunta, chiedere, inserire, mostrare il risultato dell'inserimento
 				}
 			}
 			else
@@ -362,6 +388,11 @@ namespace DbWin
 
 		}
 
+
+		void Prova(DataTableInfo dti)
+		{
+			
+		}
 
 		/*******************************************/
 		// Funzioni su DataTableInfo, dopo completamento task
@@ -406,7 +437,7 @@ namespace DbWin
 		/// <summary>
 		/// Avvia un Task per eseguire una funzione
 		/// </summary>
-		/// <param name="func">delegate o funzioen anonima che restituisce un oggetto DataTableInfo</param>
+		/// <param name="func">delegate o funzione anonima, senza parametri, che restituisce un oggetto DataTableInfo</param>
 		void Chiama(Func<DataTableInfo> func, TaskOptions topt = TaskOptions.Default)
 		{
 			CancellationTokenSource cts = new CancellationTokenSource();
@@ -451,93 +482,114 @@ namespace DbWin
 		/// <summary>
 		/// Mostra i codici
 		/// </summary>
-		/// <param name="dtiF">Funzione da eseguire (se null: ShowDataTable)</param>
-		void VediCodici(DataTableInfoFunc? dtiF)
+		/// <param name="dti">DataTableInfo object. If null, created with new DataTableInfo(ShowDataTable)</param>
+		void VediCodici(DataTableInfo? dti)
 		{
-			if(dtiF == null)	dtiF = ShowDataTable;
+			if(dti == null)
+			{
+				dti = new DataTableInfo(ShowDataTable);
+			}
 			FormData fd = new FormData();
 			fd.Add("Codice","*");
 			fd.Add("Modifica","*");
 			fd.Add("Limite",100);
 			if((new InputForm(fd)).ShowDialog() == DialogResult.OK)
 			{
-				DataTableInfo dti = new DataTableInfo(dtiF);
 				Chiama(()=>conn.VediCodici(dti,fd["Codice"],fd["Modifica"],fd["Limite"]));
 			}
 
 		}
+
 		/// <summary>
 		/// Mostra le descrizioni
 		/// </summary>
-		/// <param name="dtiF">Funzione da eseguire (se null: ShowDataTable)</param>
-		void VediDescrizioni(DataTableInfoFunc? dtiF)
+		/// <param name="dti">DataTableInfo object. If null, created with new DataTableInfo(ShowDataTable)</param>
+		void VediDescrizioni(DataTableInfo? dti)
 		{
-			if(dtiF == null)	dtiF = ShowDataTable;
+			if(dti == null)
+			{
+				dti = new DataTableInfo(ShowDataTable);
+			}
 			FormData fd = new FormData();
 			fd.Add("Codice","*");
 			fd.Add("Modifica","*");
 			fd.Add("Limite",100);
 			if((new InputForm(fd)).ShowDialog() == DialogResult.OK)
 			{
-				DataTableInfo dti = new DataTableInfo(dtiF);
 				Chiama(() => conn.VediDescrizioni(dti,fd["Codice"],fd["Modifica"],fd["Limite"]));
 			}
 		}
 
 		/// <summary>
-		/// Mostra un codice singolo
+		/// Mostra codice singolo
 		/// </summary>
-		/// <param name="dtiF">Funzione da eseguire (se null: ShowDataTable)</param>
-		void VediCodice(DataTableInfoFunc? dtiF)
+		/// <param name="dti">DataTableInfo object. If null, created with new DataTableInfo(ShowDataTable)</param>
+		void VediCodice(DataTableInfo? dti)
 		{
-			if(dtiF == null)	dtiF = ShowDataTable;
+			if(dti == null)
+			{
+				dti = new DataTableInfo(ShowDataTable);
+			}
 			FormData fd = new FormData();
 			fd.Add("Codice","100*");
 			fd.Add("Modifica","a");
 			if((new InputForm(fd)).ShowDialog() == DialogResult.OK)
 			{
-				DataTableInfo dti = new DataTableInfo(dtiF);
 				Chiama(() => conn.VediCodiceSingolo(dti,fd["Codice"],fd["Modifica"]));
 			}
 		}
+
 
 		/// <summary>
 		/// Mostra ed esegue l'edit di un codice singolo
 		/// </summary>
 		/// <param name="cod"></param>
 		/// <param name="mod"></param>
-		void VediCodiceSingolo(string cod,string mod)
+		void VediCodiceSingolo(DataTableInfo? dti, string cod,string mod)
 		{
-			DataTableInfo dti = new DataTableInfo(EditDataTable);
+			if(dti == null)
+			{
+				dti = new DataTableInfo(EditDataTable);
+			}
 			Chiama(() => conn.VediCodiceSingolo(dti,cod,mod));
 		}
 
 		/// <summary>
 		/// Esplode un codice
 		/// </summary>
-		/// <param name="dtiF">Funzione da eseguire (se null: ShowDataTable)</param>
-		void EsplodiCodice(DataTableInfoFunc? dtiF)
+		/// <param name="dti">DataTableInfo object. If null, created with new DataTableInfo(ShowDataTable)</param>
+		void EsplodiCodice(DataTableInfo? dti)
 		{
-			if(dtiF == null)	dtiF = ShowDataTable;
+			if(dti == null)
+			{
+				dti = new DataTableInfo(ShowDataTable);
+			}
 			FormData fd = new FormData();
 			fd.Add("Codice","100.12.002");
 			fd.Add("Modifica","d");
 			fd.Add("Profondità",100);
 			if((new InputForm(fd)).ShowDialog() == DialogResult.OK)
 			{
-				DataTableInfo dti = new DataTableInfo(dtiF);
 				Chiama(() => conn.EsplodiCodice(dti,fd["Codice"],fd["Modifica"],fd["Profondità"]));
 			}
 		}
 
-		DataTableInfo ContaCodici(string cod,string mod, DataTableInfoFunc? dtiF)
+		/// <summary>
+		/// Conta il numero di codici
+		/// </summary>
+		/// <param name="cod"></param>
+		/// <param name="mod"></param>
+		/// <param name="dti">DataTableInfo object. If null, created with new DataTableInfo(ShowDataTable)</param>
+		/// <returns></returns>
+		DataTableInfo ContaCodici(string cod,string mod, DataTableInfo? dti)
 		{
-			if(dtiF == null)	dtiF = ShowDataTable;
-			DataTableInfo dti = new DataTableInfo(dtiF);
-			Chiama(() => conn.ContaCodici(dti,cod,mod),TaskOptions.ExecAfterTask);
+			if(dti == null)
+			{
+				dti = new DataTableInfo(ShowDataTable);
+			}
+			Chiama(() => conn.ContaCodici(dti,cod,mod));
 			return dti;
 		}
-
 
 		/*******************************************/
 		// Handlers
@@ -621,12 +673,12 @@ namespace DbWin
 
 		private void dataTableToolStripMenuItem_Click(object sender,EventArgs e)
 		{
-			VediCodici(ShowDataTable);
+			VediCodici(null/*ShowDataTable*/);
 		}
 
 		private void vediCodiciToolStripMenuItem2_Click(object sender,EventArgs e)
 		{
-			VediCodici(ShowDataTable);
+			VediCodici(null/*ShowDataTable*/);
 		}
 
 		private void configurazioneToolStripMenuItem_Click(object sender,EventArgs e)

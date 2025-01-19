@@ -7,9 +7,23 @@ using System.Threading.Tasks;
 
 namespace DbWin
 {
-	public delegate void CodRevFunc(string cod, string mod);		// Delegate per operazioni su codice e revisione
-	public delegate void DataTableInfoFunc(DataTableInfo dti);		// Delegate per operazioni su DataTableInfo
+	public delegate void CodRevFunc(DataTableInfo? dti, string cod, string mod);		// Delegate per operazioni su codice e revisione
 
+	/// <summary>
+	/// Delegate per operazioni su DataTableInfo.
+	/// return value: void
+	/// </summary>
+	/// <param name="dti">Argomento</param>
+	public delegate void DataTableInfoFunc(DataTableInfo dti);
+
+	#if DEBUG
+	public enum _PAUSA
+		{
+			lunga = 4000,
+			corta = 1000
+		}
+	#endif
+	#warning USARE public delegate TResult Func<in T,out TResult>(T arg), per uniformare tutte le chiamate.
 
 	/// <summary>
 	/// Connection information 

@@ -73,7 +73,7 @@ namespace DbWin
 					{
 						cod = (string)drow["CODICE"];
 						mod = (string)drow["MODIFICA"];
-						_shw(cod,mod);
+						_shw(null,cod,mod);
 					}
 					catch
 					{

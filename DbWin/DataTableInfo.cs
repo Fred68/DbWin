@@ -262,13 +262,39 @@ namespace DbWin
 				}
 			}
 
-			#warning DA COMPLETARE DataTableInfo :: AggiungeColonna(string nome, Type tipo, dynamic x)
+			/// <summary>
+			/// Aggiunge una colonna
+			/// </summary>
+			/// <param name="nome">Nome della colonna</param>
+			/// <param name="tipo">Usare typeof(...)</param>
+			/// <param name="x">Valore da inserire</param>
+			/// <returns>Il numero della nuova colonna o -1 se errore</returns>
+			/// <exception cref="Exception"></exception>
 			public int AggiungeColonna(string nome, Type tipo, dynamic x)
 			{
 				int i = -1;
 				if(IndiceColonna(nome) == -1)
 				{
+					_primo._dt.Columns.Add(nome, tipo);
+					int iNuova = IndiceColonna(nome);
+					if(iNuova != -1)
+					{
+						DataRow? row = Riga(0);
+						if( (tipo != null) && (row != null) )
+						{
+							 row[iNuova] = x;
+							 i = iNuova;
 
+						}
+						else
+						{
+							throw new Exception($"Errore durante la lettura della riga [0]");
+						}
+					}
+					else
+					{
+						throw new Exception($"Errore durante l'aggiunta di una colonna");
+					}
 
 				}
 				// else {}: colonna già esistente

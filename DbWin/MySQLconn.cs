@@ -120,7 +120,7 @@ namespace DbWin
 					dtConn = conn.GetSchema();
 					sb.AppendLine(GetStatus(Info.Status | Info.ConnectionString));
 					#if DEBUG
-					Thread.Sleep(1000);
+					Thread.Sleep((int)_PAUSA.corta);
 					#endif
 				}
 				else
@@ -185,7 +185,7 @@ namespace DbWin
 						sb.AppendLine($"--- {CFG.Msg.MnuSchema} ---");
 						sb.AppendLine($"{Environment.NewLine}{DataTableToString(dtConn)}");
 						#if DEBUG
-						Thread.Sleep(8000);
+						Thread.Sleep((int)_PAUSA.lunga);
 						#endif
 					}
 				}
@@ -195,7 +195,7 @@ namespace DbWin
 					sb.AppendLine($"--- {CFG.Msg.MnuFunctions} ---");
 					sb.AppendLine(ExecuteSQLCommand("CALL ListaFunzioni();",SQLqueryType.Reader));
 					#if DEBUG
-					Thread.Sleep(1000);
+					Thread.Sleep((int)_PAUSA.corta);
 					#endif
 				}
 				if ( (nfo & Info.Procedures) != 0  )
@@ -203,7 +203,7 @@ namespace DbWin
 					sb.AppendLine($"--- {CFG.Msg.MnuProcedures} ---");
 					sb.AppendLine(ExecuteSQLCommand("CALL ListaProcedure();",SQLqueryType.Reader));
 					#if DEBUG
-					Thread.Sleep(1000);
+					Thread.Sleep((int)_PAUSA.corta);
 					#endif
 				}
 				if ( (nfo & Info.User) != 0  )
@@ -211,7 +211,7 @@ namespace DbWin
 					sb.AppendLine($"--- {CFG.Msg.MnuUser} ---");
 					sb.AppendLine(ExecuteSQLCommand("CALL NomeUtente();",SQLqueryType.Reader));
 					#if DEBUG
-					Thread.Sleep(1000);
+					Thread.Sleep((int)_PAUSA.corta);
 					#endif
 				}
 			}
@@ -353,7 +353,7 @@ namespace DbWin
 				}
 			}
 			#if DEBUG
-			Thread.Sleep(8000);
+			Thread.Sleep((int)_PAUSA.lunga);
 			#endif
 		}
 
