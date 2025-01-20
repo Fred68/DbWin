@@ -49,12 +49,14 @@ namespace DbWin
 				_dtisNullo = new DtiSingle(new DataTable(), null);		// Crea un elemento 'null' di riferimento per _primo
 			}
 
+
 			/*******************************************/
 			// Private
 			/*******************************************/
 
-			Queue<DtiSingle> _dtQ;
+			Stack<DtiSingle> _dtS;
 			DtiSingle _primo;
+
 
 			/*******************************************/
 			// Proprietà
@@ -63,7 +65,7 @@ namespace DbWin
 			/// <summary>
 			/// Numero di elementi
 			/// </summary>
-			public int Count { get { return _dtQ.Count; } }
+			public int Count { get { return _dtS.Count; } }
 
 			/// <summary>
 			/// DataTable dell'elemento meno recente della coda
@@ -76,13 +78,13 @@ namespace DbWin
 				}
 				set
 				{
-					if(_dtQ.Count == 0)
+					if(_dtS.Count == 0)
 					{
-						Accoda(value);			// Usa funzione privata Enqueue(DataTable datatable)
+						Inserisci(value);			// Usa funzione privata Enqueue(DataTable datatable)
 					}
 					else
 					{
-						_dtQ.Peek()._dt = value;	
+						_dtS.Peek()._dt = value;	
 					}
 				}
 			}
@@ -113,68 +115,78 @@ namespace DbWin
 			// Ctor e metodi
 			/*******************************************/
 
-
 			/// <summary>
 			/// Ctor
 			/// </summary>
 			/// <param name="dtiFunc">Funzione su DataTableInfo</param>
 			public DataTableInfo(DataTableInfoFunc dtiFunc)
 			{
-				_dtQ = new Queue<DtiSingle>();
+				_dtS = new Stack<DtiSingle>();
 				_primo = _dtisNullo;
-				Accoda(dtiFunc);
+				Inserisci(dtiFunc);
 			}
 
 			/// <summary>
-			/// Inserisce nella coda
+			/// Inserisce nella pila (push)
 			/// </summary>
 			/// <param name="dtiFunc">DataTableInfoFunc</param>
 			/// <param name="datatable"></param>
-			public void Accoda(DataTableInfoFunc dtiFunc, DataTable datatable)
+			public void Inserisci(DataTableInfoFunc dtiFunc, DataTable datatable)
 			{
-				_dtQ.Enqueue(new DtiSingle(datatable,dtiFunc));
-				_primo = _dtQ.Peek();
+				_dtS.Push(new DtiSingle(datatable,dtiFunc));
+				_primo = _dtS.Peek();
 			}
 
 			/// <summary>
-			/// Inserisce nella coda
+			/// Inserisce nella pila (push)
 			/// </summary>
 			/// <param name="dtiFunc">DataTableInfoFunc</param>
-			public void Accoda(DataTableInfoFunc dtiFunc)
+			public void Inserisci(DataTableInfoFunc dtiFunc)
 			{
-				Accoda(dtiFunc, new DataTable());
+				Inserisci(dtiFunc, new DataTable());
 			}
 
 			/// <summary>
-			/// Inserisce nella coda elemento con puntatore a funzione nullo
+			/// Inserisce nella pila (push) elemento con puntatore a funzione nullo
 			/// </summary>
 			/// <param name="datatable"></param>
-			private void Accoda(DataTable datatable)
+			private void Inserisci(DataTable datatable)
 			{
-				_dtQ.Enqueue(new DtiSingle(datatable,null));
-				_primo = _dtQ.Peek();
+				_dtS.Push(new DtiSingle(datatable,null));
+				_primo = _dtS.Peek();
 			}
 
 			/// <summary>
-			/// Rimuove l'elemento più vecchio della coda
+			/// Estrae l'elemento in cima alla pila (pop)
 			/// </summary>
 			/// <param name="dtiFunc"></param>
 			/// <param name="datatable"></param>
-			public void Rimuovi(out DataTableInfoFunc? dtiFunc, out DataTable? datatable)
+			public void Estrai(out DataTableInfoFunc? dtiFunc, out DataTable? datatable)
 			{
-				if(_dtQ.Count == 0)
+				if(_dtS.Count == 0)
 				{
 					dtiFunc = null;
 					datatable = null;
 				}
 				else
 				{
-					DtiSingle tmp = _dtQ.Dequeue();
+					DtiSingle tmp = _dtS.Pop();
 					dtiFunc = tmp._dtiFunc;
 					datatable = tmp._dt;
-					_primo = (_dtQ.Count > 0) ? _dtQ.Peek() : _dtisNullo;
+					_primo = (_dtS.Count > 0) ? _dtS.Peek() : _dtisNullo;
 				}
+			}
 
+			/// <summary>
+			/// Rimuove l'elemento in cima alla pila (pop)
+			/// </summary>
+			public void Rimuovi()
+			{
+				if(_dtS.Count > 0)
+				{
+					_dtS.Pop();
+					_primo = (_dtS.Count > 0) ? _dtS.Peek() : _dtisNullo;
+				}
 			}
 
 			/// <summary>
@@ -300,6 +312,18 @@ namespace DbWin
 				// else {}: colonna già esistente
 
 				return i;
+			}
+
+			/// <summary>
+			/// ToString()
+			/// Usato dal debugger
+			/// </summary>
+			/// <returns></returns>
+			public override string ToString()
+			{
+				StringBuilder sb = new StringBuilder();
+				sb.Append($"DataTableInfo[{Count}]");
+				return sb.ToString();
 			}
 	}
 

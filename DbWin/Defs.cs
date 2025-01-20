@@ -19,8 +19,8 @@ namespace DbWin
 	#if DEBUG
 	public enum _PAUSA
 		{
-			lunga = 4000,
-			corta = 1000
+			lunga = 500,
+			corta = 200
 		}
 	#endif
 	#warning USARE public delegate TResult Func<in T,out TResult>(T arg), per uniformare tutte le chiamate.

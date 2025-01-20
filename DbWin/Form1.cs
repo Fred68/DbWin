@@ -258,7 +258,6 @@ namespace DbWin
 			gb.Show();
 		}
 
-		#warning	IMPORTANTE: Capire come gestire la coda di datatable in DataTableInfo.
 		void ViewCount(DataTableInfo dti)
 		{
 			bool ok = false;
@@ -286,6 +285,10 @@ namespace DbWin
 			if(ok)
 			{
 				#warning Estrarre l'ultima datatable.
+
+				MsgBox.Show($"ESTRARRE DATATABLE PRECEDENTE CON I DATI DA STACK DI {dti.Count} ELEMENTI");
+				dti.Rimuovi();
+				EditDataTable(dti);
 			}
 
 
@@ -369,9 +372,11 @@ namespace DbWin
 					{
 						MsgBox.Show($"Update / insert:{Environment.NewLine}{fd.Dump()}");
 
-						// dti.AggiungeColonna("Pippo",typeof(int), 10);
+						#warning SCRIVERE FUNZIONE PER LEGGERE UN FORMDATA E INSERIRLO IN UN DATATABLE, DA METTERE POI NELLO STACK
 
-						DataTableInfo dtnfo = ContaCodici(cod, mod, new DataTableInfo(ViewCount));		// Conta i codici, poi chiama la funzione che analizza il conteggio
+						dti.Inserisci(ViewCount);
+
+						DataTableInfo dtnfo = ContaCodici(cod, mod, dti);		// Conta i codici, poi chiama la funzione che analizza il conteggio
 					}
 				}
 			}
@@ -538,7 +543,6 @@ namespace DbWin
 				Chiama(() => conn.VediCodiceSingolo(dti,fd["Codice"],fd["Modifica"]));
 			}
 		}
-
 
 		/// <summary>
 		/// Mostra ed esegue l'edit di un codice singolo
