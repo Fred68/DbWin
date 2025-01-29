@@ -13,6 +13,7 @@
 
   <ItemGroup>
     <Compile Remove="GestioneAttivita.cs" />
+    <Compile Remove="InputInfo.cs" />
     <Compile Remove="OLD\Form1.OLD.cs" />
     <Compile Remove="OLD\MySQLconn.OLD.cs" />
   </ItemGroup>

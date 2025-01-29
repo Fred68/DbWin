@@ -1,7 +1,6 @@
 using System.Data;
 using System.Reflection;
 using System.Text;
-using Fred68.InputForms;
 using InputForms;
 
 namespace DbWin
@@ -297,6 +296,11 @@ namespace DbWin
 			
 		}
 
+
+		#warning Scrivere funzione per leggere un DataTable (più generico, non usare DataTableInfo), confrontarlo con le liste dei campi (show,readonly,dropdown) e creare un FormData
+		#warning Scrivere funzione per leggere un FormData ed inserirne i valori in un DataTable
+		
+		
 		void EditDataTable(DataTableInfo dti)
 		{
 			int iTipo = -1;
@@ -327,7 +331,6 @@ namespace DbWin
 			}
 
 			tipo = (string?)dti[0,iTipo];
-
 			List<string> lShow = CFG.GetList(CFG.ListType.Show,tipo);               // Legge i campi dalla configurazione
 			List<string> lReadOnly = CFG.GetList(CFG.ListType.Readonly,tipo);
 			List<string> lDropdown = CFG.GetList(CFG.ListType.Dropdown,tipo);
@@ -372,7 +375,8 @@ namespace DbWin
 					{
 						MsgBox.Show($"Update / insert:{Environment.NewLine}{fd.Dump()}");
 
-						#warning SCRIVERE FUNZIONE PER LEGGERE UN FORMDATA E INSERIRLO IN UN DATATABLE, DA METTERE POI NELLO STACK
+						#warning AGGIORNARE QUI LA DATATABLE PRECEDENTE CON I NUOVI DATI DEL FORMDATA (CAMPI isModified...)
+						
 
 						dti.Inserisci(ViewCount);
 
