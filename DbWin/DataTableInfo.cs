@@ -243,7 +243,7 @@ namespace DbWin
 			/// </summary>
 			/// <param name="riga">Indice della riga</param>
 			/// <returns>DataRow? oppure null se non trovata</returns>
-			DataRow? Riga(int riga)
+			public DataRow? Riga(int riga)
 			{
 				DataRow? row = null;
 				if( (riga >= 0) && (riga < _primo._dt.Rows.Count) )

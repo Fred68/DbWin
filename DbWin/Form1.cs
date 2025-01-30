@@ -257,7 +257,7 @@ namespace DbWin
 			gb.Show();
 		}
 
-		void ViewCount(DataTableInfo dti)
+		void ViewCountAndInsertCode(DataTableInfo dti)
 		{
 			bool ok = false;
 			int ic = dti.IndiceColonna("COUNT");
@@ -287,19 +287,17 @@ namespace DbWin
 
 				MsgBox.Show($"ESTRARRE DATATABLE PRECEDENTE CON I DATI DA STACK DI {dti.Count} ELEMENTI");
 				dti.Rimuovi();
-				EditDataTable(dti);
+
+				#warning Inserire il nuovo codice nel database
+
+				//EditDataTable(dti);
 			}
 
 
-			#warning COMPLETARE: Mostrare modifica o aggiunta, chiedere, inserire, mostrare il risultato dell'inserimento
+			
 
 			
 		}
-
-
-		#warning Scrivere funzione per leggere un DataTable (più generico, non usare DataTableInfo), confrontarlo con le liste dei campi (show,readonly,dropdown) e creare un FormData
-		#warning Scrivere funzione per leggere un FormData ed inserirne i valori in un DataTable
-		
 		
 		void EditDataTable(DataTableInfo dti)
 		{
@@ -375,11 +373,28 @@ namespace DbWin
 					{
 						MsgBox.Show($"Update / insert:{Environment.NewLine}{fd.Dump()}");
 
-						#warning AGGIORNARE QUI LA DATATABLE PRECEDENTE CON I NUOVI DATI DEL FORMDATA (CAMPI isModified...)
-						
+						DataRow? dtRow = dti.Riga(0);
+						if(dtRow != null)
+						{
+							#if DEBUG
+							StringBuilder sb = new StringBuilder();
+							#endif
+							foreach(InputInfo info in fd.InputInfo())
+							{
+								if(info.isModified)
+								{
+									#if DEBUG
+									sb.AppendLine($"{info.Name}={info.Dt.Get().ToString()}");
+									#endif
+									dtRow[info.Name] = info.Dt.Get();
+								}
+							}
+							#if DEBUG
+							MsgBox.Show(sb.ToString());
+							#endif
+						}
 
-						dti.Inserisci(ViewCount);
-
+						dti.Inserisci(ViewCountAndInsertCode);								// Imposta la funzione che analizza il conteggio e inserisce i dati nel database
 						DataTableInfo dtnfo = ContaCodici(cod, mod, dti);		// Conta i codici, poi chiama la funzione che analizza il conteggio
 					}
 				}
@@ -388,13 +403,6 @@ namespace DbWin
 			{
 				MsgBox.Show("Nessun dato trovato");
 			}
-
-
-
-
-			//GridBox gb = new GridBox(dt,VediCodiceSingolo);		// Evento per doppio click su un codice
-			//gb.Show();
-
 		}
 
 
