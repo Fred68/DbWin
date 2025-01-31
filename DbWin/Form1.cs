@@ -280,21 +280,17 @@ namespace DbWin
 				}
 			}
 
-
 			if(ok)
 			{
-				#warning Estrarre l'ultima datatable.
+				dti.Rimuovi();			// Estrae dallo stack l'ultimo datatable (risultato COUNT)
 
-				MsgBox.Show($"ESTRARRE DATATABLE PRECEDENTE CON I DATI DA STACK DI {dti.Count} ELEMENTI");
-				dti.Rimuovi();
+				#warning Chiamare funzione (da scrivere) di inserimento dei dati di un datatableinfo
+				#warning Aggiungere liste di configurazione: dati da scrivere
+				#warning Leggere i dati dal datatable (in base al tipo e alle liste di configurazione)
+				#warning Scegliere la procedura MySQL da chiamare ed eseguire l'inserimento, prenotando funzione per mostrare il risultato
+				#warning Scrivere la funzione per mostrare il risultato (meglio se rilegge il codice dal database).
 
-				#warning Inserire il nuovo codice nel database
-
-				//EditDataTable(dti);
 			}
-
-
-			
 
 			
 		}
@@ -421,7 +417,13 @@ namespace DbWin
 
 			busy.busy = false;
 			UpdateForm();
-			BeginInvoke(new Action(() => t.Result.dtFunc(dti)));
+			if(dti != null)
+			{
+				if(dti.dtFunc != null)
+				{
+					BeginInvoke(new Action(() => dti.dtFunc(dti)));
+				}
+			}
 		}
 
 		/*******************************************/
