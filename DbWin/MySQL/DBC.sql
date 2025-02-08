@@ -76,8 +76,8 @@ REPLACE INTO `codici` (`cod`, `mod`, `descrizione`, `id_utente`, `creazione`, `a
 	('102.11.100', '', 'STAFFA', 2, '2023-04-23 17:43:31', '2023-04-23 17:43:31', 2),
 	('102.11.100', 'a', 'STAFFA', 2, '2023-04-23 17:44:58', '2023-04-23 17:45:27', 2),
 	('102.11.100', 'b', 'STAFFA', 6, '2025-02-03 19:20:41', '2025-02-03 19:20:41', 6),
-	('102.11.100', 'c', 'STAFFA PIPPO', 6, '2025-02-08 07:52:06', '2025-02-08 09:52:35', 6),
-	('102.11.100', 'd', 'STAFFA PIPPO', 6, '2025-02-08 08:26:39', '2025-02-08 09:37:23', 6),
+	('102.11.100', 'c', 'STAFFA Y', 6, '2025-02-08 07:52:06', '2025-02-08 17:40:45', 1),
+	('102.11.100', 'd', 'STAFFA Y', 6, '2025-02-08 08:26:39', '2025-02-08 17:42:22', 1),
 	('1055.45567.122', '', 'Vite', 2, '2019-06-24 08:31:22', '2019-08-17 17:03:04', 2),
 	('1055.54789.123', '', 'Guida lineare Bosch 1605.302.10.20', 2, '2019-11-02 14:09:12', '2019-11-02 14:09:12', 2),
 	('1058.32765.001', '', 'Guida lineare Bosch 1605.20.345', 2, '2019-11-02 14:27:02', '2019-11-02 14:27:02', 2),
@@ -710,16 +710,16 @@ CREATE PROCEDURE `InsParticolare`(
     SQL SECURITY INVOKER
     COMMENT 'InsParticolare(_cod, _mod, _desc, _mat)'
 BEGIN
-
+DECLARE _usr VARCHAR(50) DEFAULT "-";
 DECLARE _idx INT DEFAULT -1;	-- id del current user (invoker) e...
 DECLARE _stx INT DEFAULT 0; -- ...stato
-
--- Eseguito con privilegi di Invoker
-CALL StatoUtente(_idx, _stx,"");
+CALL StatoUtente(_idx, _stx, NULL);		-- Utente reale (privilegi di Invoker)
+SET _usr = dbc01._NomeUtente(_idx);
 IF _stx = 2 THEN
- 	CALL dbc01r._InsParticolare(_cod, _mod, _desc, _mat);
+	SELECT CONCAT("Utente ", _usr, " abilitato...") AS `ABILITAZIONE`;
+ 	CALL dbc01r._InsParticolare(_idx,_cod, _mod, _desc, _mat);
 ELSE
-	SELECT CONCAT("Utente ", _idx, " NON abilitato") AS `ABILITAZIONE`;
+	SELECT CONCAT("Utente ", _usr, " NON abilitato") AS `ABILITAZIONE`;
 END IF;
 
 END//
@@ -800,7 +800,7 @@ CREATE PROCEDURE `NomeUtente`()
     COMMENT 'Estrae i dati dell''utente connesso'
 BEGIN
 	DECLARE idu, stu INT DEFAULT(-1);
-	CALL StatoUtente(idu,stu);
+	CALL StatoUtente(idu,stu,NULL);
 	CALL DatiUtente(idu);
 END//
 DELIMITER ;
@@ -885,7 +885,7 @@ DELIMITER //
 CREATE PROCEDURE `StatoUtente`(
 	INOUT `_uid` INT,
 	INOUT `_st` TINYINT,
-	IN `_strUsr` VARCHAR(50)
+	IN `_user` VARCHAR(50)
 )
     SQL SECURITY INVOKER
     COMMENT 'Legge lo StatoUtente(INOUT _uid INT, INOUT _st TINYINT, _strUsr), soltanto se  _uid = -1. Se _strUsr è nullo, usa current user'
@@ -893,13 +893,13 @@ BEGIN
 DECLARE cusr, cusrName VARCHAR(50);
 IF _uid = -1 THEN
 	SET _st = 0;
-	IF LENGTH(_strUsr) > 0 THEN
-		SET cusr = _strUsr;
-	ELSE
+	IF (_user IS NULL) THEN
 		SELECT CURRENT_USER() INTO cusr;
+	ELSE	
+		SET cusr = _user;
 	END IF;
 	SELECT SUBSTRING_INDEX(cusr, "@", 1) INTO cusrName;
-	CALL dbc01._StatoUtente(cusr, cusrName, _uid, _st); -- Chiama funzione con priviligi di Definer
+	CALL dbc01._StatoUtente(cusr, cusrName, _uid, _st); -- Chiama funzione con privilegi di Definer
 END IF;
 END//
 DELIMITER ;
@@ -1035,7 +1035,7 @@ DECLARE _qta, _qta_ric SMALLINT DEFAULT 0; -- Temporanee per lettura record
 DECLARE _acq, _liv_ric TINYINT DEFAULT 0;
 DECLARE _tipoP CHAR DEFAULT '-';
 
-CALL StatoUtente(_idx, _stx, "");
+CALL StatoUtente(_idx, _stx, NULL);
 IF _stx = 2 THEN
 	SET _cod = TRIM(_cod);
 	SET _mod = TRIM(_mod);
@@ -1095,7 +1095,8 @@ DELIMITER //
 CREATE FUNCTION `_InsCodice`(
 	`_cod` VARCHAR(50),
 	`_mod` VARCHAR(10),
-	`_desc` VARCHAR(255)
+	`_desc` VARCHAR(255),
+	`_usr` INT
 ) RETURNS int
     MODIFIES SQL DATA
     DETERMINISTIC
@@ -1103,20 +1104,20 @@ CREATE FUNCTION `_InsCodice`(
 BEGIN
 DECLARE n INT;	-- return value
 DECLARE x INT;	-- numero di codici trovati
-DECLARE _idx INT DEFAULT -1;	-- id del current user e...
+DECLARE _idx INT DEFAULT -1;	-- id del current user
 DECLARE _stx INT DEFAULT 0; -- ...stato
 SET n = 0;
-CALL StatoUtente(_idx, _stx, "");
+CALL StatoUtente(_idx, _stx, NULL);		-- Permessi dell'utente Definer (root)
 IF _stx = 2 THEN
 	SET _cod = TRIM(_cod);
 	SET _mod = TRIM(_mod);
 	SET _desc = TRIM(_desc);
 	SELECT COUNT(*) FROM dbc00.codici c WHERE c.cod = _cod AND c.`mod` = _mod INTO x;
 	IF x = 0 THEN
-		INSERT INTO dbc00.codici(cod, `mod`, descrizione, id_utente, id_ultimo) VALUES(_cod, _mod, _desc, _idx, _idx);
+		INSERT INTO dbc00.codici(cod, `mod`, descrizione, id_utente, id_ultimo) VALUES(_cod, _mod, _desc, _usr, _usr);
 		SET n = 1;
 	ELSEIF x = 1 THEN
-		UPDATE dbc00.codici SET descrizione = _desc, id_ultimo = _idx, aggiornamento = DEFAULT WHERE dbc00.codici.cod = _cod AND dbc00.codici.`mod` = _mod;
+		UPDATE dbc00.codici SET descrizione = _desc, id_ultimo = _usr, aggiornamento = DEFAULT WHERE dbc00.codici.cod = _cod AND dbc00.codici.`mod` = _mod;
 		SET n = -1;
 	ELSE
 		SET n = 0;
@@ -1140,7 +1141,7 @@ DECLARE x INT;	-- numero di codici trovati
 DECLARE _idx INT DEFAULT -1;	-- id del current user e...
 DECLARE _stx INT DEFAULT 0; -- ...stato
 SET n = -1;
-CALL StatoUtente(_idx, _stx, "");
+CALL StatoUtente(_idx, _stx, NULL);
 IF _stx = 2 THEN
 	SET _cos = TRIM(_cos);
 	SELECT COUNT(*) FROM dbc00.costruttori c WHERE c.costruttore = _cos INTO x;
@@ -1182,7 +1183,7 @@ DECLARE _stx INT DEFAULT 0; -- ...stato.
 DECLARE nc INT;	-- numero di codici.
 DECLARE ncp INT;	-- numero di codici padre.
 DECLARE nl INT;	-- numero di legami.
-CALL StatoUtente(_idx, _stx, "");
+CALL StatoUtente(_idx, _stx, NULL);
 SET n = _stx;
 IF _stx = 2 THEN
 	SET _cod = TRIM(_cod);
@@ -1231,7 +1232,7 @@ DECLARE x INT;	-- numero di codici trovati
 DECLARE _idx INT DEFAULT -1;	-- id del current user e...
 DECLARE _stx INT DEFAULT 0; -- ...stato
 SET n = -1;
-CALL StatoUtente(_idx, _stx, "");
+CALL StatoUtente(_idx, _stx, NULL);
 IF _stx = 2 THEN
 	SET _mat = TRIM(_mat);
 	SELECT COUNT(*) FROM dbc00.materiali m WHERE m.materiale = _mat INTO x;
@@ -1266,7 +1267,7 @@ DECLARE x INT;	-- numero di codici trovati
 DECLARE _idx INT DEFAULT -1;	-- id del current user e...
 DECLARE _stx INT DEFAULT 0; -- ...stato
 SET n = -1;
-CALL StatoUtente(_idx, _stx, "");
+CALL StatoUtente(_idx, _stx, NULL);
 IF _stx = 2 THEN
 	SET _pro = TRIM(_pro);
 	SELECT COUNT(*) FROM dbc00.prodotti p WHERE p.prodotto = _pro INTO x;
@@ -1283,6 +1284,19 @@ IF n = 1 THEN
 	SELECT p.id FROM dbc00.prodotti p WHERE p.prodotto = _pro INTO n;
 END IF;
 RETURN n;
+END//
+DELIMITER ;
+
+-- Dump della struttura di funzione dbc01._NomeUtente
+DELIMITER //
+CREATE FUNCTION `_NomeUtente`(
+	`_id` INT
+) RETURNS varchar(50) CHARSET latin1
+    DETERMINISTIC
+BEGIN
+DECLARE nome VARCHAR(50) DEFAULT "-";
+SELECT ut.utente FROM dbc02.utenti AS ut WHERE ut.id = _id INTO nome;
+RETURN nome;
 END//
 DELIMITER ;
 
@@ -1385,22 +1399,21 @@ USE `dbc01r`;
 -- Dump della struttura di procedura dbc01r._InsParticolare
 DELIMITER //
 CREATE PROCEDURE `_InsParticolare`(
+	IN `_usr` INT,
 	IN `_cod` VARCHAR(50),
 	IN `_mod` VARCHAR(10),
 	IN `_desc` VARCHAR(255),
 	IN `_mat` VARCHAR(255)
 )
-    COMMENT '_InsParticolare(_cod, _mod, _desc, _mat)'
+    COMMENT '_InsParticolare(_usr, _cod, _mod, _desc, _mat)'
 BEGIN
 DECLARE n, idm INT;
-DECLARE _idx INT DEFAULT -1;	-- id del current user (invoker) e...
-DECLARE _stx INT DEFAULT 0; -- ...stato
 SET _cod = TRIM(_cod);
 SET _mod = TRIM(_mod);
 
 START TRANSACTION;
 SET idm = dbc01._InsMateriale(_mat); -- id o -1 se errore
-SET n = dbc01._InsCodice(_cod, _mod, _desc); -- 1 inserito, -1 aggiornato, 0 se errore
+SET n = dbc01._InsCodice(_cod, _mod, _desc, _usr); -- 1 inserito, -1 aggiornato, 0 se errore
 IF (idm != -1) AND (n != 0) THEN
 	IF n = 1 THEN
 		INSERT INTO dbc00.particolari(cod, `mod`, materiale) VALUES(_cod, _mod, idm);
