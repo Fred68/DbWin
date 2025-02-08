@@ -7,7 +7,9 @@ using System.Security.Permissions;
 using System.Text;
 using System.Threading.Tasks;
 using Fred68.CfgReader;
+using Org.BouncyCastle.Cms;
 using Org.BouncyCastle.Math.EC.Multiplier;
+using Org.BouncyCastle.Utilities;
 using static Fred68.CfgReader.CfgReader;
 
 
@@ -29,18 +31,28 @@ namespace DbWin
 		public string	CONN_database;
 		public bool		INI_quick;
 		public DateTime	INI_dt;
+		public string	tipo;
+		public string	tipoP;
+		public string	tipoA;
+		public string	tipoC;
+		public string	tipoS;
+
 		public List<string>	P_show;
 		public List<string>	P_rdonly;
 		public List<string>	P_drop;
+		public List<string>	P_ins;
 		public List<string>	C_show;
 		public List<string>	C_rdonly;
 		public List<string>	C_drop;
+		public List<string>	C_ins;
 		public List<string>	A_show;
 		public List<string>	A_rdonly;
 		public List<string>	A_drop;
+		public List<string>	A_ins;
 		public List<string>	S_show;
 		public List<string>	S_rdonly;
 		public List<string>	S_drop;
+		public List<string>	S_ins;
 	}
 
 	public class Msg:CfgReader
@@ -82,11 +94,18 @@ namespace DbWin
 
 	public static class CFG
 	{
+		public enum DumpType
+		{
+			Config,
+			Msg,
+			All
+		}
 		public enum ListType
 		{
 			Show,
 			Readonly,
-			Dropdown
+			Dropdown,
+			Insert
 		}
 		public readonly static string _cfgFile = "DbWin.cfg";
 		public readonly static string _msgFile = "DbWin.msg";
@@ -115,12 +134,25 @@ namespace DbWin
 
 		}
 	
-		public static string DumpEntries()
+		public static string DumpEntries(DumpType dumpT = DumpType.All)
 		{
 			StringBuilder sb = new StringBuilder();
 
 			FieldInfo[] finfos;
-			foreach(object obj in new object[] {Config, Msg })
+			object[] types;
+			switch(dumpT)
+			{
+				case DumpType.Config:
+					types = new object[] {Config};
+					break;
+				case DumpType.Msg:
+					types = new object[] {Msg };
+					break;
+				default:
+					types = new object[] {Config, Msg };
+					break;
+			}
+			foreach(object obj in types)
 			{
 				Type t = obj.GetType();
 				sb.AppendLine($"{Environment.NewLine}{t.Name}:");
@@ -157,26 +189,25 @@ namespace DbWin
 			{
 				case "P":
 				{
-					return SelectList(lst, Config.P_show, Config.P_rdonly, Config.P_drop);
+					return SelectList(lst, Config.P_show, Config.P_rdonly, Config.P_drop, Config.P_ins);
 				}
 				case "A":
 				{
-					return SelectList(lst, Config.A_show, Config.A_rdonly, Config.A_drop);
+					return SelectList(lst, Config.A_show, Config.A_rdonly, Config.A_drop, Config.A_ins);
 				}
 				case "C":
 				{
-					return SelectList(lst, Config.C_show, Config.C_rdonly, Config.C_drop);
+					return SelectList(lst, Config.C_show, Config.C_rdonly, Config.C_drop, Config.C_ins);
 				}
 				case "S":
 				{
-					return SelectList(lst, Config.S_show, Config.S_rdonly, Config.S_drop);
+					return SelectList(lst, Config.S_show, Config.S_rdonly, Config.S_drop, Config.S_ins);
 				}
-
 			}
 			return list;
 		}
 
-		private static List<string> SelectList(ListType lt, List<string> show, List<string> rdonly, List<string> dropdwn)
+		private static List<string> SelectList(ListType lt, List<string> show, List<string> rdonly, List<string> dropdwn, List<string> insert)
 		{
 			switch(lt)
 			{
@@ -186,6 +217,8 @@ namespace DbWin
 					return rdonly;
 				case ListType.Dropdown:
 					return dropdwn;
+				case ListType.Insert:
+					return insert;
 				default:
 					return new List<string>();
 			}

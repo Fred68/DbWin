@@ -16,6 +16,17 @@ namespace DbWin
 	/// <param name="dti">Argomento</param>
 	public delegate void DataTableInfoFunc(DataTableInfo dti);
 
+	/// <summary>
+	/// Tipo di codice
+	/// </summary>
+	public enum TipoCod
+	{
+		P,
+		A,
+		C,
+		S
+	}
+
 	#if DEBUG
 	public enum _PAUSA
 		{

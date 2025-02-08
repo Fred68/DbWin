@@ -2,6 +2,7 @@ using System.Data;
 using System.Reflection;
 using System.Text;
 using InputForms;
+using static Org.BouncyCastle.Crypto.Engines.SM2Engine;
 
 namespace DbWin
 {
@@ -237,16 +238,16 @@ namespace DbWin
 					if(dsc)
 					{
 						string msg = conn.Disconnect();
-						#if DEBUG
+#if DEBUG
 						MsgBox.Show(msg);
-						#endif
+#endif
 						conn.ConnectionString = new ConnectionString();
 					}
 				}
 			}
 			UpdateForm();
 		}
-		
+
 		/*******************************************/
 		// Funzioni su DataTableInfo, richiamabili 
 		/*******************************************/
@@ -263,7 +264,7 @@ namespace DbWin
 			int ic = dti.IndiceColonna("COUNT");
 			if(ic != -1)
 			{
-				long count = dti[0, ic];
+				long count = dti[0,ic];
 				if(count == 0)
 				{
 					ok = true;
@@ -282,45 +283,130 @@ namespace DbWin
 
 			if(ok)
 			{
-				dti.Rimuovi();			// Estrae dallo stack l'ultimo datatable (risultato COUNT)
+				dti.Rimuovi();              // Rimuove dallo stack l'ultimo datatable (risultato COUNT)
+				InsertDataFromDti(dti);     // Inserisce i dati dell'ultima datatable in dti nel database
+			}
+		}
 
-				#warning Chiamare funzione (da scrivere) di inserimento dei dati di un datatableinfo
-				#warning Aggiungere liste di configurazione: dati da scrivere
-				#warning Leggere i dati dal datatable (in base al tipo e alle liste di configurazione)
-				#warning Scegliere la procedura MySQL da chiamare ed eseguire l'inserimento, prenotando funzione per mostrare il risultato
-				#warning Scrivere la funzione per mostrare il risultato (meglio se rilegge il codice dal database).
+		void InsertDataFromDti(DataTableInfo dti)
+		{
+			List<string> args = new List<string>();
+			if(dti.Count > 0)
+			{
+				string? tipo;
+				MsgBox.Show("Inserimento datatable nel database...");
+				int iTipo = dti.IndiceColonna(CFG.Config.tipo);
+				if(iTipo != -1)
+				{
+					tipo = dti[0,iTipo];
+					if(tipo != null)
+					{
+						Type? tTipo = dti.TipoColonna(iTipo);
+						if(tTipo == typeof(string))
+						{
+							// Compone lista di stringhe con chiavi e valori
+							List<string> campi = CFG.GetList(CFG.ListType.Insert,tipo);	// Legge i campi dalla configurazione
+
+							foreach(string campo in campi)
+							{
+								int ic = dti.IndiceColonna(campo);
+								if(ic != -1)
+								{
+									//args.Add($"{campo}={dti[0,ic]}");
+									args.Add($"{dti[0,ic]}");
+								}
+							}
+							//args.Insert(0,tipo);
+
+							// Mostra la lista
+							StringBuilder sb = new StringBuilder();
+							foreach(string s in args)
+							{
+								sb.AppendLine(s);
+							}
+							MsgBox.Show(sb.ToString());
+
+							switch(tipo)
+							{
+								case "P":
+								case "A":
+								case "C":
+								case "S":
+								{
+									Chiama(() => conn.InserisceCodice(dti, tipo, args));
+								}
+								break;
+								default:
+								{
+									MsgBox.Show($"Tipo {tipo} non riconosciuto");
+									iTipo = -1;
+								}
+								break;
+							}
+						}
+						else
+						{
+							iTipo = -1;		// Imposta errore
+						}
+					}
+					else
+					{
+						iTipo = -1;
+					}
+				}
+
+
+			if(iTipo == -1)
+				{
+					MsgBox.Show($"Colonna {CFG.Config.tipo} mancante o errato");
+				}
+
+			}
+			else
+			{
+				MsgBox.Show("Errore, nessun datatable disponibile per l'inserimento nel database");
 
 			}
 
-			
+			/*
+			InsAssieme, InsAssieme(_cod, _mod, _desc): inserisce un nuovo assieme
+			InsCommerciale, InsCommerciale(_cod, _mod, _cos, _pro, _model, _dett).
+			InsLegame, InsLegame(_cod, _mod, _cod_p, _mod_p, _qta, _acq, _qta_ric, _liv_ric)
+			InsParticolare, InsParticolare(_cod, _mod, _desc, _mat)
+			InsSchema, InsSchema(_cod, _mod, _desc)
+			*/
+#warning Leggere i dati dal datatable (in base al tipo e alle liste di configurazione)
+#warning Scegliere la procedura MySQL da chiamare ed eseguire l'inserimento, prenotando funzione per mostrare il risultato
+#warning Scrivere la funzione per mostrare il risultato (meglio se rilegge il codice dal database).
+
 		}
-		
+
 		void EditDataTable(DataTableInfo dti)
 		{
 			int iTipo = -1;
 			string? tipo = string.Empty;
 			Type? tTipo = null;
 
-			if(dti.Righe != 1)									// Edit possibile solo il codice è unico (una riga soltanto)
+			if(dti.Righe != 1)                                  // Edit possibile solo il codice è unico (una riga soltanto)
 			{
 				MsgBox.Show("Ammessa tabella con una sola riga");
 				return;
 			}
 
-			iTipo = dti.IndiceColonna("TIPO");					// Cerca la colonna con il TIPO
-			
-			if(iTipo != -1)										// Legge il tipo di dati
+			iTipo = dti.IndiceColonna(CFG.Config.tipo);                  // Cerca la colonna con il TIPO
+
+			if(iTipo != -1)                                     // Legge il tipo di dati
 			{
-				tTipo = dti.TipoColonna(iTipo);					// tTipo non è null, perché la colona esiste
+				tTipo = dti.TipoColonna(iTipo);                 // tTipo non è null, perché la colona esiste
 				if(tTipo != typeof(string))
 				{
-					MsgBox.Show("Colonna 'TIPO' con dati non string");
+					MsgBox.Show($"Colonna '{CFG.Config.tipo}' con dati non string");
 					return;
 				}
 			}
 			else
 			{
-				MsgBox.Show("Colonna 'TIPO' mancante.");
+				MsgBox.Show($"Colonna '{CFG.Config.tipo}' mancante.");
 				return;
 			}
 
@@ -350,9 +436,9 @@ namespace DbWin
 				{
 					string cod = string.Empty;
 					string mod = string.Empty;
-					if(fd.isValid)								// Estrae il codice
+					if(fd.isValid)                              // Estrae il codice
 					{
-						
+
 						try
 						{
 							cod = fd["CODICE"];
@@ -365,33 +451,33 @@ namespace DbWin
 						}
 					}
 
-					if(fd.isValid)								// Controlla se esiste già
+					if(fd.isValid)                              // Controlla se esiste già
 					{
 						MsgBox.Show($"Update / insert:{Environment.NewLine}{fd.Dump()}");
 
 						DataRow? dtRow = dti.Riga(0);
 						if(dtRow != null)
 						{
-							#if DEBUG
+#if DEBUG
 							StringBuilder sb = new StringBuilder();
-							#endif
+#endif
 							foreach(InputInfo info in fd.InputInfo())
 							{
 								if(info.isModified)
 								{
-									#if DEBUG
+#if DEBUG
 									sb.AppendLine($"{info.Name}={info.Dt.Get().ToString()}");
-									#endif
+#endif
 									dtRow[info.Name] = info.Dt.Get();
 								}
 							}
-							#if DEBUG
+#if DEBUG
 							MsgBox.Show(sb.ToString());
-							#endif
+#endif
 						}
 
-						dti.Inserisci(ViewCountAndInsertCode);								// Imposta la funzione che analizza il conteggio e inserisce i dati nel database
-						DataTableInfo dtnfo = ContaCodici(cod, mod, dti);		// Conta i codici, poi chiama la funzione che analizza il conteggio
+						dti.Inserisci(ViewCountAndInsertCode);                              // Imposta la funzione che analizza il conteggio e inserisce i dati nel database
+						DataTableInfo dtnfo = ContaCodici(cod,mod,dti);     // Conta i codici, poi chiama la funzione che analizza il conteggio
 					}
 				}
 			}
@@ -399,12 +485,6 @@ namespace DbWin
 			{
 				MsgBox.Show("Nessun dato trovato");
 			}
-		}
-
-
-		void Prova(DataTableInfo dti)
-		{
-			
 		}
 
 		/*******************************************/
@@ -435,9 +515,9 @@ namespace DbWin
 			string msg = t.Result;
 			busy.busy = false;
 			UpdateForm();
-			#if DEBUG
+#if DEBUG
 			MsgBox.Show(msg);
-			#endif
+#endif
 		}
 
 		void ShowTaskMsg(Task<string> t)
@@ -457,22 +537,22 @@ namespace DbWin
 		/// Avvia un Task per eseguire una funzione
 		/// </summary>
 		/// <param name="func">delegate o funzione anonima, senza parametri, che restituisce un oggetto DataTableInfo</param>
-		void Chiama(Func<DataTableInfo> func, TaskOptions topt = TaskOptions.Default)
+		void Chiama(Func<DataTableInfo> func,TaskOptions topt = TaskOptions.Default)
 		{
 			CancellationTokenSource cts = new CancellationTokenSource();
 			CancellationToken token = cts.Token;
 			Task<DataTableInfo> task = Task<DataTableInfo>.Factory.StartNew(func,token);
 
-			if( (topt & TaskOptions.ExecAfterTask) !=0)			// Se deve eseguire l'operazione dopo il completamento del task...
+			if((topt & TaskOptions.ExecAfterTask) != 0)         // Se deve eseguire l'operazione dopo il completamento del task...
 			{
-				if( (topt & TaskOptions.DoNotWait) !=0)			// Attende o no il completamento del task ?
+				if((topt & TaskOptions.DoNotWait) != 0)         // Attende o no il completamento del task ?
 				{
-					task.ContinueWith(AfterTask);				// Se no, prenota esecuzione alla fine del task
+					task.ContinueWith(AfterTask);               // Se no, prenota esecuzione alla fine del task
 				}
 				else
 				{
-					task.Wait();								// Se sì, aspetta la fine del task...
-					AfterTask(task);							// ...ed esegue l'operazione
+					task.Wait();                                // Se sì, aspetta la fine del task...
+					AfterTask(task);                            // ...ed esegue l'operazione
 				}
 			}
 		}
@@ -514,7 +594,7 @@ namespace DbWin
 			fd.Add("Limite",100);
 			if((new InputForm(fd)).ShowDialog() == DialogResult.OK)
 			{
-				Chiama(()=>conn.VediCodici(dti,fd["Codice"],fd["Modifica"],fd["Limite"]));
+				Chiama(() => conn.VediCodici(dti,fd["Codice"],fd["Modifica"],fd["Limite"]));
 			}
 
 		}
@@ -563,7 +643,7 @@ namespace DbWin
 		/// </summary>
 		/// <param name="cod"></param>
 		/// <param name="mod"></param>
-		void VediCodiceSingolo(DataTableInfo? dti, string cod,string mod)
+		void VediCodiceSingolo(DataTableInfo? dti,string cod,string mod)
 		{
 			if(dti == null)
 			{
@@ -599,7 +679,7 @@ namespace DbWin
 		/// <param name="mod"></param>
 		/// <param name="dti">DataTableInfo object. If null, created with new DataTableInfo(ShowDataTable)</param>
 		/// <returns></returns>
-		DataTableInfo ContaCodici(string cod,string mod, DataTableInfo? dti)
+		DataTableInfo ContaCodici(string cod,string mod,DataTableInfo? dti)
 		{
 			if(dti == null)
 			{
@@ -701,8 +781,14 @@ namespace DbWin
 
 		private void configurazioneToolStripMenuItem_Click(object sender,EventArgs e)
 		{
-			MsgBox.Show(CFG.DumpEntries());
+			MsgBox.Show(CFG.DumpEntries(CFG.DumpType.Config));
 		}
+
+		private void messaggiToolStripMenuItem_Click(object sender,EventArgs e)
+		{
+			MsgBox.Show(CFG.DumpEntries(CFG.DumpType.Msg));
+		}
+
 
 		private void vediCodiceToolStripMenuItem_Click(object sender,EventArgs e)
 		{
@@ -728,5 +814,6 @@ namespace DbWin
 		{
 			ContaCodici("100.11.123","a",null);
 		}
+
 	}
 }

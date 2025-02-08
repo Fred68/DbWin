@@ -495,5 +495,67 @@ namespace DbWin
 
 		}
 
+		#warning FUNZIONE InserisceCodice(...) DA SCRIVERE
+		public DataTableInfo InserisceCodice(DataTableInfo dti, string tipo, List<string> args)
+		{
+			DataTableInfoFunc? dtF;
+			DataTable? dt;
+			dti.Estrai(out dtF, out dt);				// Estrae l'ultimo datatable.
+
+			dti.datatable = new DataTable();
+			if(conn != null)
+			{
+				string sql = string.Empty;
+				StringBuilder sb = new StringBuilder();
+				bool first = true;
+				foreach(string arg in args)
+				{
+					if(!first)
+						sb.Append(", ");
+					sb.Append($"\"{arg}\"");
+					first = false;
+				}
+				
+
+				switch(tipo)
+				{
+					case "A":
+					{
+						sql = $"CALL InsAssieme({sb.ToString()})";
+					}
+					break;
+					case "P":
+					{
+						sql = $"CALL InsParticolare({sb.ToString()})";
+					}
+					break;
+					case "C":
+					{
+						sql = $"CALL InsCommerciale({sb.ToString()})";
+					}
+					break;
+					case "S":
+					{
+						sql = $"CALL InsSchema({sb.ToString()})";
+					}
+					break;
+				}
+				
+				#warning DA PROVARE CHIAMATA DELLA PROCEDURA. POI CORREGGERE IL RESTO (dti, return value...)
+				//= $"CALL VediCodici({100},\"{ReplaceWildcards("100")}\",\"{"a"}\");";
+				#if DEBUG
+				MsgBox.Show(sql);
+				#endif
+				ExecuteSQLReadDataTable(sql, ref dti);
+			}
+			else
+			{
+				dti.datatable = EmptyDataTable("RESULT",CFG.Msg.MsgNotConnected);
+			}
+			dti.datatable.TableName = CFG.Msg.MnuViewCodes;
+			return dti;
+		}
+
+
 	}
 }
