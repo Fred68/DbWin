@@ -284,6 +284,8 @@ namespace DbWin
 			if(ok)
 			{
 				dti.Rimuovi();              // Rimuove dallo stack l'ultimo datatable (risultato COUNT)
+				#warning DA FARE !!!! dti qui deve avere ShowDataTable come funzione da richiamare
+				dti.dtFunc = ShowDataTable;
 				InsertDataFromDti(dti);     // Inserisce i dati dell'ultima datatable in dti nel database
 			}
 		}
@@ -375,8 +377,6 @@ namespace DbWin
 			InsParticolare, InsParticolare(_cod, _mod, _desc, _mat)
 			InsSchema, InsSchema(_cod, _mod, _desc)
 			*/
-#warning Leggere i dati dal datatable (in base al tipo e alle liste di configurazione)
-#warning Scegliere la procedura MySQL da chiamare ed eseguire l'inserimento, prenotando funzione per mostrare il risultato
 #warning Scrivere la funzione per mostrare il risultato (meglio se rilegge il codice dal database).
 
 		}
@@ -476,7 +476,7 @@ namespace DbWin
 #endif
 						}
 
-						dti.Inserisci(ViewCountAndInsertCode);                              // Imposta la funzione che analizza il conteggio e inserisce i dati nel database
+						dti.Inserisci(ViewCountAndInsertCode);				// Imposta la funzione che analizza il conteggio e inserisce i dati nel database
 						DataTableInfo dtnfo = ContaCodici(cod,mod,dti);     // Conta i codici, poi chiama la funzione che analizza il conteggio
 					}
 				}

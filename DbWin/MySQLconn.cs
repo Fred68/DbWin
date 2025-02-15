@@ -542,7 +542,6 @@ namespace DbWin
 				}
 				
 				#warning DA PROVARE CHIAMATA DELLA PROCEDURA. POI CORREGGERE IL RESTO (dti, return value...)
-				//= $"CALL VediCodici({100},\"{ReplaceWildcards("100")}\",\"{"a"}\");";
 				#if DEBUG
 				MsgBox.Show(sql);
 				#endif

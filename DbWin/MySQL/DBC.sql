@@ -30,6 +30,7 @@ CREATE TABLE IF NOT EXISTS `assiemi` (
 -- Dump dei dati della tabella dbc00.assiemi: ~17 rows (circa)
 REPLACE INTO `assiemi` (`cod`, `mod`) VALUES
 	('100.12.001', ''),
+	('100.12.001', 'a'),
 	('100.12.002', 'd'),
 	('101.10.100', ''),
 	('201.10.001', ''),
@@ -63,25 +64,29 @@ CREATE TABLE IF NOT EXISTS `codici` (
   CONSTRAINT `FK_codici_dbc02.utenti_2` FOREIGN KEY (`id_utente`) REFERENCES `dbc02`.`utenti` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Tutti i codici con le informazioni principali.';
 
--- Dump dei dati della tabella dbc00.codici: ~56 rows (circa)
+-- Dump dei dati della tabella dbc00.codici: ~62 rows (circa)
 REPLACE INTO `codici` (`cod`, `mod`, `descrizione`, `id_utente`, `creazione`, `aggiornamento`, `id_ultimo`) VALUES
 	('', '', 'Valvola Fluido sistem iso01', 2, '2023-05-12 10:52:05', '2023-05-12 11:13:04', 2),
 	('100.11.123', '', 'Staffa', 5, '2019-06-22 08:33:51', '2019-06-22 08:33:51', 5),
 	('100.11.123', 'a', 'STAFFA ALLUNGATA', 1, '2019-06-22 08:18:19', '2019-09-14 14:22:29', 2),
 	('100.11.123', 'b', 'Staffa', 1, '2019-06-24 08:20:25', '2019-06-24 08:20:25', 1),
 	('100.12.001', '', 'Assieme Antani', 6, '2024-07-01 12:01:30', '2024-07-01 12:01:33', 6),
+	('100.12.001', 'a', 'Assieme Antani', 1, '2025-02-09 08:47:33', '2025-02-09 08:47:33', 1),
 	('100.12.002', 'd', 'Assieme Blinda', 6, '2024-07-01 12:01:43', '2024-07-01 12:01:48', 6),
 	('100.12.003', 'b', 'Schema Blinda', 6, '2024-07-01 12:01:57', '2024-07-01 12:01:58', 6),
 	('101.10.100', '', 'AAA', 2, '2019-11-01 10:34:21', '2019-11-01 10:34:21', 2),
 	('102.11.100', '', 'STAFFA', 2, '2023-04-23 17:43:31', '2023-04-23 17:43:31', 2),
 	('102.11.100', 'a', 'STAFFA', 2, '2023-04-23 17:44:58', '2023-04-23 17:45:27', 2),
 	('102.11.100', 'b', 'STAFFA', 6, '2025-02-03 19:20:41', '2025-02-03 19:20:41', 6),
-	('102.11.100', 'c', 'STAFFA Y', 6, '2025-02-08 07:52:06', '2025-02-08 17:40:45', 1),
+	('102.11.100', 'c', 'STAFFA Y', 6, '2025-02-08 07:52:06', '2025-02-09 05:50:42', 6),
 	('102.11.100', 'd', 'STAFFA Y', 6, '2025-02-08 08:26:39', '2025-02-08 17:42:22', 1),
+	('102.11.100', 'E', 'STAFFA Y', 1, '2025-02-09 08:47:06', '2025-02-09 08:47:06', 1),
 	('1055.45567.122', '', 'Vite', 2, '2019-06-24 08:31:22', '2019-08-17 17:03:04', 2),
 	('1055.54789.123', '', 'Guida lineare Bosch 1605.302.10.20', 2, '2019-11-02 14:09:12', '2019-11-02 14:09:12', 2),
 	('1058.32765.001', '', 'Guida lineare Bosch 1605.20.345', 2, '2019-11-02 14:27:02', '2019-11-02 14:27:02', 2),
 	('1058.54567.123', '', 'Guida lineare Bosch 1605.302.20.20', 2, '2023-04-23 17:47:00', '2023-04-23 17:47:00', 2),
+	('1058.54567.123', 'a', 'Guida lineare BOSCH 1605.302.20.20', 6, '2025-02-15 09:34:41', '2025-02-15 09:34:41', 6),
+	('1058.54567.124', '', 'Guida lineare BOSCH 1605.302.20.20', 6, '2025-02-09 08:50:46', '2025-02-09 08:50:46', 6),
 	('1059.11111.234', '', 'Valvola Camozzi EV', 2, '2023-04-23 23:58:46', '2023-04-23 23:58:46', 2),
 	('113.10.100', '', 'Supporto', 1, '2019-06-22 11:40:51', '2019-06-22 11:40:51', 1),
 	('201.10.001', '', 'ASSIEME', 2, '2019-11-02 11:45:33', '2019-11-02 11:45:33', 2),
@@ -92,11 +97,13 @@ REPLACE INTO `codici` (`cod`, `mod`, `descrizione`, `id_utente`, `creazione`, `a
 	('201.11.100', '', 'STAFFA', 2, '2019-11-09 18:17:22', '2019-11-09 18:17:22', 2),
 	('201.11.100', 'a', 'STAFFA', 2, '2023-04-26 19:15:21', '2023-04-26 19:15:21', 2),
 	('20111.98765.001', '', 'Vite Umbrako M12x30', 2, '2019-11-09 18:18:07', '2019-11-09 18:18:07', 2),
+	('20111.98765.001', 'a', 'Vite UMBRAKO M12x30', 1, '2025-02-15 09:39:48', '2025-02-15 09:39:48', 1),
 	('202.10.100', '', 'Parte 3/4', 2, '2023-05-02 20:59:56', '2023-05-02 21:01:32', 2),
 	('300.33.330', 'a', 'STAFFA', 2, '2019-11-25 00:51:07', '2019-11-25 00:52:35', 2),
 	('301.10.001', '', 'ASSIEME', 2, '2019-11-02 14:25:32', '2019-11-02 14:25:32', 2),
 	('301.10.100', '', 'STAFFA', 2, '2019-11-02 14:26:18', '2019-11-02 14:26:18', 2),
 	('301.10.900', '', 'SCHEMA', 2, '2019-11-02 14:25:57', '2019-11-02 14:25:57', 2),
+	('301.10.900', 'a', 'SCHEMA', 6, '2025-02-09 08:48:49', '2025-02-09 08:48:49', 6),
 	('333.44.555', '', 'Valvola Festo ASD', 2, '2019-11-25 00:55:48', '2019-11-25 00:55:48', 2),
 	('554.55.554', '', 'AAA', 2, '2023-04-24 07:13:26', '2023-04-24 07:13:26', 2),
 	('555.55.555', 'a', 'ASSIEME PROVA', 2, '2019-09-11 21:23:16', '2019-09-11 21:23:16', 2),
@@ -142,14 +149,17 @@ CREATE TABLE IF NOT EXISTS `commerciali` (
   CONSTRAINT `FK_commerciali_prodotti` FOREIGN KEY (`prodotto`) REFERENCES `prodotti` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Tabella dei codici commerciali (in comune con la tabella dei codici), con informazioni aggiuntive.';
 
--- Dump dei dati della tabella dbc00.commerciali: ~9 rows (circa)
+-- Dump dei dati della tabella dbc00.commerciali: ~11 rows (circa)
 REPLACE INTO `commerciali` (`cod`, `mod`, `modello`, `dettagli`, `costruttore`, `prodotto`) VALUES
 	('1055.45567.122', '', 'M12x50', 'interamente filettata', 1, 1),
 	('1055.54789.123', '', '1605.302.10.20', 'TAGLI 20, CLASSE P', 2, 4),
 	('1058.32765.001', '', '1605.20.345', 'taglia 20, classe P', 2, 4),
 	('1058.54567.123', '', '1605.302.20.20', 'Classe SP', 2, 4),
+	('1058.54567.123', 'a', '1605.302.20.20', 'Classe P', 2, 4),
+	('1058.54567.124', '', '1605.302.20.20', 'Classe P', 2, 4),
 	('1059.11111.234', '', 'EV', '5/3 c.a.', 4, 2),
 	('20111.98765.001', '', 'M12x30', '12.9', 1, 1),
+	('20111.98765.001', 'a', 'M12x30', '10.8', 1, 1),
 	('333.44.555', '', 'ASD', 'ASDFRE', 3, 2),
 	('999.88.777', '', '', '', 3, 11);
 
@@ -259,6 +269,7 @@ REPLACE INTO `particolari` (`cod`, `mod`, `materiale`) VALUES
 	('102.11.100', 'b', 1),
 	('102.11.100', 'c', 1),
 	('102.11.100', 'd', 1),
+	('102.11.100', 'E', 1),
 	('301.10.100', '', 1),
 	('789.10.100', '', 1),
 	('789.10.100', 'a', 1),
@@ -316,6 +327,7 @@ REPLACE INTO `schemi` (`cod`, `mod`) VALUES
 	('201.10.900', 'b'),
 	('300.33.330', 'a'),
 	('301.10.900', ''),
+	('301.10.900', 'a'),
 	('554.55.554', ''),
 	('567.89.111', ''),
 	('820.10.900', ''),
@@ -591,24 +603,20 @@ CREATE PROCEDURE `InsAssieme`(
 	IN `_mod` VARCHAR(10),
 	IN `_desc` VARCHAR(255)
 )
+    SQL SECURITY INVOKER
     COMMENT 'InsAssieme(_cod, _mod, _desc): inserisce un nuovo assieme'
 BEGIN
-DECLARE n INT;
-SET _cod = TRIM(_cod);
-SET _mod = TRIM(_mod);
-START TRANSACTION;
-SET n = dbc01._InsCodice(_cod, _mod, _desc);
-IF n = 1 THEN
-	INSERT INTO dbc00.assiemi(cod, `mod`) VALUES(_cod, _mod);
-	SELECT CONCAT(_cod,_mod," inserito.") AS `RISPOSTA`;
-ELSEIF n = -1 THEN
-	DO 0;	-- UPDATE assiemi SET cod = _cod WHERE assiemi.cod = _cod AND assiemi.`mod` = _mod;
-	SELECT CONCAT(_cod,_mod," aggiornato.") AS `RISPOSTA`;
+DECLARE _usr VARCHAR(50) DEFAULT "-";
+DECLARE _idx INT DEFAULT -1;	-- id del current user (invoker) e...
+DECLARE _stx INT DEFAULT 0; -- ...stato
+CALL StatoUtente(_idx, _stx, NULL);		-- Utente reale (privilegi di Invoker)
+SET _usr = dbc01._NomeUtente(_idx);
+IF _stx = 2 THEN
+	SELECT CONCAT("Utente ", _usr, " abilitato...") AS `ABILITAZIONE`;
+ 	CALL dbc01r._InsAssieme(_idx, _cod, _mod, _desc);
 ELSE
-	ROLLBACK;
-	SELECT CONCAT(_cod,_mod," non inserito.") AS `RISPOSTA`;
+	SELECT CONCAT("Utente ", _usr, " NON abilitato") AS `ABILITAZIONE`;
 END IF;
-COMMIT;
 END//
 DELIMITER ;
 
@@ -622,36 +630,20 @@ CREATE PROCEDURE `InsCommerciale`(
 	IN `_model` VARCHAR(255),
 	IN `_dett` VARCHAR(255)
 )
+    SQL SECURITY INVOKER
     COMMENT 'InsCommerciale(_cod, _mod, _cos, _pro, _model, _dett).'
 BEGIN
-DECLARE n, idc, idp INT;
-DECLARE _desc VARCHAR(255);
-SET _cod = TRIM(_cod);
-SET _mod = TRIM(_mod);
-SET _cos = TRIM(_cos);
-SET _pro = TRIM(_pro);
-SET _model = TRIM(_model);
-SET _dett = TRIM(_dett);
-SET _desc = CONCAT(_pro, " ", UPPER(_cos), " ", _model);	-- Compone descrizione
-START TRANSACTION;
-SET idc = dbc01._InsCostruttore(_cos); -- id o -1 se errore
-SET idp = dbc01._InsProdotto(_pro);
-SET n = dbc01._InsCodice(_cod, _mod, _desc); -- 1 inserito, -1 aggiornato, 0 se errore
-IF (idc != -1) AND (idp != -1) AND (n != 0) THEN
-	IF n = 1 THEN
-		INSERT INTO dbc00.commerciali(cod, `mod`, modello, dettagli, costruttore, prodotto)
-		VALUES(_cod, _mod, _model, _dett, idc, idp);
-		SELECT CONCAT(_cod,_mod," inserito.") AS `RISPOSTA`;
-	ELSEIF n = -1 THEN
-		UPDATE dbc00.commerciali c SET c.modello = _model, c.dettagli = _dett, c.costruttore = idc, c.prodotto = idp
-		WHERE c.cod = _cod AND c.`mod` = _mod;
-		SELECT CONCAT(_cod,_mod," aggiornato.") AS `RISPOSTA`;
-	END IF;
+DECLARE _usr VARCHAR(50) DEFAULT "-";
+DECLARE _idx INT DEFAULT -1;	-- id del current user (invoker) e...
+DECLARE _stx INT DEFAULT 0; -- ...stato
+CALL StatoUtente(_idx, _stx, NULL);		-- Utente reale (privilegi di Invoker)
+SET _usr = dbc01._NomeUtente(_idx);
+IF _stx = 2 THEN
+	SELECT CONCAT("Utente ", _usr, " abilitato...") AS `ABILITAZIONE`;
+ 	CALL dbc01r._InsCommerciale(_idx, _cod, _mod, _cos, _pro, _model, _dett);
 ELSE
-	ROLLBACK;
-	SELECT CONCAT(_cod,_mod," non inserito.") AS `RISPOSTA`;	
+	SELECT CONCAT("Utente ", _usr, " NON abilitato") AS `ABILITAZIONE`;
 END IF;
-COMMIT;
 END//
 DELIMITER ;
 
@@ -721,7 +713,6 @@ IF _stx = 2 THEN
 ELSE
 	SELECT CONCAT("Utente ", _usr, " NON abilitato") AS `ABILITAZIONE`;
 END IF;
-
 END//
 DELIMITER ;
 
@@ -732,24 +723,20 @@ CREATE PROCEDURE `InsSchema`(
 	IN `_mod` VARCHAR(10),
 	IN `_desc` VARCHAR(255)
 )
+    SQL SECURITY INVOKER
     COMMENT 'InsSchema(_cod, _mod, _desc)'
 BEGIN
-DECLARE n INT;
-SET _cod = TRIM(_cod);
-SET _mod = TRIM(_mod);
-START TRANSACTION;
-SET n = dbc01._InsCodice(_cod, _mod, _desc);
-IF n = 1 THEN
-	INSERT INTO dbc00.schemi(cod, `mod`) VALUES(_cod, _mod);
-	SELECT CONCAT(_cod,_mod," inserito.") AS `RISPOSTA`;
-ELSEIF n = -1 THEN
-	DO 0;	-- UPDATE schemi SET cod = _cod WHERE schemi.cod = _cod AND schemi.`mod` = _mod;
-	SELECT CONCAT(_cod,_mod," aggiornato.") AS `RISPOSTA`;
+DECLARE _usr VARCHAR(50) DEFAULT "-";
+DECLARE _idx INT DEFAULT -1;	-- id del current user (invoker) e...
+DECLARE _stx INT DEFAULT 0; -- ...stato
+CALL StatoUtente(_idx, _stx, NULL);		-- Utente reale (privilegi di Invoker)
+SET _usr = dbc01._NomeUtente(_idx);
+IF _stx = 2 THEN
+	SELECT CONCAT("Utente ", _usr, " abilitato...") AS `ABILITAZIONE`;
+ 	CALL dbc01r._InsSchema(_idx, _cod, _mod, _desc);
 ELSE
-	ROLLBACK;
-	SELECT CONCAT(_cod,_mod," non inserito.") AS `RISPOSTA`;
+	SELECT CONCAT("Utente ", _usr, " NON abilitato") AS `ABILITAZIONE`;
 END IF;
-COMMIT;
 END//
 DELIMITER ;
 
@@ -1396,6 +1383,125 @@ DELIMITER ;
 CREATE DATABASE IF NOT EXISTS `dbc01r` /*!40100 DEFAULT CHARACTER SET latin1 */ /*!80016 DEFAULT ENCRYPTION='N' */;
 USE `dbc01r`;
 
+-- Dump della struttura di procedura dbc01r._InsAssieme
+DELIMITER //
+CREATE PROCEDURE `_InsAssieme`(
+	IN `_usr` INT,
+	IN `_cod` VARCHAR(50),
+	IN `_mod` VARCHAR(10),
+	IN `_desc` VARCHAR(255)
+)
+    COMMENT '_InsAssieme(_usr,_cod, _mod, _desc, _usr): inserisce un nuovo assieme'
+BEGIN
+DECLARE n INT;
+SET _cod = TRIM(_cod);
+SET _mod = TRIM(_mod);
+
+START TRANSACTION;
+SET n = dbc01._InsCodice(_cod, _mod, _desc, _usr);
+IF n = 1 THEN
+	INSERT INTO dbc00.assiemi(cod, `mod`) VALUES(_cod, _mod);
+	SELECT CONCAT(_cod,_mod," inserito.") AS `RISPOSTA`;
+ELSEIF n = -1 THEN
+	DO 0;	-- UPDATE dbc00.assiemi SET ... WHERE dbc00.assiemi.cod = _cod AND dbc00.assiemi.`mod` = _mod;
+	SELECT CONCAT(_cod,_mod," aggiornato.") AS `RISPOSTA`;
+ELSE
+	ROLLBACK;
+	SELECT CONCAT(_cod,_mod," non inserito.") AS `RISPOSTA`;
+END IF;
+COMMIT;
+END//
+DELIMITER ;
+
+-- Dump della struttura di procedura dbc01r._InsCommerciale
+DELIMITER //
+CREATE PROCEDURE `_InsCommerciale`(
+	IN `_usr` INT,
+	IN `_cod` VARCHAR(50),
+	IN `_mod` VARCHAR(10),
+	IN `_cos` VARCHAR(255),
+	IN `_pro` VARCHAR(255),
+	IN `_model` VARCHAR(255),
+	IN `_dett` VARCHAR(255)
+)
+    COMMENT '_InsCommerciale(_usr,_cod, _mod, _cos, _pro, _model, _dett).'
+BEGIN
+DECLARE n, idc, idp INT;
+DECLARE _desc VARCHAR(255);
+SET _cod = TRIM(_cod);
+SET _mod = TRIM(_mod);
+SET _cos = TRIM(_cos);
+SET _pro = TRIM(_pro);
+SET _model = TRIM(_model);
+SET _dett = TRIM(_dett);
+SET _desc = CONCAT(_pro, " ", UPPER(_cos), " ", _model);	-- Compone descrizione
+
+START TRANSACTION;
+SET idc = dbc01._InsCostruttore(_cos); -- id o -1 se errore
+SET idp = dbc01._InsProdotto(_pro);
+SET n = dbc01._InsCodice(_cod, _mod, _desc,_usr); -- 1 inserito, -1 aggiornato, 0 se errore
+IF (idc != -1) AND (idp != -1) AND (n != 0) THEN
+	IF n = 1 THEN
+		INSERT INTO dbc00.commerciali(cod, `mod`, modello, dettagli, costruttore, prodotto)
+		VALUES(_cod, _mod, _model, _dett, idc, idp);
+		SELECT CONCAT(_cod,_mod," inserito.") AS `RISPOSTA`;
+	ELSEIF n = -1 THEN
+		UPDATE dbc00.commerciali c SET c.modello = _model, c.dettagli = _dett, c.costruttore = idc, c.prodotto = idp
+		WHERE c.cod = _cod AND c.`mod` = _mod;
+		SELECT CONCAT(_cod,_mod," aggiornato.") AS `RISPOSTA`;
+	END IF;
+ELSE
+	ROLLBACK;
+	SELECT CONCAT(_cod,_mod," non inserito.") AS `RISPOSTA`;	
+END IF;
+COMMIT;
+END//
+DELIMITER ;
+
+-- Dump della struttura di procedura dbc01r._InsLegame
+DELIMITER //
+CREATE PROCEDURE `_InsLegame`(
+	IN `_cod` VARCHAR(50),
+	IN `_mod` VARCHAR(10),
+	IN `_cod_p` VARCHAR(50),
+	IN `_mod_p` VARCHAR(10),
+	IN `_qta` INT,
+	IN `_acq` INT,
+	IN `_qta_ric` INT,
+	IN `_liv_ric` INT
+)
+    MODIFIES SQL DATA
+    DETERMINISTIC
+    COMMENT '_InsLegame(_cod, _mod, _cod_p, _mod_p, _qta, _acq, _qta_ric, _liv_ric) DA AGGIORNARE !!!'
+BEGIN
+DECLARE n1, n2, nc INT DEFAULT 0;
+
+SET nc = _ChkCiclico(_cod, _mod, _cod_p, _mod_p, 100);
+-- Usato maxP = 100. Si potrebbe passare come parametro e usare ISNULL(x,b_se_null), ma appesantisce la funzione
+IF nc = 0 THEN
+	START TRANSACTION;
+		SET n1 = _InsLegame(_cod, _mod, _cod_p, _mod_p, _qta, _acq, _qta_ric, _liv_ric); -- 1 inserito, -1 aggiornato, 0 non inserito, -2 cancellato
+		IF n1 = 1 OR n1 = -1 THEN
+			SET n2 = _CorreggeLegame(_cod, _mod, _cod_p, _mod_p); -- 1 inserito, 0 non trovato
+		END IF;
+		IF (n1 = 1 OR n1 = -1) AND n2 = 1 THEN
+			COMMIT;
+			IF n1 = 1 THEN
+				SELECT CONCAT(_cod,_mod," -> [ ", _cod_p, _mod_p, " ] inserito.") AS `RISPOSTA`;
+			ELSE 
+				SELECT CONCAT(_cod,_mod," -> [ ", _cod_p, _mod_p, " ] aggiornato.") AS `RISPOSTA`;
+			END IF;	
+		ELSE
+			ROLLBACK;
+			SELECT CONCAT(_cod,_mod," -> [ ", _cod_p, _mod_p, " ] non inserito.") AS `RISPOSTA`;
+		END IF;
+	COMMIT;
+ELSE
+	SELECT "Controllo ciclico non superato";
+END IF;
+END//
+DELIMITER ;
+
 -- Dump della struttura di procedura dbc01r._InsParticolare
 DELIMITER //
 CREATE PROCEDURE `_InsParticolare`(
@@ -1430,6 +1536,36 @@ COMMIT;
 END//
 DELIMITER ;
 
+-- Dump della struttura di procedura dbc01r._InsSchema
+DELIMITER //
+CREATE PROCEDURE `_InsSchema`(
+	IN `_usr` INT,
+	IN `_cod` VARCHAR(50),
+	IN `_mod` VARCHAR(10),
+	IN `_desc` VARCHAR(255)
+)
+    COMMENT '_InsSchema(_usr,_cod, _mod, _desc)'
+BEGIN
+DECLARE n INT;
+SET _cod = TRIM(_cod);
+SET _mod = TRIM(_mod);
+
+START TRANSACTION;
+SET n = dbc01._InsCodice(_cod, _mod, _desc,_usr);
+IF n = 1 THEN
+	INSERT INTO dbc00.schemi(cod, `mod`) VALUES(_cod, _mod);
+	SELECT CONCAT(_cod,_mod," inserito.") AS `RISPOSTA`;
+ELSEIF n = -1 THEN
+	DO 0;	-- UPDATE dbc00.schemi SET ... WHERE dbc00.schemi.cod = _cod AND dbc00.schemi.`mod` = _mod;
+	SELECT CONCAT(_cod,_mod," aggiornato.") AS `RISPOSTA`;
+ELSE
+	ROLLBACK;
+	SELECT CONCAT(_cod,_mod," non inserito.") AS `RISPOSTA`;
+END IF;
+COMMIT;
+END//
+DELIMITER ;
+
 
 -- Dump della struttura del database dbc02
 CREATE DATABASE IF NOT EXISTS `dbc02` /*!40100 DEFAULT CHARACTER SET latin1 */ /*!80016 DEFAULT ENCRYPTION='N' */;
@@ -1453,6 +1589,149 @@ REPLACE INTO `aggiornato` (`id`, `costruttori`, `materiali`, `prodotti`) VALUES
 	(4, 1, 0, 0),
 	(5, 1, 0, 0),
 	(6, 1, 0, 0);
+
+-- Dump della struttura di procedura dbc02.InsAssieme
+DELIMITER //
+CREATE PROCEDURE `InsAssieme`(
+	IN `_cod` VARCHAR(50),
+	IN `_mod` VARCHAR(10),
+	IN `_desc` VARCHAR(255)
+)
+    COMMENT 'InsAssieme(_cod, _mod, _desc): inserisce un nuovo assieme'
+BEGIN
+DECLARE n INT;
+SET _cod = TRIM(_cod);
+SET _mod = TRIM(_mod);
+START TRANSACTION;
+SET n = dbc01._InsCodice(_cod, _mod, _desc);
+IF n = 1 THEN
+	INSERT INTO dbc00.assiemi(cod, `mod`) VALUES(_cod, _mod);
+	SELECT CONCAT(_cod,_mod," inserito.") AS `RISPOSTA`;
+ELSEIF n = -1 THEN
+	DO 0;	-- UPDATE assiemi SET cod = _cod WHERE assiemi.cod = _cod AND assiemi.`mod` = _mod;
+	SELECT CONCAT(_cod,_mod," aggiornato.") AS `RISPOSTA`;
+ELSE
+	ROLLBACK;
+	SELECT CONCAT(_cod,_mod," non inserito.") AS `RISPOSTA`;
+END IF;
+COMMIT;
+END//
+DELIMITER ;
+
+-- Dump della struttura di procedura dbc02.InsCommerciale
+DELIMITER //
+CREATE PROCEDURE `InsCommerciale`(
+	IN `_cod` VARCHAR(50),
+	IN `_mod` VARCHAR(10),
+	IN `_cos` VARCHAR(255),
+	IN `_pro` VARCHAR(255),
+	IN `_model` VARCHAR(255),
+	IN `_dett` VARCHAR(255)
+)
+    COMMENT 'InsCommerciale(_cod, _mod, _cos, _pro, _model, _dett).'
+BEGIN
+DECLARE n, idc, idp INT;
+DECLARE _desc VARCHAR(255);
+SET _cod = TRIM(_cod);
+SET _mod = TRIM(_mod);
+SET _cos = TRIM(_cos);
+SET _pro = TRIM(_pro);
+SET _model = TRIM(_model);
+SET _dett = TRIM(_dett);
+SET _desc = CONCAT(_pro, " ", UPPER(_cos), " ", _model);	-- Compone descrizione
+START TRANSACTION;
+SET idc = dbc01._InsCostruttore(_cos); -- id o -1 se errore
+SET idp = dbc01._InsProdotto(_pro);
+SET n = dbc01._InsCodice(_cod, _mod, _desc); -- 1 inserito, -1 aggiornato, 0 se errore
+IF (idc != -1) AND (idp != -1) AND (n != 0) THEN
+	IF n = 1 THEN
+		INSERT INTO dbc00.commerciali(cod, `mod`, modello, dettagli, costruttore, prodotto)
+		VALUES(_cod, _mod, _model, _dett, idc, idp);
+		SELECT CONCAT(_cod,_mod," inserito.") AS `RISPOSTA`;
+	ELSEIF n = -1 THEN
+		UPDATE dbc00.commerciali c SET c.modello = _model, c.dettagli = _dett, c.costruttore = idc, c.prodotto = idp
+		WHERE c.cod = _cod AND c.`mod` = _mod;
+		SELECT CONCAT(_cod,_mod," aggiornato.") AS `RISPOSTA`;
+	END IF;
+ELSE
+	ROLLBACK;
+	SELECT CONCAT(_cod,_mod," non inserito.") AS `RISPOSTA`;	
+END IF;
+COMMIT;
+END//
+DELIMITER ;
+
+-- Dump della struttura di procedura dbc02.InsLegame
+DELIMITER //
+CREATE PROCEDURE `InsLegame`(
+	IN `_cod` VARCHAR(50),
+	IN `_mod` VARCHAR(10),
+	IN `_cod_p` VARCHAR(50),
+	IN `_mod_p` VARCHAR(10),
+	IN `_qta` INT,
+	IN `_acq` INT,
+	IN `_qta_ric` INT,
+	IN `_liv_ric` INT
+)
+    MODIFIES SQL DATA
+    DETERMINISTIC
+    COMMENT 'InsLegame(_cod, _mod, _cod_p, _mod_p, _qta, _acq, _qta_ric, _liv_ric)'
+BEGIN
+DECLARE n1, n2, nc INT DEFAULT 0;
+
+SET nc = _ChkCiclico(_cod, _mod, _cod_p, _mod_p, 100);
+-- Usato maxP = 100. Si potrebbe passare come parametro e usare ISNULL(x,b_se_null), ma appesantisce la funzione
+IF nc = 0 THEN
+	START TRANSACTION;
+		SET n1 = _InsLegame(_cod, _mod, _cod_p, _mod_p, _qta, _acq, _qta_ric, _liv_ric); -- 1 inserito, -1 aggiornato, 0 non inserito, -2 cancellato
+		IF n1 = 1 OR n1 = -1 THEN
+			SET n2 = _CorreggeLegame(_cod, _mod, _cod_p, _mod_p); -- 1 inserito, 0 non trovato
+		END IF;
+		IF (n1 = 1 OR n1 = -1) AND n2 = 1 THEN
+			COMMIT;
+			IF n1 = 1 THEN
+				SELECT CONCAT(_cod,_mod," -> [ ", _cod_p, _mod_p, " ] inserito.") AS `RISPOSTA`;
+			ELSE 
+				SELECT CONCAT(_cod,_mod," -> [ ", _cod_p, _mod_p, " ] aggiornato.") AS `RISPOSTA`;
+			END IF;	
+		ELSE
+			ROLLBACK;
+			SELECT CONCAT(_cod,_mod," -> [ ", _cod_p, _mod_p, " ] non inserito.") AS `RISPOSTA`;
+		END IF;
+	COMMIT;
+ELSE
+	SELECT "Controllo ciclico non superato";
+END IF;
+END//
+DELIMITER ;
+
+-- Dump della struttura di procedura dbc02.InsSchema
+DELIMITER //
+CREATE PROCEDURE `InsSchema`(
+	IN `_cod` VARCHAR(50),
+	IN `_mod` VARCHAR(10),
+	IN `_desc` VARCHAR(255)
+)
+    COMMENT 'InsSchema(_cod, _mod, _desc)'
+BEGIN
+DECLARE n INT;
+SET _cod = TRIM(_cod);
+SET _mod = TRIM(_mod);
+START TRANSACTION;
+SET n = dbc01._InsCodice(_cod, _mod, _desc);
+IF n = 1 THEN
+	INSERT INTO dbc00.schemi(cod, `mod`) VALUES(_cod, _mod);
+	SELECT CONCAT(_cod,_mod," inserito.") AS `RISPOSTA`;
+ELSEIF n = -1 THEN
+	DO 0;	-- UPDATE schemi SET cod = _cod WHERE schemi.cod = _cod AND schemi.`mod` = _mod;
+	SELECT CONCAT(_cod,_mod," aggiornato.") AS `RISPOSTA`;
+ELSE
+	ROLLBACK;
+	SELECT CONCAT(_cod,_mod," non inserito.") AS `RISPOSTA`;
+END IF;
+COMMIT;
+END//
+DELIMITER ;
 
 -- Dump della struttura di tabella dbc02.utenti
 CREATE TABLE IF NOT EXISTS `utenti` (

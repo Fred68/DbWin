@@ -68,7 +68,8 @@ namespace DbWin
 			public int Count { get { return _dtS.Count; } }
 
 			/// <summary>
-			/// DataTable dell'elemento meno recente della coda
+			/// DataTable dell'elemento in cima alla pila
+			/// set: aggiunge se pila vuota
 			/// </summary>
 			public DataTable datatable
 			{
@@ -90,7 +91,8 @@ namespace DbWin
 			}
 			
 			/// <summary>
-			/// DataTableInfoFunc dell'elemento meno recente della coda
+			/// DataTableInfoFunc dell'elemento in cima alla pila
+			/// set: se pila vuota, non fa nulla
 			/// </summary>
 			public DataTableInfoFunc? dtFunc
 			{
@@ -98,15 +100,22 @@ namespace DbWin
 				{
 					return _primo._dtiFunc;
 				}
+				set
+				{
+					if(_dtS.Count > 0)	
+					{
+						_dtS.Peek()._dtiFunc = value;
+					}
+				}
 			}
 
 			/// <summary>
-			/// Numero di righe del DataTable dell'elemento meno recente della coda
+			/// Numero di righe del DataTable dell'elemento in cima alla pila
 			/// </summary>
 			public int Righe	{ get {return _primo._dt.Rows.Count;}}
 
 			/// <summary>
-			/// Numero di colonne del DataTable dell'elemento meno recente della coda
+			/// Numero di colonne del DataTable dell'elemento in cima alla pila
 			/// </summary>
 			public int Colonne	{ get {return _primo._dt.Columns.Count;}}
 
