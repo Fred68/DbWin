@@ -5,6 +5,8 @@
 -- HeidiSQL Versione:            12.8.0.6976
 -- --------------------------------------------------------
 
+-- AGGIORNAMENTO: 15 FEBBRAIO 2025 BY FcSoft !
+
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET NAMES utf8 */;
 /*!50503 SET NAMES utf8mb4 */;
